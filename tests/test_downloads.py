@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from data_utils import load_level
-from download_bls import parse_bls, to_wide
+from download_bls import api_windows, parse_bls, to_wide
 from download_pce import parse_nipa, spending_weights
 
 BLS_SAMPLE = """series_id        \tyear\tperiod\t       value\tfootnote_codes
@@ -60,3 +60,15 @@ def test_load_level_uses_last_unbroken_stretch(tmp_path):
     level = load_level(path, "gs30")
     assert list(level.index) == list(dates[4:7])
     assert level.iloc[-1] == pytest.approx(4.9)
+
+
+def test_api_windows_full_history_then_refresh_and_backfill():
+    assert api_windows(None, 2026, 10) == [
+        (2017, 2026),
+        (2007, 2016),
+        (1997, 2006),
+        (1987, 1996),
+        (1979, 1986),
+    ]
+    assert api_windows(1997, 2026, 10) == [(2025, 2026), (1987, 1996), (1979, 1986)]
+    assert api_windows(1979, 2026, 20) == [(2025, 2026)]
