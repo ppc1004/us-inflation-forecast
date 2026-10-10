@@ -43,7 +43,7 @@ def make_share_image() -> None:
     fig = plt.figure(figsize=(12, 6.3), dpi=100, facecolor=PAGE)
 
     # ---- text block ----
-    fig.text(0.055, 0.86, "U.S. INFLATION FORECAST", fontsize=15, color=INK_2, weight="bold")
+    fig.text(0.055, 0.86, "U.S. ECONOMIC FORECAST", fontsize=15, color=INK_2, weight="bold")
     fig.text(0.055, 0.60, f"{latest:.1f}%", fontsize=96, color=INK, weight="bold")
     fig.text(0.055, 0.52, f"Annual CPI inflation, {latest_date:%B %Y}", fontsize=19, color=INK_2)
     direction = "above" if gap >= 0 else "below"

@@ -1,13 +1,14 @@
 """Download supporting FRED series used by the website.
 
 Writes one monthly, wide CSV (data/extra_series.csv) with a column per series.
-Daily series (the 10-year breakeven rate) are averaged by month.
+Daily and weekly series (breakeven and TIPS yields, mortgage rates) are averaged by month.
 If a single series fails to download, its previous values are kept so one
 bad request never wipes a chart off the site.
 """
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -32,6 +33,14 @@ SERIES = {
     # wages, policy and expectations
     "wages": "AHETPI",  # avg hourly earnings, production & nonsupervisory
     "fed_funds": "FEDFUNDS",  # effective federal funds rate, %
+    # Treasury yields and other interest rates (monthly averages, %)
+    "tbill_3m": "TB3MS",  # 3-month Treasury bill, secondary market
+    "gs2": "GS2",  # 2-year Treasury, constant maturity
+    "gs5": "GS5",  # 5-year Treasury, constant maturity
+    "gs10": "GS10",  # 10-year Treasury, constant maturity
+    "gs30": "GS30",  # 30-year Treasury, constant maturity (not published Feb 2002 - Jan 2006)
+    "tips_10y": "DFII10",  # 10-year TIPS (real) yield, daily -> monthly average
+    "mortgage_30y": "MORTGAGE30US",  # 30-year fixed mortgage rate, weekly -> monthly average
     "exp_consumers_1y": "MICH",  # U. Michigan expected inflation, next 12 months, %
     "exp_market_10y": "T10YIE",  # 10-year breakeven inflation rate, %
 }
@@ -60,6 +69,7 @@ def download_extra() -> None:
         try:
             columns[name] = fetch_series(series_id)
             print(f"{series_id:>14} -> {name}: {columns[name].dropna().index.max():%Y-%m}")
+            time.sleep(0.5)  # be gentle with FRED's rate limit
         except Exception as error:
             print(f"{series_id} failed: {error}")
             if previous is not None and name in previous:
