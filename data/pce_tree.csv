@@ -1,0 +1,85 @@
+code,name,parent
+DPCE,Personal consumption expenditures,
+DHUT,Housing and utilities,DPCE
+DHSG,Housing,DHUT
+DOWN,Owner-occupied housing (imputed rent),DHSG
+DTEN,Rent of tenant-occupied housing,DHSG
+DGRH,Group housing,DHSG
+DFAR,Farm housing,DHSG
+DUTL,Household utilities,DHUT
+DELG,Electricity and gas,DUTL
+DWRS,Water supply and sanitation,DUTL
+DHLC,Health care,DPCE
+DOUT,Outpatient services,DHLC
+DPHY,Physician services,DOUT
+DDEN,Dental services,DOUT
+DPMS,Paramedical services,DOUT
+DHPN,Hospital and nursing home services,DHLC
+DHSP,Hospitals,DHPN
+DNRS,Nursing homes,DHPN
+DTRS,Transportation services,DPCE
+DMVS,Motor vehicle services,DTRS
+DVMR,Motor vehicle maintenance and repair,DMVS
+DOVS,Other motor vehicle services,DMVS
+DPUB,Public transportation,DTRS
+DAIT,Air transportation,DPUB
+DGRD,Ground transportation,DPUB
+DWAT,Water transportation,DPUB
+DRCA,Recreation services,DPCE
+DFSA,Food services and accommodations,DPCE
+DFSE,Food services (restaurants),DFSA
+DACC,Accommodations,DFSA
+DIFS,Financial services and insurance,DPCE
+DFNL,Financial services,DIFS
+DINS,Insurance,DIFS
+DHIN,Net health insurance,DINS
+DTIN,Net motor vehicle insurance,DINS
+DLIF,Life insurance,DINS
+DFIN,Net household insurance,DINS
+DOTS,Other services,DPCE
+DCOM,Communication,DOTS
+DTCS,Telecommunication services,DCOM
+DINT,Internet access,DCOM
+DPSS,Postal and delivery services,DCOM
+DTED,Education services,DOTS
+DHED,Higher education,DTED
+DNEH,"Nursery, elementary and secondary schools",DTED
+DVED,Commercial and vocational schools,DTED
+DPRS,Professional and other services,DOTS
+DPER,Personal care and clothing services,DOTS
+DSOC,Social services and religious activities,DOTS
+DHHM,Household maintenance,DOTS
+DNPI,Nonprofit institutions serving households,DPCE
+DFXA,Food and beverages (groceries),DPCE
+DFOF,Food at home,DFXA
+DNBV,Nonalcoholic beverages,DFXA
+DAOP,Alcoholic beverages,DFXA
+DONG,Other nondurable goods,DPCE
+DPHM,Pharmaceutical and medical products,DONG
+DREI,Recreational items,DONG
+DHOU,Household supplies,DONG
+DOPC,Personal care products,DONG
+DTOB,Tobacco,DONG
+DNEW,"Magazines, newspapers, stationery",DONG
+DMOT,Motor vehicles and parts,DPCE
+DNMV,New motor vehicles,DMOT
+DNPV,Used motor vehicles (net purchases),DMOT
+DMVP,Motor vehicle parts and accessories,DMOT
+DGOE,Gasoline and other energy goods,DPCE
+DMFL,Motor vehicle fuels,DGOE
+DFUL,Fuel oil and other fuels,DGOE
+DREQ,Recreational goods and vehicles,DPCE
+DVAP,"Video, audio, computers",DREQ
+DSPG,Sporting equipment and supplies,DREQ
+DWHL,Sports and recreational vehicles,DREQ
+DFDH,Furnishings and household equipment,DPCE
+DFFF,Furniture and furnishings,DFDH
+DAPP,Household appliances,DFDH
+DUTE,"Glassware, tableware and utensils",DFDH
+DTOO,Tools and equipment for house and garden,DFDH
+DCLO,Clothing and footwear,DPCE
+DGAR,Garments,DCLO
+DODG,Other durable goods,DPCE
+DJRY,Jewelry and watches,DODG
+DTAE,Therapeutic appliances and equipment,DODG
+DTCE,Telephone and related communication equipment,DODG

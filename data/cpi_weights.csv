@@ -1,0 +1,162 @@
+code,name,parent,weight
+SA0,All items,,100.000
+SAF,Food and beverages,SA0,14.539
+SAF11,Food at home,SAF,8.325
+SAF111,Cereals and bakery products,SAF11,1.035
+SEFA01,Flour and prepared flour mixes,SAF111,0.038
+SEFA02,Breakfast cereal,SAF111,0.136
+SEFA03,"Rice, pasta, cornmeal",SAF111,0.141
+SEFB01,Bread,SAF111,0.175
+SEFB02,"Fresh biscuits, rolls, muffins",SAF111,0.120
+SEFB03,"Cakes, cupcakes, and cookies",SAF111,0.210
+SEFB04,Other bakery products,SAF111,0.217
+SAF112,"Meats, poultry, fish, and eggs",SAF11,1.995
+SEFC,Beef and veal,SAF112,0.638
+SEFC01,Uncooked ground beef,SEFC,0.236
+SEFC02,Uncooked beef roasts,SEFC,0.087
+SEFC03,Uncooked beef steaks,SEFC,0.240
+SEFD,Pork,SAF112,0.340
+SEFE,Other meats,SAF112,0.207
+SEFF,Poultry,SAF112,0.363
+SEFF01,Chicken,SEFF,0.291
+SEFG,Fish and seafood,SAF112,0.314
+SEFH,Eggs,SAF112,0.133
+SEFJ,Dairy and related products,SAF11,0.758
+SEFJ01,Milk,SEFJ,0.190
+SEFJ02,Cheese and related products,SEFJ,0.261
+SEFJ03,Ice cream and related products,SEFJ,0.115
+SEFJ04,Other dairy and related products,SEFJ,0.192
+SAF113,Fruits and vegetables,SAF11,1.269
+SEFK,Fresh fruits,SAF113,0.532
+SEFK01,Apples,SEFK,0.073
+SEFK02,Bananas,SEFK,0.060
+SEFK03,Citrus fruits,SEFK,0.077
+SEFK04,Other fresh fruits,SEFK,0.322
+SEFL,Fresh vegetables,SAF113,0.476
+SEFL01,Potatoes,SEFL,0.063
+SEFL02,Lettuce,SEFL,0.044
+SEFL03,Tomatoes,SEFL,0.063
+SEFL04,Other fresh vegetables,SEFL,0.305
+SEFM,Processed fruits and vegetables,SAF113,0.262
+SAF114,Nonalcoholic beverages,SAF11,0.995
+SEFN01,Carbonated drinks,SAF114,0.324
+SEFN03,Juices and other noncarbonated drinks,SAF114,0.346
+SEFP01,Coffee,SAF114,0.221
+SEFP02,Tea and other beverage materials,SAF114,0.099
+SAF115,Other food at home,SAF11,2.273
+SEFR,Sugar and sweets,SAF115,0.328
+SEFS,Fats and oils,SAF115,0.231
+SEFT01,Soups,SAF115,0.085
+SEFT02,Frozen and freeze dried prepared foods,SAF115,0.305
+SEFT03,Snacks,SAF115,0.372
+SEFT04,"Spices, seasonings, condiments, sauces",SAF115,0.317
+SEFT05,Baby food and formula,SAF115,0.053
+SEFT06,Other miscellaneous foods,SAF115,0.582
+SEFV,Food away from home,SAF,5.373
+SEFV01,Full service meals and snacks,SEFV,2.386
+SEFV02,Limited service meals and snacks,SEFV,2.684
+SEFV03,Food at employee sites and schools,SEFV,0.065
+SEFV04,Food from vending machines and mobile vendors,SEFV,0.054
+SEFV05,Other food away from home,SEFV,0.185
+SAF116,Alcoholic beverages,SAF,0.840
+SEFW,Alcoholic beverages at home,SAF116,0.397
+SEFX,Alcoholic beverages away from home,SAF116,0.443
+SAH,Housing,SA0,44.469
+SAH1,Shelter,SAH,35.625
+SEHC,Owners' equivalent rent,SAH1,26.204
+SEHA,Rent of primary residence,SAH1,7.840
+SEHB,Lodging away from home (hotels),SAH1,1.289
+SEHD,Tenants' and household insurance,SAH1,0.292
+SAH2,Fuels and utilities,SAH,4.546
+SEHF01,Electricity,SAH2,2.489
+SEHF02,Utility (piped) gas service,SAH2,0.773
+SEHG,"Water, sewer and trash collection",SAH2,1.144
+SEHE,Fuel oil and other fuels,SAH2,0.140
+SAH3,Household furnishings and operations,SAH,4.298
+SEHJ,Furniture and bedding,SAH3,0.884
+SEHP,Household operations,SAH3,0.881
+SEHN,Housekeeping supplies,SAH3,0.847
+SEHM,"Tools, hardware, outdoor equipment",SAH3,0.691
+SEHL,Other household equipment and furnishings,SAH3,0.566
+SEHH,Window and floor coverings and linens,SAH3,0.238
+SEHK,Appliances,SAH3,0.191
+SAA,Apparel,SA0,2.368
+SAA2,Women's and girls' apparel,SAA,0.928
+SAA1,Men's and boys' apparel,SAA,0.588
+SEAE,Footwear,SAA,0.585
+SEAG,Jewelry and watches,SAA,0.163
+SEAF,Infants' and toddlers' apparel,SAA,0.103
+SAT,Transportation,SA0,16.316
+SETA,New and used motor vehicles,SAT,7.204
+SETA01,New vehicles,SETA,3.838
+SETA02,Used cars and trucks,SETA,2.759
+SETA03,Leased cars and trucks,SETA,0.394
+SETA04,Car and truck rental,SETA,0.138
+SETB,Motor fuel,SAT,2.981
+SETB01,Gasoline (all types),SETB,2.895
+SETE,Motor vehicle insurance,SAT,2.754
+SETD,Motor vehicle maintenance and repair,SAT,1.039
+SETF,Motor vehicle fees,SAT,0.505
+SETC,Motor vehicle parts and equipment,SAT,0.349
+SETG,Public transportation,SAT,1.485
+SETG01,Airline fares,SETG,0.881
+SETG02,Other intercity transportation,SETG,0.244
+SETG03,Intracity transportation,SETG,0.355
+SAM,Medical care,SA0,8.423
+SAM2,Medical care services,SAM,6.935
+SEMC,Professional services,SAM2,3.426
+SEMC01,Physicians' services,SEMC,1.684
+SEMC02,Dental services,SEMC,0.904
+SEMC03,Eyeglasses and eye care,SEMC,0.327
+SEMC04,Services by other medical professionals,SEMC,0.511
+SEMD,Hospital and related services,SAM2,2.618
+SEMD01,Hospital services,SEMD,2.167
+SEMD02,Nursing homes and adult day services,SEMD,0.221
+SEMD03,Care of invalids and elderly at home,SEMD,0.230
+SEME,Health insurance,SAM2,0.890
+SAM1,Medical care commodities,SAM,1.489
+SEMF01,Prescription drugs,SAM1,0.973
+SEMF02,Nonprescription drugs,SAM1,0.381
+SEMG,Medical equipment and supplies,SAM1,0.135
+SAR,Recreation,SA0,5.137
+SERF,Other recreation services,SAR,1.841
+SERF01,"Club memberships, participant sports fees",SERF,0.766
+SERF02,Admissions,SERF,0.704
+SERF03,Fees for lessons or instructions,SERF,0.158
+SERB,"Pets, pet products and services",SAR,1.158
+SERB01,Pets and pet products,SERB,0.612
+SERB02,Pet services including veterinary,SERB,0.546
+SERA,Video and audio,SAR,1.053
+SERA02,"Cable, satellite, and streaming TV",SERA,0.606
+SERA01,Televisions,SERA,0.107
+SERC,Sporting goods,SAR,0.526
+SERE,Other recreational goods,SAR,0.380
+SERE01,Toys,SERE,0.293
+SERG,Recreational reading materials,SAR,0.114
+SERD,Photography,SAR,0.064
+SAE,Education and communication,SA0,5.846
+SAE2,Communication,SAE,3.244
+SEED03,Wireless telephone services,SAE2,1.340
+SEEE03,Internet services,SAE2,0.923
+SEEE04,"Telephone hardware, calculators",SAE2,0.461
+SEEE01,"Computers, peripherals, smart home assistants",SAE2,0.293
+SEED04,Residential telephone services,SAE2,0.126
+SEEC,Postage and delivery services,SAE2,0.064
+SEEE02,Computer software and accessories,SAE2,0.027
+SAE1,Education,SAE,2.602
+SEEB01,College tuition and fees,SAE1,1.351
+SEEB03,Day care and preschool,SAE1,0.699
+SEEB02,Elementary and high school tuition and fees,SAE1,0.408
+SEEB04,Technical and business school tuition,SAE1,0.046
+SEEA,Educational books and supplies,SAE1,0.038
+SAG,Other goods and services,SA0,2.902
+SEGD,Miscellaneous personal services,SAG,0.922
+SEGD01,Legal services,SEGD,0.270
+SEGD05,Financial services,SEGD,0.236
+SEGD02,Funeral expenses,SEGD,0.166
+SEGD03,Laundry and dry cleaning services,SEGD,0.129
+SEGC,Personal care services (haircuts),SAG,0.676
+SEGB,Personal care products,SAG,0.674
+SEGA,Tobacco and smoking products,SAG,0.445
+SEGA01,Cigarettes,SEGA,0.327
+SEGE,Miscellaneous personal goods,SAG,0.184

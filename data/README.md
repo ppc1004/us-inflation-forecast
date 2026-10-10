@@ -6,7 +6,15 @@ daily GitHub Actions job. The website (`index.html`) reads these files directly.
 | File | Written by | Contents |
 |---|---|---|
 | `cpi_data.csv` | `download_cpi.py` | Monthly CPI-U index (FRED `CPIAUCSL`) |
-| `extra_series.csv` | `download_extra.py` | CPI components, average prices, wages, Fed funds rate, inflation expectations |
+| `extra_series.csv` | `download_extra.py` | CPI components, average prices, wages, Fed funds rate, Treasury yields, mortgage and TIPS rates, inflation expectations |
+| `cpi_weights.csv` | maintained by hand | CPI category tree (BLS item codes) and relative importance, December 2025 (update yearly) |
+| `cpi_components.csv` | `download_bls.py` | Monthly CPI-U index per category, not seasonally adjusted, since 1979 |
+| `avg_prices.csv` | `download_bls.py` | BLS average retail prices for 24 items, since 1979 |
+| `pce_tree.csv` | maintained by hand | PCE category tree (BEA series code stems) |
+| `pce_data.csv` | `download_pce.py` | PCE and core PCE price indexes |
+| `pce_components.csv`, `pce_weights.csv` | `download_pce.py` | PCE price index per category; latest spending and share of total |
+| `pce_forecast.csv`, `pce_horizon_backtest.csv` | `pce_forecast.py` | PCE and core PCE 12-month forecasts; accuracy by horizon |
+| `rates_forecast.csv`, `rates_backtest.csv` | `rates_forecast.py` | Fed funds and 2/10/30-year Treasury forecasts; accuracy by horizon vs "no change" |
 | `yoy_forecast.csv` | `arima_forecast.py` | 12-month forecast with 95% intervals |
 | `forecast_archive.csv` | `archive_forecast.py` | Every published forecast, labelled by data vintage |
 | `rolling_backtest.csv`, `backtest_errors.csv` | `rolling_backtest.py` | One-month-ahead backtest of nine ARIMA orders vs naive, and per-month errors |
