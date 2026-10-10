@@ -1,4 +1,4 @@
-name: Update CPI Data
+name: Update Economic Data
 
 on:
   schedule:
@@ -32,6 +32,18 @@ jobs:
         continue-on-error: true
         run: python src/download_extra.py
 
+      # Detailed CPI categories (about 160) and average prices straight from BLS.
+      - name: Download CPI components and average prices (BLS)
+        continue-on-error: true
+        env:
+          BLS_USER_AGENT: ${{ secrets.BLS_USER_AGENT }}
+        run: python src/download_bls.py
+
+      # PCE price index, its categories and spending weights from BEA.
+      - name: Download PCE data (BEA)
+        continue-on-error: true
+        run: python src/download_pce.py
+
       - name: Check whether CPI data changed
         id: cpi_diff
         run: |
@@ -56,10 +68,30 @@ jobs:
           python src/model_benchmark.py
           python src/make_share_image.py
 
+      - name: Check whether PCE data changed
+        id: pce_diff
+        run: |
+          if git diff --quiet -- data/pce_data.csv && [ -f data/pce_forecast.csv ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Forecast PCE inflation
+        if: steps.pce_diff.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: python src/pce_forecast.py
+
+      # Rates are monthly averages, but the current month's average moves every
+      # day, so the rate forecasts are refreshed on every run.
+      - name: Forecast interest rates
+        continue-on-error: true
+        run: python src/rates_forecast.py
+
       - name: Commit and push if data changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
-          git diff --staged --quiet || git commit -m "Auto-update CPI data and refresh forecast/backtest outputs"
+          git diff --staged --quiet || git commit -m "Auto-update economic data and refresh forecasts"
           git push
