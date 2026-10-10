@@ -1,9 +1,9 @@
-# U.S. Inflation Forecast
+# U.S. Economic Forecast
 
-[![Update CPI Data](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml/badge.svg)](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml)
+[![Update Economic Data](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml/badge.svg)](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml)
 [![Tests](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/tests.yml/badge.svg)](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/tests.yml)
 
-A self-updating dashboard that tracks U.S. CPI inflation, forecasts it 12 months ahead with an ARIMA model, and publishes the model's track record: backtests, a four-model benchmark with significance tests, accuracy by horizon, interval calibration and a live archive of every forecast it has made.
+A self-updating dashboard of U.S. prices and interest rates. It tracks **CPI** and **PCE** inflation across more than 200 categories with their weights, the **Fed funds rate** and **2-, 10- and 30-year Treasury yields**, forecasts each 12 months ahead with ARIMA models, and publishes the models' track record: backtests, a four-model benchmark with significance tests, accuracy by horizon, interval calibration and a live archive of every CPI forecast it has made.
 
 **Live site: [ppc1004.github.io/us-inflation-forecast](https://ppc1004.github.io/us-inflation-forecast/)**
 
@@ -13,31 +13,38 @@ A self-updating dashboard that tracks U.S. CPI inflation, forecasts it 12 months
 
 | Section | Contents |
 |---|---|
-| **Key findings** | Six conclusions from the out-of-sample tests, recomputed automatically with every data update |
-| **Overview / Forecast** | Latest YoY and MoM inflation, 12-month forecast with 95% intervals, monthly forecast table |
-| **Track record** | Rolling one-month-ahead backtest, error over time, four-model competition with Diebold-Mariano tests, accuracy for 1–12 month horizons, interval coverage, live forecast archive |
-| **What's driving it** | Core, food, energy and shelter inflation |
-| **Everyday prices** | BLS average prices for eggs, gasoline, milk, coffee and bread |
-| **History** | Inflation since 1948 with major episodes annotated |
-| **Your money** | Purchasing-power calculator, wage growth vs inflation |
-| **Expectations** | Model vs consumer survey (U. Michigan) vs market breakeven inflation |
-| **Fed & rates** | Federal funds rate vs inflation and the real policy rate |
+| **Dashboard** | CPI, core CPI, PCE, core PCE, Fed funds and 10-year yield at a glance, forecasts, yield curve, CPI basket treemap |
+| **Key findings** | Conclusions from the out-of-sample tests, recomputed automatically with every data update |
+| **CPI forecast / Track record** | 12-month forecast with 95% intervals; rolling backtest, four-model competition with Diebold-Mariano tests, accuracy for 1–12 month horizons, interval coverage, live forecast archive |
+| **What's driving it** | Inflation and contribution (weight × change) by the eight CPI spending groups, stacked over five years; core, food, energy and shelter |
+| **Everyday prices** | Treemap of ~160 CPI categories sized by BLS relative importance and coloured by 12-month change, drill-down from groups to items (e.g. Food → Food at home → Eggs), history since 1980, biggest movers; 24 BLS average shelf prices |
+| **History** | CPI inflation since 1948 with major episodes annotated |
+| **PCE forecast / PCE categories** | PCE and core PCE with 12-month forecasts and backtest, CPI vs PCE since 1980, why their weights differ; treemap of 80+ PCE categories weighted by spending share |
+| **Treasury yields / Fed policy** | Fed funds, 2-, 10- and 30-year forecasts with backtests vs "no change", yield curve, 10y–2y spread, mortgage rates, real (TIPS) yields; Fed funds vs inflation |
+| **Your money / Expectations** | Purchasing-power calculator, wages vs inflation; model vs consumer survey vs market breakeven inflation |
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    FRED[(FRED API)] -->|daily check| A[download_cpi.py<br/>download_extra.py]
+    FRED[(FRED)] -->|daily| A[download_cpi.py<br/>download_extra.py]
+    BLS[(BLS)] -->|daily| A2[download_bls.py]
+    BEA[(BEA)] -->|daily| A3[download_pce.py]
     A --> B{New CPI<br/>release?}
     B -->|yes| C[arima_forecast.py<br/>archive_forecast.py]
     C --> D[rolling_backtest.py<br/>horizon_backtest.py<br/>model_benchmark.py]
     D --> E[make_share_image.py]
     E --> F[(data/*.csv, png)]
     B -->|no| F
+    A3 --> P[pce_forecast.py]
+    A --> R[rates_forecast.py]
+    A2 --> F
+    P --> F
+    R --> F
     F -->|git push| G[GitHub Pages<br/>index.html]
 ```
 
-A GitHub Actions job runs every day. It always refreshes the supporting series, and re-runs the models only when BLS has published a new CPI figure (or when the workflow is started by hand). The website is a single dependency-free HTML file that reads the CSVs and draws every chart as inline SVG.
+A GitHub Actions job runs every day. It refreshes every series, re-runs the CPI models only when BLS has published a new CPI figure, the PCE models when BEA publishes new PCE data, and the rate models on every run (or everything when the workflow is started by hand). The website is a single dependency-free HTML file that reads the CSVs and draws every chart as inline SVG.
 
 ## Method
 
@@ -48,7 +55,10 @@ A GitHub Actions job runs every day. It always refreshes the supporting series, 
   - *Model competition*: over 48 months, ARIMA is compared with naive, ARIMAX (plus last month's energy and core inflation) and gradient-boosted trees (scikit-learn). Differences are tested with the Diebold-Mariano test, using the Harvey-Leybourne-Newbold small-sample correction.
   - *Horizon backtest*: 48 forecast origins, each scored at 1–12 months ahead, with the share of outcomes that fell inside the 95% interval.
   - *Live archive*: each published forecast is stored with its data vintage and scored when the actual CPI print arrives.
-- **Limitations.** A univariate model sees only past inflation, not energy prices, wages or policy, and tends to lag turning points.
+- **CPI categories and weights.** About 160 CPI-U categories (U.S. city average, not seasonally adjusted) from the BLS time-series files, organised in the BLS hierarchy. Weights are BLS relative importance, December 2025 (`data/cpi_weights.csv`). Contribution to inflation ≈ weight × 12-month change.
+- **PCE.** PCE and core PCE price indexes and 80+ categories from BEA NIPA tables 2.4.4U (prices) and 2.4.5U (spending); weights are each category's share of nominal spending in the latest month. ARIMA order chosen by AIC; 48-origin horizon backtest.
+- **Interest rates.** Monthly averages of the Fed funds rate and Treasury yields since 1990, ARIMA(p, 1, q) with p, q chosen by AIC, 12-month forecasts with 95% intervals, backtested against "no change" over 48 origins. The 30-year model uses only data after the 2002–2006 gap in issuance.
+- **Limitations.** Univariate models see only each series' own past, not energy prices, wages or policy, and tend to lag turning points. Interest rates are close to a random walk.
 
 ## Repository layout
 
@@ -56,12 +66,16 @@ A GitHub Actions job runs every day. It always refreshes the supporting series, 
 src/
   data_utils.py          shared CPI loading and YoY calculation
   download_cpi.py        headline CPI from FRED
-  download_extra.py      components, average prices, wages, rates, expectations
+  download_extra.py      components, wages, Fed funds, Treasury yields, expectations (FRED)
+  download_bls.py        ~160 CPI categories and 24 average prices (BLS flat files)
+  download_pce.py        PCE prices and spending by category (BEA NIPA)
   arima_forecast.py      12-month forecast
   archive_forecast.py    permanent record of every forecast
   rolling_backtest.py    one-step-ahead backtest vs naive
   horizon_backtest.py    1–12 month accuracy and interval coverage
   model_benchmark.py     naive vs ARIMA vs ARIMAX vs gradient boosting, Diebold-Mariano tests
+  pce_forecast.py        PCE and core PCE forecasts and horizon backtest
+  rates_forecast.py      Fed funds, 2/10/30-year Treasury forecasts and backtest
   make_share_image.py    social preview card
 data/                    generated CSVs and the preview image
 tests/                   pytest suite (no network access needed)
@@ -76,8 +90,10 @@ cd us-inflation-forecast
 pip install -r requirements.txt
 
 python src/download_cpi.py && python src/download_extra.py
+python src/download_bls.py && python src/download_pce.py
 python src/arima_forecast.py && python src/archive_forecast.py
 python src/rolling_backtest.py && python src/horizon_backtest.py && python src/model_benchmark.py
+python src/pce_forecast.py && python src/rates_forecast.py
 python src/make_share_image.py
 
 python -m http.server 8000   # then open http://localhost:8000
@@ -105,10 +121,12 @@ Conclusions are recomputed with every data update and published on the [Key find
 
 `data/cpi_release_schedule.csv` holds the BLS CPI release calendar used for the "next release" date. Update it once a year from [bls.gov/schedule/news_release/cpi.htm](https://www.bls.gov/schedule/news_release/cpi.htm).
 
+`data/cpi_weights.csv` holds the CPI category tree and weights. BLS publishes new relative importance each January ([bls.gov/cpi/tables/relative-importance](https://www.bls.gov/cpi/tables/relative-importance/)); update the `weight` column once a year. BLS asks automated clients to identify themselves: set the repository secret `BLS_USER_AGENT` (e.g. your name and email) if BLS downloads start failing.
+
 ## Data sources
 
-All series are retrieved from [FRED](https://fred.stlouisfed.org/), Federal Reserve Bank of St. Louis: CPI and components, average prices and earnings from the U.S. Bureau of Labor Statistics; the federal funds rate from the Federal Reserve; expected inflation from the University of Michigan Surveys of Consumers; breakeven inflation from U.S. Treasury yields.
+Headline series come from [FRED](https://fred.stlouisfed.org/) (Federal Reserve Bank of St. Louis): CPI and earnings from the U.S. Bureau of Labor Statistics; the federal funds rate and Treasury yields from the Federal Reserve; mortgage rates from Freddie Mac; expected inflation from the University of Michigan Surveys of Consumers; breakeven inflation from Treasury yields. Detailed CPI categories, weights and average prices come directly from the [BLS](https://www.bls.gov/cpi/); PCE prices and spending from the [BEA](https://www.bea.gov/).
 
 ---
 
-Personal research project. Forecasts are statistical estimates, not investment or policy advice. Not affiliated with BLS, FRED or the Federal Reserve.
+Personal research project. Forecasts are statistical estimates, not investment or policy advice. Not affiliated with BLS, BEA, FRED or the Federal Reserve.

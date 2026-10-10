@@ -1,7 +1,7 @@
 [project]
 name = "us-inflation-forecast"
-version = "1.0.0"
-description = "U.S. CPI inflation tracker with a 12-month ARIMA forecast, model benchmarks and a public backtest track record."
+version = "2.0.0"
+description = "U.S. Economic Forecast: CPI and PCE inflation by category, Treasury yields and 12-month ARIMA forecasts with public backtests."
 requires-python = ">=3.11"
 
 [tool.ruff]
@@ -14,7 +14,10 @@ extend-exclude = ["app.py"]
 select = ["E", "F", "W", "I", "B", "UP", "NPY", "PD002", "RUF100"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["data_utils", "archive_forecast", "download_extra", "horizon_backtest", "model_benchmark"]
+known-first-party = [
+    "data_utils", "archive_forecast", "download_extra", "download_bls", "download_pce",
+    "horizon_backtest", "model_benchmark", "pce_forecast", "rates_forecast",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

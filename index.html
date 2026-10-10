@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>U.S. Inflation Forecast</title>
-<meta name="description" content="U.S. CPI inflation tracker and 12-month ARIMA forecast with a public backtest track record, inflation drivers, everyday prices, wages, expectations and Fed policy context.">
+<title>U.S. Economic Forecast</title>
+<meta name="description" content="U.S. Economic Forecast: CPI and PCE inflation across 160+ categories with their weights, Treasury yields and the Fed funds rate, with 12-month ARIMA forecasts and public backtests.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="U.S. Inflation Forecast">
-<meta property="og:description" content="U.S. CPI inflation tracker and 12-month ARIMA forecast with a transparent backtest track record.">
+<meta property="og:title" content="U.S. Economic Forecast">
+<meta property="og:description" content="CPI and PCE inflation by category, Treasury yields and 12-month forecasts with a transparent backtest track record.">
 <meta property="og:url" content="https://ppc1004.github.io/us-inflation-forecast/">
 <meta property="og:image" content="https://ppc1004.github.io/us-inflation-forecast/data/social_preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Latest U.S. CPI inflation and the 12-month forecast">
+<meta property="og:image:alt" content="Latest U.S. inflation and the 12-month forecast">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ppc1004.github.io/us-inflation-forecast/data/social_preview.png">
-<meta name="twitter:title" content="U.S. Inflation Forecast">
-<meta name="twitter:description" content="U.S. CPI inflation tracker and 12-month ARIMA forecast with a transparent backtest track record.">
+<meta name="twitter:title" content="U.S. Economic Forecast">
+<meta name="twitter:description" content="CPI and PCE inflation by category, Treasury yields and 12-month forecasts with a transparent backtest track record.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%232a78d6%22/><path d=%22M6 22 L12 15 L17 18 L26 8%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +29,10 @@
     --grid:#ebeae4; --axis:#c3c2b7; --border:rgba(11,11,11,.09);
     --c-actual:#2a78d6; --c-model:#eb6834; --c-3:#1baf7a; --c-4:#4a3aa7; --c-ref:#9a9892;
     --c-good:#006300; --c-bad:#b42318;
+    --c-5:#eda100; --c-6:#e87ba4; --c-7:#008300; --c-8:#e34948;
+    /* diverging heat scale for inflation rates: blue (below target) - gray (near 2%) - red (high) */
+    --h0:#104281; --h1:#2a78d6; --h2:#9ec5f4; --h3:#e6e4de; --h4:#f6bfae; --h5:#e5735a; --h6:#b42318;
+    --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#0b0b0b; --hi4:#0b0b0b; --hi5:#0b0b0b; --hi6:#fff;
     --band-opacity:.13;
     --sans:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     --radius:14px;
@@ -41,6 +45,9 @@
       --grid:#2c2c2a; --axis:#44443f; --border:rgba(255,255,255,.09);
       --c-actual:#3987e5; --c-model:#d95926; --c-3:#199e70; --c-4:#9085e9; --c-ref:#77756f;
       --c-good:#0ca30c; --c-bad:#e66767; --band-opacity:.16;
+      --c-5:#c98500; --c-6:#d55181; --c-7:#0f9a0f; --c-8:#e66767;
+      --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3a3a37; --h4:#8a4a3c; --h5:#c4553c; --h6:#e66767;
+      --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#0b0b0b;
     }
   }
   :root[data-theme="dark"]{
@@ -50,6 +57,9 @@
     --grid:#2c2c2a; --axis:#44443f; --border:rgba(255,255,255,.09);
     --c-actual:#3987e5; --c-model:#d95926; --c-3:#199e70; --c-4:#9085e9; --c-ref:#77756f;
     --c-good:#0ca30c; --c-bad:#e66767; --band-opacity:.16;
+    --c-5:#c98500; --c-6:#d55181; --c-7:#0f9a0f; --c-8:#e66767;
+    --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3a3a37; --h4:#8a4a3c; --h5:#c4553c; --h6:#e66767;
+    --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#0b0b0b;
   }
 
   *{box-sizing:border-box;}
@@ -138,10 +148,12 @@
   .chart .ref-label{fill:var(--ink-2); font-size:11.5px;}
   .chart .s{fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round;}
   .chart .s-actual{stroke:var(--c-actual);} .chart .s-model{stroke:var(--c-model);} .chart .s-c3{stroke:var(--c-3);} .chart .s-c4{stroke:var(--c-4);} .chart .s-ref{stroke:var(--c-ref);}
+  .chart .s-c5{stroke:var(--c-5);} .chart .s-c6{stroke:var(--c-6);} .chart .s-c7{stroke:var(--c-7);} .chart .s-c8{stroke:var(--c-8);}
   .chart .dashed{stroke-dasharray:5 4;}
   .chart .band-model{fill:var(--c-model); opacity:var(--band-opacity);}
   .chart .area-actual{fill:var(--c-actual); opacity:.08;}
   .chart .dot-actual{fill:var(--c-actual);} .chart .dot-model{fill:var(--c-model);} .chart .dot-c3{fill:var(--c-3);} .chart .dot-c4{fill:var(--c-4);} .chart .dot-ref{fill:var(--c-ref);}
+  .chart .dot-c5{fill:var(--c-5);} .chart .dot-c6{fill:var(--c-6);} .chart .dot-c7{fill:var(--c-7);} .chart .dot-c8{fill:var(--c-8);}
   .chart .ring{stroke:var(--surface); stroke-width:2;}
   .chart .bar-actual{fill:var(--c-actual);}
   .chart .bar-actual.hover{opacity:.75;}
@@ -237,9 +249,48 @@
   .loading, .error{padding:80px 24px; text-align:center; color:var(--ink-2);}
   .error{color:var(--c-bad);}
 
+
+  /* ---------- treemap explorer ---------- */
+  .crumbs{display:flex; flex-wrap:wrap; align-items:center; gap:4px; font-size:13.5px; margin:0 0 10px;}
+  .crumbs button{font:inherit; border:0; background:none; color:var(--c-actual); cursor:pointer; padding:2px 4px; border-radius:6px;}
+  .crumbs button:hover{background:var(--border);}
+  .crumbs .cur{font-weight:600; color:var(--ink); padding:2px 4px;}
+  .crumbs .sep{color:var(--muted);}
+  .tm{position:relative; width:100%; border-radius:10px; overflow:hidden; background:var(--surface);}
+  .tm-tile{position:absolute; box-sizing:border-box; border:0; margin:0; padding:7px 8px; text-align:left; font:inherit; cursor:pointer; overflow:hidden;
+    border-radius:6px; display:flex; flex-direction:column; justify-content:flex-start; gap:1px; transition:filter .1s;}
+  .tm-tile:hover{filter:brightness(1.06) saturate(1.05);}
+  .tm-tile:focus-visible{outline:2px solid var(--ink); outline-offset:-2px;}
+  .tm-tile[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--ink);}
+  .tm-tile.other{cursor:default; background:repeating-linear-gradient(45deg, var(--grid), var(--grid) 6px, var(--surface) 6px, var(--surface) 10px) !important; color:var(--ink-2) !important;}
+  .tm-name{font-size:12.5px; font-weight:600; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .tm-meta{font-size:11.5px; font-variant-numeric:tabular-nums; opacity:.9; white-space:nowrap;}
+  .tm-big .tm-name{font-size:14.5px;} .tm-big .tm-meta{font-size:12.5px;}
+  .tm-kids{font-size:11px; opacity:.8; margin-top:auto; white-space:nowrap;}
+  .heat-legend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; font-size:12px; color:var(--ink-2); margin:10px 0 0;}
+  .heat-legend .sw{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:5px;}
+  .wbar{display:inline-block; height:8px; border-radius:0 4px 4px 0; background:var(--c-actual); vertical-align:middle; margin-right:8px; opacity:.85;}
+  .xtable td.name{max-width:280px;}
+  .xtable tr.click{cursor:pointer;} .xtable tr.click:hover td{background:var(--page);}
+  .xtable tr.sel td{background:color-mix(in srgb, var(--c-actual) 9%, transparent);}
+  .xtable .kid-mark{color:var(--muted); font-size:12px; margin-left:4px;}
+  .chip{display:inline-block; min-width:52px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums;}
+  .sec-tabs{display:flex; gap:6px; flex-wrap:wrap; margin:0 0 14px;}
+  .detail-kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:6px 0 12px;}
+  .detail-kpis .k{background:var(--page); border:1px solid var(--border); border-radius:10px; padding:9px 11px; min-width:0;}
+  .detail-kpis .k .l{font-size:12px; color:var(--ink-2);} .detail-kpis .k .v{font-size:19px; font-weight:600; letter-spacing:-.01em; font-variant-numeric:tabular-nums;}
+  .movers{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;}
+  .kpi .spark{margin-top:8px;}
+  .kpi a.kpi-link{text-decoration:none; color:inherit; display:block;}
+  .kpi.linky{cursor:pointer;} .kpi.linky:hover{border-color:var(--axis);}
+  .two-col-legend{display:flex; gap:16px; flex-wrap:wrap;}
+  .note{font-size:12.5px; color:var(--muted); margin:8px 0 0;}
+  .grid-6{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;}
+
   /* ---------- responsive ---------- */
   @media (max-width: 1100px){
     .grid-4{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .detail-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
   }
   @media (max-width: 900px){
     .shell{grid-template-columns:1fr;}
@@ -252,7 +303,9 @@
     .nav-link{padding:6px 10px; font-size:13.5px;}
     .nav-link svg{display:none;}
     .content{padding:26px 18px 48px;}
-    .grid-2, .grid-3{grid-template-columns:1fr;}
+    .grid-2, .grid-3{grid-template-columns:minmax(0,1fr);}
+    .grid-6{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .movers{grid-template-columns:minmax(0,1fr);}
   }
   @media (max-width: 560px){
     .grid-4{grid-template-columns:1fr 1fr;}
@@ -264,6 +317,10 @@
     .hb-row{grid-template-columns:104px 1fr 56px;}
     .hb-row.wide{grid-template-columns:120px 1fr 52px;}
     .hb-row.wide .hb-rmse, .hb-row .tag{display:none;}
+    .grid-6{grid-template-columns:minmax(0,1fr);}
+    .hb-row[style]{grid-template-columns:112px 1fr 58px !important;}
+    .xtable .hide-sm{display:none;}
+    .tm-name{font-size:11.5px;}
   }
 </style>
 </head>
@@ -273,26 +330,35 @@
   <aside class="side" aria-label="Site navigation">
     <a class="brand" href="#overview">
       <span class="brand-mark"><svg width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 23 L12 15 L17 18 L27 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      <span class="brand-text">U.S. Inflation Forecast</span>
+      <span class="brand-text">U.S. Economic Forecast</span>
     </a>
-    <nav class="nav-group" aria-label="Forecast">
-      <div class="nav-label">Forecast</div>
-      <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Overview</a>
+    <nav class="nav-group" aria-label="Overview">
+      <div class="nav-label">Overview</div>
+      <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Dashboard</a>
       <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>Key findings</a>
-      <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>Forecast</a>
-      <a class="nav-link" href="#track-record"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5"/></svg>Track record</a>
     </nav>
-    <nav class="nav-group" aria-label="Inflation">
-      <div class="nav-label">Inflation</div>
+    <nav class="nav-group" aria-label="CPI inflation">
+      <div class="nav-label">CPI inflation</div>
+      <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>CPI forecast</a>
+      <a class="nav-link" href="#track-record"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5"/></svg>Track record</a>
       <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What's driving it</a>
       <a class="nav-link" href="#prices"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h2l1.5 7h7L14 5H5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="13" r="1"/><circle cx="12" cy="13" r="1"/></svg>Everyday prices</a>
       <a class="nav-link" href="#history"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5" stroke-linecap="round"/></svg>History</a>
     </nav>
-    <nav class="nav-group" aria-label="Context">
-      <div class="nav-label">Context</div>
+    <nav class="nav-group" aria-label="PCE inflation">
+      <div class="nav-label">PCE inflation</div>
+      <a class="nav-link" href="#pce"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>PCE forecast</a>
+      <a class="nav-link" href="#pce-categories"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M8 2v12M8 8h6M2 10.5h6"/></svg>PCE categories</a>
+    </nav>
+    <nav class="nav-group" aria-label="Interest rates">
+      <div class="nav-label">Interest rates</div>
+      <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Treasury yields</a>
+      <a class="nav-link" href="#fed"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5 8 3l6 3.5M3 7v5M6.3 7v5M9.7 7v5M13 7v5M2 13.5h12" stroke-linecap="round" stroke-linejoin="round"/></svg>Fed policy</a>
+    </nav>
+    <nav class="nav-group" aria-label="Consumer">
+      <div class="nav-label">Consumer</div>
       <a class="nav-link" href="#money"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><circle cx="8" cy="8" r="1.8"/></svg>Your money</a>
       <a class="nav-link" href="#expectations"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>Expectations</a>
-      <a class="nav-link" href="#fed"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5 8 3l6 3.5M3 7v5M6.3 7v5M9.7 7v5M13 7v5M2 13.5h12" stroke-linecap="round" stroke-linejoin="round"/></svg>Fed &amp; rates</a>
     </nav>
     <nav class="nav-group" aria-label="About">
       <div class="nav-label">About</div>
@@ -304,7 +370,7 @@
     </div>
   </aside>
 
-  <main class="content" id="app"><div class="loading">Loading the latest CPI data…</div></main>
+  <main class="content" id="app"><div class="loading">Loading the latest economic data…</div></main>
 </div>
 
 <script>
@@ -410,7 +476,7 @@
     const fmt = step>=12 ? (x=>String(x.getUTCFullYear())) : (x=>MONTHS[x.getUTCMonth()]+" '"+String(x.getUTCFullYear()).slice(2));
     return {ticks, fmt};
   }
-  const COLOR_VAR = {actual:'--c-actual', model:'--c-model', c3:'--c-3', c4:'--c-4', ref:'--c-ref'};
+  const COLOR_VAR = {actual:'--c-actual', model:'--c-model', c3:'--c-3', c4:'--c-4', ref:'--c-ref', c5:'--c-5', c6:'--c-6', c7:'--c-7', c8:'--c-8'};
 
   /*
     lineChart(cfg) -> draw(el)
@@ -620,7 +686,7 @@
     const zero = (0-lo)/span*100;
     return `<div class="hbars">` + rows.map(r=>{
       const w = Math.abs(r.value)/span*100, left = r.value>=0 ? zero : zero-w;
-      return `<div class="hb-row ${r.em?'em':''}">
+      return `<div class="hb-row ${r.em?'em':''}"${opts.nameW?` style="grid-template-columns:${opts.nameW} 1fr 64px"`:''}>
         <span class="hb-name">${esc(r.label)}</span>
         <span class="hb-track"><span class="hb-bar ${r.value>=0?'pos':'neg'} c-${r.color||'actual'}" style="left:${left.toFixed(2)}%;width:${Math.max(w,0.6).toFixed(2)}%"></span>${lo<0?`<span class="hb-zero" style="left:${zero.toFixed(2)}%"></span>`:''}</span>
         <span class="hb-v">${esc(opts.fmt(r.value))}</span></div>`;
@@ -634,15 +700,376 @@
     const btns = document.querySelectorAll(`#${id} button`);
     btns.forEach(b=>b.addEventListener('click', ()=>{ btns.forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); onChange(b.dataset.v); }));
   }
-  const pageFoot = () => `<div class="page-foot"><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, FRED or the Federal Reserve.</span><span>Data: BLS, U.S. Treasury &amp; University of Michigan via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
+  const pageFoot = () => `<div class="page-foot"><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve, U.S. Treasury &amp; University of Michigan via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
   const pending = what => `<div class="empty">${esc(what)} will appear after the next automatic data update.</div>`;
 
+  // chart height grows with width on large screens so wide charts don't look flat
+  const H = (desk, mob) => W => W < 520 ? mob : Math.round(Math.min(desk*1.35, Math.max(desk, W*0.28)));
+  const padN = n => Array(n).fill(null);
+
+  // ================= wide monthly tables =================
+  // CSV rows with a date column -> one value array per column on a complete monthly calendar.
+  // Months missing from the file (BLS skipped October 2025) are linearly interpolated,
+  // except in columns listed in noFill (the 30-year bond was not issued 2002-2006).
+  function wideTable(rows, noFill){
+    if(!rows || !rows.length) return null;
+    const recs = rows.map(r=>({date:parseDate(r.date), r})).sort((a,b)=>a.date-b.date);
+    const t0 = recs[0].date, n = monthDiff(t0, recs[recs.length-1].date) + 1;
+    const dates = Array.from({length:n}, (_,i)=>addMonths(t0, i));
+    const pos = recs.map(x=>monthDiff(t0, x.date));
+    const cols = {};
+    Object.keys(rows[0]).filter(k=>k!=='date').forEach(k=>{
+      const v = new Array(n).fill(null);
+      recs.forEach((x,j)=>{ v[pos[j]] = num(x.r[k]); });
+      cols[k] = (noFill||[]).includes(k) ? v : fillInterior(v);
+    });
+    return {dates, cols, has:k=>!!cols[k] && lastIdx(cols[k])>=0, idx:new Map(dates.map((d,i)=>[d.getTime(), i]))};
+  }
+
+  // ================= heat scale (diverging around the 2% target) =================
+  const HEAT_EDGES = [-2, 0, 1, 3, 5, 8];
+  const HEAT_LABELS = ['below −2%', '−2 to 0%', '0 to 1%', '1 to 3%', '3 to 5%', '5 to 8%', '8% or more'];
+  const heatBin = v => (v==null || !isFinite(v)) ? null : HEAT_EDGES.filter(e=>v>=e).length;
+  const heatLegend = () => `<div class="heat-legend"><span>12-month change:</span>` +
+    HEAT_LABELS.map((l,i)=>`<span><i class="sw" style="background:var(--h${i})"></i>${l}</span>`).join('') +
+    `<span><i class="sw" style="background:repeating-linear-gradient(45deg,var(--axis),var(--axis) 2px,var(--surface) 2px,var(--surface) 4px)"></i>smaller items not listed</span></div>`;
+
+  // ================= squarified treemap layout (Bruls, Huizing & van Wijk) =================
+  function squarify(items, rect){
+    const out=[]; let {x,y,w,h}=rect; let row=[]; const rest=items.slice();
+    const worst=(r, side)=>{ const s=r.reduce((a,b)=>a+b.v,0); let mx=-Infinity, mn=Infinity; r.forEach(i=>{ mx=Math.max(mx,i.v); mn=Math.min(mn,i.v); }); return Math.max(side*side*mx/(s*s), (s*s)/(side*side*mn)); };
+    function layout(){
+      const s=row.reduce((a,b)=>a+b.v,0); if(s<=0){ row=[]; return; }
+      if(w>=h){ const cw=s/h; let cy=y; row.forEach(r=>{ const rh=r.v/cw; out.push({...r, x, y:cy, w:cw, h:rh}); cy+=rh; }); x+=cw; w-=cw; }
+      else { const rh=s/w; let cx=x; row.forEach(r=>{ const rw=r.v/rh; out.push({...r, x:cx, y, w:rw, h:rh}); cx+=rw; }); y+=rh; h-=rh; }
+      row=[];
+    }
+    while(rest.length){
+      const side=Math.min(w,h), it=rest[0];
+      if(!row.length || worst(row.concat(it), side) <= worst(row, side)){ row.push(it); rest.shift(); }
+      else layout();
+    }
+    if(row.length) layout();
+    return out;
+  }
+
+  /*
+    explorer(cfg): a weight treemap with drill-down, a detail chart and a sortable breakdown table.
+      el, id                 container element and a unique id prefix
+      nodes                  [{code, name, parent, weight}]  weight = % of the total
+      table                  wideTable of price index levels, one column per code
+      rootCode, rootLabel    the total ('SA0' / 'DPCE')
+      weightLabel            how the weight is defined (shown in the detail card)
+      target                 reference line on the inflation chart (2% for PCE), optional
+      movers                 element for the biggest-movers lists, optional
+  */
+  function explorer(cfg){
+    const T = cfg.table, byCode = new Map();
+    cfg.nodes.forEach(n=>byCode.set(n.code, {...n, kids:[]}));
+    byCode.forEach(n=>{ if(n.parent && byCode.has(n.parent)) byCode.get(n.parent).kids.push(n); });
+    byCode.forEach(n=>n.kids.sort((a,b)=>b.weight-a.weight));
+    const root = byCode.get(cfg.rootCode);
+    if(!root){ cfg.el.innerHTML = pending('Category data'); return null; }
+    const i80 = T ? T.idx.get(Date.UTC(1980,0,1)) : null;
+    byCode.forEach(n=>{
+      const v = T && T.cols[n.code];
+      n.has = !!v && lastIdx(v)>=0;
+      if(!n.has) return;
+      const li = lastIdx(v), y = yoyOf(v), f = v.findIndex(x=>x!=null);
+      Object.assign(n, {level:v, yoyS:y, li, date:T.dates[li], yoy:y[li], yoyPrev: li>=12 ? y[li-12] : null, first:T.dates[f]});
+      n.ann5 = li>=60 && v[li-60]!=null ? (Math.pow(v[li]/v[li-60], 1/5)-1)*100 : null;
+      n.base = (i80!=null && v[i80]!=null) ? i80 : f;
+      n.cum = (v[li]/v[n.base]-1)*100;
+      n.contrib = n.yoy!=null && isFinite(n.yoy) ? n.weight*n.yoy/100 : null;
+    });
+    const path = n => { const p=[]; let c=n; while(c){ p.unshift(c); c = c.parent ? byCode.get(c.parent) : null; } return p; };
+    const id = cfg.id;
+    let zoom = root, sel = root, view = 'yoy', months = 0;
+
+    cfg.el.innerHTML = `
+      <div class="card">
+        <div class="crumbs" id="${id}-crumbs"></div>
+        <div class="tm" id="${id}-tm" role="group" aria-label="Treemap of category weights"></div>
+        ${heatLegend()}
+        <p class="note">Tile size is the category's weight in the index, colour its price change over the past 12 months. Click a tile to see its history and open its sub-categories; use the path above to go back.</p>
+      </div>
+      <div class="grid-2" style="margin-top:12px; align-items:start">
+        <div class="card" id="${id}-detail">
+          <div class="card-head">
+            <div><p class="card-title" id="${id}-dname"></p><p class="card-sub" id="${id}-dsub"></p></div>
+            ${segControl(id+'-view', [{v:'yoy',label:'12-month change'},{v:'level',label:'Price level'}], 'yoy')}
+          </div>
+          <div class="detail-kpis" id="${id}-kpis"></div>
+          <div class="card-head" style="align-items:center"><div class="legend" id="${id}-legend" style="margin:0"></div>
+            ${segControl(id+'-range', [{v:'120',label:'10Y'},{v:'240',label:'20Y'},{v:'0',label:'Since 1980'}], '0')}</div>
+          <div class="chart" id="${id}-chart" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <p class="card-title" id="${id}-ttitle"></p>
+          <p class="card-sub">Largest weight first. Contribution = weight × 12-month change: the percentage points this item adds to the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate.</p>
+          <div style="overflow-x:auto"><table class="xtable" id="${id}-table"></table></div>
+        </div>
+      </div>`;
+
+    const tmEl = document.getElementById(id+'-tm'), chartEl = document.getElementById(id+'-chart');
+    const tip = document.createElement('div'); tip.className='tip';
+
+    function select(code){
+      const n = byCode.get(code); if(!n) return;
+      if(n.kids.length) zoom = n; else if(n.parent && byCode.has(n.parent)) zoom = byCode.get(n.parent);
+      sel = n;
+      render();
+    }
+
+    function crumbs(){
+      const p = path(zoom);
+      let h = p.map((n,i)=> i===p.length-1 && sel===zoom ? `<span class="cur">${esc(n.name)}</span>` : `<button data-code="${n.code}">${esc(n.name)}</button>`).join('<span class="sep">›</span>');
+      if(sel!==zoom) h += `<span class="sep">›</span><span class="cur">${esc(sel.name)}</span>`;
+      const el = document.getElementById(id+'-crumbs');
+      el.innerHTML = h;
+      el.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ const n=byCode.get(b.dataset.code); zoom=n; sel=n; render(); }));
+    }
+
+    function drawTM(el){
+      const W = el.clientWidth || 800;
+      const H = W < 520 ? Math.round(W*1.1) : Math.round(Math.min(560, Math.max(360, W*0.42)));
+      el.style.height = H+'px';
+      const kids = zoom.kids.filter(k=>k.weight>0);
+      const sumK = kids.reduce((s,k)=>s+k.weight,0), other = zoom.weight - sumK;
+      const items = kids.map(k=>({node:k, v:k.weight}));
+      if(other > zoom.weight*0.02) items.push({other:true, v:other});
+      items.sort((a,b)=>b.v-a.v);
+      const tot = items.reduce((s,i)=>s+i.v,0) || 1, sc = W*H/tot;
+      const rects = squarify(items.map(i=>({...i, v:i.v*sc})), {x:0, y:0, w:W, h:H});
+      el.innerHTML = rects.map((r,k)=>{
+        const st = `left:${(r.x+1).toFixed(1)}px;top:${(r.y+1).toFixed(1)}px;width:${Math.max(0,r.w-2).toFixed(1)}px;height:${Math.max(0,r.h-2).toFixed(1)}px;`;
+        if(r.other) return `<div class="tm-tile other" data-k="${k}" style="${st}">${r.w>80 && r.h>34 ? `<span class="tm-name">Other items</span><span class="tm-meta">${(r.v/sc).toFixed(2)}% weight</span>` : ''}</div>`;
+        const n = r.node, b = heatBin(n.yoy);
+        const color = b==null ? 'background:var(--grid);color:var(--ink-2);' : `background:var(--h${b});color:var(--hi${b});`;
+        const big = r.w>220 && r.h>120, showName = r.w>=66 && r.h>=36, showMeta = r.w>=46 && r.h>=22;
+        const meta = `${n.weight.toFixed(n.weight>=10?1:2)}% · ${n.yoy!=null?spct(n.yoy):'n/a'}`;
+        return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: weight ${n.weight.toFixed(2)}%, 12-month change ${n.yoy!=null?spct(n.yoy):'not available'}">
+          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?`<span class="tm-meta">${showName?meta:(n.yoy!=null?spct(n.yoy):'')}</span>`:''}
+          ${n.kids.length && r.h>=78 && r.w>=90 ? `<span class="tm-kids">${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'} ›</span>` : ''}</button>`;
+      }).join('');
+      el.appendChild(tip);
+      el.querySelectorAll('.tm-tile').forEach(t=>{
+        const r = rects[+t.dataset.k];
+        const show = e=>{
+          tip.textContent='';
+          const add=(cls, txt)=>{ const d=document.createElement('div'); d.className=cls; d.textContent=txt; tip.appendChild(d); return d; };
+          const row=(k,v)=>{ const d=document.createElement('div'); d.className='t-row'; const a=document.createElement('span'); a.className='t-key'; a.textContent=k; const b=document.createElement('b'); b.textContent=v; d.appendChild(a); d.appendChild(b); tip.appendChild(d); };
+          if(r.other){ add('t-date','Other items'); row('Weight', (r.v/sc).toFixed(2)+'%'); add('t-note','Smaller categories not listed separately'); }
+          else {
+            const n=r.node; add('t-date', n.name);
+            row('Weight', n.weight.toFixed(2)+'% of total');
+            row('12-month change', n.yoy!=null?spct(n.yoy):'n/a');
+            if(n.contrib!=null) row('Contribution', pp(n.contrib,2));
+            if(n.kids.length) add('t-note', `Click to open ${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'}`);
+          }
+          tip.style.opacity=1;
+          const box = el.getBoundingClientRect(), px=e.clientX-box.left, py=e.clientY-box.top;
+          let left = px+14; if(left+tip.offsetWidth > box.width) left = px-tip.offsetWidth-14;
+          let top = py+14; if(top+tip.offsetHeight > box.height) top = py-tip.offsetHeight-10;
+          tip.style.left=Math.max(0,left)+'px'; tip.style.top=Math.max(0,top)+'px';
+        };
+        t.addEventListener('pointermove', show);
+        t.addEventListener('pointerleave', ()=>{ tip.style.opacity=0; });
+        if(!r.other) t.addEventListener('click', ()=>select(t.dataset.code));
+      });
+    }
+
+    function drawDetail(el){
+      const n = sel;
+      if(!n.has){ el.innerHTML = '<div class="empty">No price history published for this category.</div>'; return; }
+      const start = months ? addMonths(n.date, -months) : parseDate('1980-01-01');
+      const idx = []; for(let i=0;i<T.dates.length;i++){ if(T.dates[i]>=start && i<=n.li) idx.push(i); }
+      const r = byCode.get(cfg.rootCode), cmp = n!==r && r.has;
+      if(view==='yoy'){
+        lineChart({aria:n.name+' 12-month change', height:H(300,230), dates:idx.map(i=>T.dates[i]),
+          series:(cmp?[{label:cfg.rootLabel, cls:'ref', values:idx.map(i=>r.yoyS[i])}]:[]).concat([{label:n.name, cls:'actual', values:idx.map(i=>n.yoyS[i]), endMarker:true}]),
+          refs: cfg.target ? [{value:cfg.target, label:''}] : [], zeroLine:true, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(1)+'%'})(el);
+      } else {
+        const b0 = idx.find(i=>n.level[i]!=null), rb = idx.find(i=>r.level && r.level[i]!=null);
+        const b = cmp ? Math.max(b0, rb) : b0;
+        const ix = idx.filter(i=>i>=b);
+        lineChart({aria:n.name+' price level', height:H(300,230), dates:ix.map(i=>T.dates[i]),
+          series:(cmp?[{label:cfg.rootLabel, cls:'ref', values:ix.map(i=>r.level[i]/r.level[b]*100)}]:[]).concat([{label:n.name, cls:'actual', values:ix.map(i=>n.level[i]/n.level[b]*100), endMarker:true, endLabel:'above'}]),
+          refs:[{value:100, label:''}], endFmt:v=>v.toFixed(0), yFmt:(v,d)=>v.toFixed(d), tipFmt:v=>v.toFixed(1)})(el);
+      }
+    }
+
+    function detail(){
+      const n = sel, r = byCode.get(cfg.rootCode);
+      document.getElementById(id+'-dname').textContent = n.name;
+      document.getElementById(id+'-dsub').innerHTML = n===r ? `${esc(cfg.weightLabel)}. Data through ${n.has?fmtMonthLong(n.date):'—'}.`
+        : `Weight <b style="color:var(--ink)">${n.weight.toFixed(3)}%</b> of ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} (${esc(cfg.weightLabel)})${n.has?` · data ${n.first.getUTCFullYear()}–${fmtMonth(n.date)}`:''}.`;
+      const sinceYr = n.has ? T.dates[n.base].getUTCFullYear() : 1980;
+      document.getElementById(id+'-kpis').innerHTML = n.has ? `
+        <div class="k"><div class="l">12-month change</div><div class="v">${spct(n.yoy)}</div></div>
+        <div class="k"><div class="l">A year earlier</div><div class="v">${spct(n.yoyPrev)}</div></div>
+        <div class="k"><div class="l">Per year, last 5 years</div><div class="v">${spct(n.ann5)}</div></div>
+        <div class="k"><div class="l">Total since ${sinceYr}</div><div class="v">${spct(n.cum,0)}</div></div>` : '';
+      const cmp = n!==r && r.has;
+      document.getElementById(id+'-legend').innerHTML = `<span><i class="key-line" style="background:var(--c-actual)"></i>${esc(n.name)}</span>` + (cmp?`<span><i class="key-line" style="background:var(--c-ref)"></i>${esc(cfg.rootLabel)}</span>`:'') + (view==='level'?`<span class="muted">Index, start of period = 100</span>`:'');
+      if(chartEl.offsetParent!==null) drawDetail(chartEl);
+    }
+
+    function table(){
+      const base = zoom;
+      document.getElementById(id+'-ttitle').textContent = base===root ? `Major groups of ${(cfg.rootLower||cfg.rootLabel.toLowerCase())}` : `Inside ${base.name}`;
+      const rows = base.kids;
+      const maxW = Math.max(...rows.map(k=>k.weight), 0.0001);
+      document.getElementById(id+'-table').innerHTML = `<thead><tr><th>Category</th><th>Weight</th><th class="r">12-month</th><th class="r">Contribution</th></tr></thead><tbody>
+        <tr class="click ${sel===base?'sel':''}" data-code="${base.code}"><td class="name"><b>${esc(base.name)}</b></td><td>${base.weight.toFixed(2)}%</td><td class="r">${base.has?spct(base.yoy):'—'}</td><td class="r">${base.contrib!=null?pp(base.contrib,2):'—'}</td></tr>
+        ${rows.map(k=>`<tr class="click ${sel===k?'sel':''}" data-code="${k.code}"><td class="name">${esc(k.name)}${k.kids.length?'<span class="kid-mark">›</span>':''}</td>
+          <td style="white-space:nowrap"><span class="wbar" style="width:${(k.weight/maxW*60).toFixed(1)}px"></span>${k.weight.toFixed(k.weight>=1?2:3)}%</td>
+          <td class="r"><span class="chip ${k.yoy>3?'up-bad':''}">${k.has?spct(k.yoy):'—'}</span></td>
+          <td class="r">${k.contrib!=null?pp(k.contrib,2):'—'}</td></tr>`).join('')}</tbody>`;
+      document.querySelectorAll(`#${id}-table tr.click`).forEach(tr=>tr.addEventListener('click', ()=>select(tr.dataset.code)));
+    }
+
+    function render(){ crumbs(); if(tmEl.offsetParent!==null) drawTM(tmEl); detail(); table(); }
+
+    tmEl.__draw = drawTM; charts.push(tmEl);
+    chartEl.__draw = drawDetail; charts.push(chartEl);
+    bindSeg(id+'-view', v=>{ view=v; detail(); });
+    bindSeg(id+'-range', v=>{ months=+v; if(chartEl.offsetParent!==null) drawDetail(chartEl); });
+
+    if(cfg.movers){
+      const leaves = [...byCode.values()].filter(n=>!n.kids.length && n.has && n.yoy!=null && n.weight>=0.03 && n.date.getTime()===root.date.getTime());
+      const up = leaves.slice().sort((a,b)=>b.yoy-a.yoy).slice(0,8), down = leaves.slice().sort((a,b)=>a.yoy-b.yoy).slice(0,8);
+      const list = (arr, title) => `<div class="card"><p class="card-title">${title}</p><p class="card-sub">12-month change, ${fmtMonth(root.date)} · detailed items with weight ≥ 0.03%.</p>
+        <table class="xtable"><tbody>${arr.map(n=>`<tr class="click" data-code="${n.code}"><td class="name">${esc(n.name)}<div class="muted" style="font-size:12px">${esc(byCode.get(n.parent)?byCode.get(n.parent).name:'')} · weight ${n.weight.toFixed(2)}%</div></td><td class="r"><span class="chip">${spct(n.yoy)}</span></td></tr>`).join('')}</tbody></table></div>`;
+      cfg.movers.innerHTML = leaves.length ? `<div class="movers">${list(up,'Fastest-rising prices')}${list(down,'Slowest-rising or falling prices')}</div>` : '';
+      cfg.movers.querySelectorAll('tr.click').forEach(tr=>tr.addEventListener('click', ()=>{ select(tr.dataset.code); cfg.el.scrollIntoView({behavior:'smooth', block:'start'}); }));
+    }
+    if(cfg.initial && byCode.has(cfg.initial)) select(cfg.initial); else render();
+    return {select, byCode, root};
+  }
+
+  // static mini treemap of the top level (overview page)
+  function miniTreemap(el, nodes, onPick){
+    const W = el.clientWidth || 600, H = W<520 ? 300 : 240;
+    el.style.height = H+'px';
+    const items = nodes.filter(n=>n.weight>0).map(n=>({node:n, v:n.weight})).sort((a,b)=>b.v-a.v);
+    const tot = items.reduce((s,i)=>s+i.v,0) || 1, sc = W*H/tot;
+    const rects = squarify(items.map(i=>({...i, v:i.v*sc})), {x:0,y:0,w:W,h:H});
+    el.innerHTML = rects.map(r=>{ const n=r.node, b=heatBin(n.yoy);
+      return `<button class="tm-tile" data-code="${n.code}" style="left:${r.x+1}px;top:${r.y+1}px;width:${Math.max(0,r.w-2)}px;height:${Math.max(0,r.h-2)}px;${b==null?'background:var(--grid)':`background:var(--h${b});color:var(--hi${b})`}">
+        ${r.w>=60&&r.h>=34?`<span class="tm-name">${esc(n.name)}</span>`:''}${r.w>=44&&r.h>=22?`<span class="tm-meta">${r.w>=60&&r.h>=34?n.weight.toFixed(1)+'% · ':''}${n.yoy!=null?spct(n.yoy):''}</span>`:''}</button>`; }).join('');
+    el.querySelectorAll('.tm-tile').forEach(t=>t.addEventListener('click', ()=>onPick(t.dataset.code)));
+  }
+
+  // stacked columns (contributions), with an optional total line on the same axis
+  function stackedColumns(cfg){
+    return function draw(el){
+      const W = Math.max(200, el.clientWidth || 600), Ht = typeof cfg.height==='function' ? cfg.height(W) : (cfg.height||300);
+      const m = {t:12, r:12, b:28, l:46}, pw=W-m.l-m.r, ph=Ht-m.t-m.b, N=cfg.dates.length;
+      const pos=new Array(N).fill(0), neg=new Array(N).fill(0);
+      cfg.stacks.forEach(s=>s.values.forEach((v,i)=>{ if(v==null) return; if(v>=0) pos[i]+=v; else neg[i]+=v; }));
+      const vals = pos.concat(neg, (cfg.line?cfg.line.values:[]).filter(v=>v!=null), [0]);
+      const yt = niceTicks(Math.min(...vals), Math.max(...vals), 5), y0=yt[0], y1=yt[yt.length-1], dec=tickDecimals(yt);
+      const Y = v => m.t + ph - (v-y0)/(y1-y0)*ph;
+      const band = pw/N, bw = Math.max(1.5, Math.min(18, band*0.72));
+      let s = `<svg viewBox="0 0 ${W} ${Ht}" height="${Ht}" role="img" aria-label="${esc(cfg.aria||'Chart')}"><g class="grid">` + yt.map(t=>`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>`).join('') + `</g>`;
+      s += yt.map(t=>`<text x="${m.l-8}" y="${(Y(t)+4).toFixed(1)}" text-anchor="end">${cfg.yFmt(t,dec)}</text>`).join('');
+      const mt = monthTicks(cfg.dates[0], cfg.dates[N-1], pw);
+      mt.ticks.forEach(d=>{ const i=cfg.dates.findIndex(x=>x.getTime()===d.getTime()); if(i>=0) s+=`<text x="${(m.l+band*i+band/2).toFixed(1)}" y="${Ht-8}" text-anchor="middle">${mt.fmt(d)}</text>`; });
+      for(let i=0;i<N;i++){
+        let up=0, dn=0; const x = m.l+band*i+band/2-bw/2;
+        cfg.stacks.forEach(st=>{
+          const v=st.values[i]; if(v==null || v===0) return;
+          const a = v>=0 ? up : dn, b = a+v; if(v>=0) up=b; else dn=b;
+          const yA=Y(a), yB=Y(b);
+          s += `<rect x="${x.toFixed(1)}" y="${Math.min(yA,yB).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5,Math.abs(yA-yB)).toFixed(1)}" style="fill:var(${st.color})" stroke="var(--surface)" stroke-width="${bw>5?1:0}"/>`;
+        });
+      }
+      s += `<line class="baseline" x1="${m.l}" x2="${W-m.r}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
+      if(cfg.line){
+        let d='', on=false; cfg.line.values.forEach((v,i)=>{ if(v==null){ on=false; return; } d+=(on?' L':' M')+(m.l+band*i+band/2).toFixed(1)+' '+Y(v).toFixed(1); on=true; });
+        s += `<path d="${d}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>`;
+      }
+      s += `<line class="xhair" x1="0" x2="0" y1="${m.t}" y2="${m.t+ph}" visibility="hidden"/><rect class="hit" x="${m.l}" y="0" width="${pw}" height="${Ht}" fill="transparent"/></svg>`;
+      el.innerHTML = s;
+      const tip=document.createElement('div'); tip.className='tip'; el.appendChild(tip);
+      const svg=el.querySelector('svg'), hit=svg.querySelector('.hit'), xh=svg.querySelector('.xhair');
+      function show(e){
+        const r=svg.getBoundingClientRect(), px=(e.clientX-r.left)*(W/r.width);
+        const i=Math.max(0, Math.min(N-1, Math.floor((px-m.l)/band)));
+        tip.textContent='';
+        const dt=document.createElement('div'); dt.className='t-date'; dt.textContent=fmtMonthLong(cfg.dates[i]); tip.appendChild(dt);
+        const row=(k,color,v,line)=>{ const d=document.createElement('div'); d.className='t-row'; const a=document.createElement('span'); a.className='t-key'; if(color){ const sw=document.createElement('span'); sw.className=line?'key-line':'key-area'; sw.style.background=color; a.appendChild(sw); } a.appendChild(document.createTextNode(k)); const b=document.createElement('b'); b.textContent=v; d.appendChild(a); d.appendChild(b); tip.appendChild(d); };
+        if(cfg.line && cfg.line.values[i]!=null) row(cfg.line.label, 'var(--ink)', cfg.tipFmt(cfg.line.values[i]), true);
+        cfg.stacks.slice().reverse().forEach(st=>{ if(st.values[i]!=null) row(st.label, `var(${st.color})`, cfg.tipFmt(st.values[i])); });
+        const x=m.l+band*i+band/2; xh.setAttribute('x1',x); xh.setAttribute('x2',x); xh.setAttribute('visibility','visible');
+        tip.style.opacity=1; const sc=r.width/W; let left=x*sc+14; if(left+tip.offsetWidth>r.width) left=x*sc-tip.offsetWidth-14;
+        tip.style.left=Math.max(0,left)+'px'; tip.style.top=(m.t*sc)+'px';
+      }
+      hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show);
+      hit.addEventListener('pointerleave', ()=>{ tip.style.opacity=0; xh.setAttribute('visibility','hidden'); });
+    };
+  }
+
+  // yield curve: categorical maturities on x, one line per date
+  function curveChart(cfg){
+    return function draw(el){
+      const W=Math.max(200, el.clientWidth||600), Ht=cfg.height||280, m={t:16, r:20, b:30, l:46}, pw=W-m.l-m.r, ph=Ht-m.t-m.b;
+      const K=cfg.labels.length, X=k=>m.l + (K>1 ? k/(K-1)*pw : pw/2);
+      const vals=[]; cfg.series.forEach(s=>s.values.forEach(v=>{ if(v!=null) vals.push(v); })); vals.push(0);
+      const yt=niceTicks(Math.min(...vals), Math.max(...vals), 5), y0=yt[0], y1=yt[yt.length-1], dec=tickDecimals(yt);
+      const Y=v=>m.t+ph-(v-y0)/(y1-y0)*ph;
+      let s=`<svg viewBox="0 0 ${W} ${Ht}" height="${Ht}" role="img" aria-label="${esc(cfg.aria||'Yield curve')}"><g class="grid">`+yt.map(t=>`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>`).join('')+`</g>`;
+      s+=yt.map(t=>`<text x="${m.l-8}" y="${(Y(t)+4).toFixed(1)}" text-anchor="end">${t.toFixed(dec)}%</text>`).join('');
+      s+=cfg.labels.map((l,k)=>`<text x="${X(k).toFixed(1)}" y="${Ht-8}" text-anchor="middle">${esc(l)}</text>`).join('');
+      cfg.series.forEach(se=>{
+        const pts=se.values.map((v,k)=>v==null?null:[X(k),Y(v)]).filter(Boolean);
+        s+=`<path class="s s-${se.cls}${se.dashed?' dashed':''}" d="${pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')}"/>`;
+        s+=pts.map(p=>`<circle class="dot-${se.cls} ring" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`).join('');
+      });
+      s+=`<line class="xhair" x1="0" x2="0" y1="${m.t}" y2="${m.t+ph}" visibility="hidden"/><rect class="hit" x="0" y="0" width="${W}" height="${Ht}" fill="transparent"/></svg>`;
+      el.innerHTML=s;
+      const tip=document.createElement('div'); tip.className='tip'; el.appendChild(tip);
+      const svg=el.querySelector('svg'), hit=svg.querySelector('.hit'), xh=svg.querySelector('.xhair');
+      hit.addEventListener('pointermove', e=>{
+        const r=svg.getBoundingClientRect(), px=(e.clientX-r.left)*(W/r.width);
+        let k=0, bd=Infinity; for(let j=0;j<K;j++){ const d=Math.abs(X(j)-px); if(d<bd){ bd=d; k=j; } }
+        tip.textContent=''; const dt=document.createElement('div'); dt.className='t-date'; dt.textContent=cfg.labels[k]; tip.appendChild(dt);
+        let any=false;
+        cfg.series.forEach(se=>{ const v=se.values[k]; if(v==null) return; any=true;
+          const d=document.createElement('div'); d.className='t-row'; const a=document.createElement('span'); a.className='t-key'; const sw=document.createElement('span'); sw.className='key-line'; sw.style.background=`var(${COLOR_VAR[se.cls]})`; a.appendChild(sw); a.appendChild(document.createTextNode(se.label)); const b=document.createElement('b'); b.textContent=v.toFixed(2)+'%'; d.appendChild(a); d.appendChild(b); tip.appendChild(d); });
+        if(!any){ tip.style.opacity=0; return; }
+        xh.setAttribute('x1',X(k)); xh.setAttribute('x2',X(k)); xh.setAttribute('visibility','visible');
+        tip.style.opacity=1; const sc=r.width/W; let left=X(k)*sc+14; if(left+tip.offsetWidth>r.width) left=X(k)*sc-tip.offsetWidth-14;
+        tip.style.left=Math.max(0,left)+'px'; tip.style.top=(m.t*sc)+'px';
+      });
+      hit.addEventListener('pointerleave', ()=>{ tip.style.opacity=0; xh.setAttribute('visibility','hidden'); });
+    };
+  }
+
+  // accuracy-by-horizon rows (shared by CPI, PCE and rates)
+  function horizonTable(hz, opts){
+    const pick = hz.filter(r=>[1,3,6,12].includes(r.h));
+    if(!pick.length) return '';
+    const maxV = Math.max(...pick.map(r=>Math.max(r.m, r.nv)));
+    return `<div class="legend"><span><i class="key-area" style="background:var(--c-model)"></i>${esc(opts.model)}</span><span><i class="key-area" style="background:var(--c-ref)"></i>${esc(opts.naive||'No change')}</span></div>
+      <div class="hz-row hz-head"><span>Horizon</span><span>Mean absolute error (${opts.unit||'pp'})</span><span class="hz-cov">In 95% interval</span></div>
+      ${pick.map(r=>`<div class="hz-row"><span>${r.h} month${r.h>1?'s':''}</span><span class="hz-bars">
+        <span class="hz-bar"><span class="b model" style="width:${(r.m/maxV*85).toFixed(1)}%"></span><span class="v">${r.m.toFixed(2)}</span></span>
+        <span class="hz-bar"><span class="b naive" style="width:${(r.nv/maxV*85).toFixed(1)}%"></span><span class="v">${r.nv.toFixed(2)}</span></span></span>
+        <span class="hz-cov">${r.cov.toFixed(0)}% <span class="muted" style="font-size:12px">of ${r.n}</span></span></div>`).join('')}`;
+  }
+  const hzParse = rows => rows.map(r=>({series:r.series, h:+r.horizon, n:+r.n, m:num(r.model_mae), nv:num(r.naive_mae), cov:num(r.coverage_95)})).filter(r=>r.m!=null).sort((a,b)=>a.h-b.h);
+
   // ================= app =================
+  const SITE = "U.S. Economic Forecast";
   async function main(){
     const app = document.getElementById('app');
-    let cpiRaw, fcRaw, btRaw, errRaw, xRaw, arRaw, hzRaw, schRaw, bmRaw, bmErrRaw;
+    let cpiRaw, fcRaw, btRaw, errRaw, xRaw, arRaw, hzRaw, schRaw, bmRaw, bmErrRaw,
+        compRaw, wRaw, apRaw, pceRaw, pceFcRaw, pceHzRaw, pceWRaw, pceCompRaw, rFcRaw, rBtRaw;
     try{
-      [cpiRaw, fcRaw, btRaw, errRaw, xRaw, arRaw, hzRaw, schRaw, bmRaw, bmErrRaw] = await Promise.all([
+      [cpiRaw, fcRaw, btRaw, errRaw, xRaw, arRaw, hzRaw, schRaw, bmRaw, bmErrRaw,
+       compRaw, wRaw, apRaw, pceRaw, pceFcRaw, pceHzRaw, pceWRaw, pceCompRaw, rFcRaw, rBtRaw] = await Promise.all([
         loadCSV('data/cpi_data.csv'),
         loadCSV('data/yoy_forecast.csv'),
         loadCSV('data/rolling_backtest.csv'),
@@ -653,6 +1080,16 @@
         loadCSV('data/cpi_release_schedule.csv', true),
         loadCSV('data/model_benchmark.csv', true),
         loadCSV('data/model_benchmark_errors.csv', true),
+        loadCSV('data/cpi_components.csv', true),
+        loadCSV('data/cpi_weights.csv', true),
+        loadCSV('data/avg_prices.csv', true),
+        loadCSV('data/pce_data.csv', true),
+        loadCSV('data/pce_forecast.csv', true),
+        loadCSV('data/pce_horizon_backtest.csv', true),
+        loadCSV('data/pce_weights.csv', true),
+        loadCSV('data/pce_components.csv', true),
+        loadCSV('data/rates_forecast.csv', true),
+        loadCSV('data/rates_backtest.csv', true),
       ]);
     }catch(err){
       app.innerHTML = `<div class="error">Could not load data files — ${esc(err.message)}.<br>This page must be served over HTTP (e.g. GitHub Pages or <code>python -m http.server</code>).</div>`;
@@ -670,15 +1107,13 @@
     const yoyData = data.filter(d=>d.yoy!=null);
     const latest = data[data.length-1], prev = data[data.length-2];
     const cpiAt = new Map(data.map(d=>[d.date.getTime(), d]));
-    // next scheduled BLS release (data/cpi_release_schedule.csv, from bls.gov)
     const now = new Date(), todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
     const nextRelease = schRaw.map(r=>({ref:parseDate(r.reference_month), date:parseDate(r.release_date)}))
       .filter(r=>r.ref>latest.date && r.date.getTime()>=todayUTC).sort((a,b)=>a.date-b.date)[0];
     const fmtDay = d => MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate();
     const nextText = nextRelease ? (nextRelease.date.getTime()===todayUTC ? 'today, 8:30 a.m. ET' : fmtDay(nextRelease.date)+', '+nextRelease.date.getUTCFullYear()) : null;
-    document.getElementById('sideStatus').innerHTML = `<span class="row"><span class="dot"></span>Data through ${fmtMonth(latest.date)}</span>` + (nextText ? `<span class="sub">Next CPI release: ${nextText}</span>` : '');
 
-    // ---------- forecast & backtest ----------
+    // ---------- CPI forecast & backtest ----------
     const forecast = fcRaw.map(r=>({date:parseDate(r.date), mean:num(r.mean), lo:num(r.mean_ci_lower), hi:num(r.mean_ci_upper)})).filter(r=>r.mean!=null).sort((a,b)=>a.date-b.date);
     const next = forecast[0], last12 = forecast[forecast.length-1];
     const bt = btRaw.map(r=>({model:cleanModel(r.model), mae:num(r.mae), rmse:num(r.rmse)})).filter(r=>r.mae!=null);
@@ -691,15 +1126,8 @@
     const errNaive = errs.filter(e=>/naive/i.test(e.model)).sort((a,b)=>a.date-b.date);
     const hasErrors = errModel.length>0 && errNaive.length===errModel.length;
 
-    // ---------- supporting series (monthly, aligned) ----------
-    const X = (()=>{
-      if(!xRaw.length) return null;
-      const rows = xRaw.map(r=>({date:parseDate(r.date), r})).sort((a,b)=>a.date-b.date);
-      const dates = rows.map(x=>x.date);
-      const cols = {};
-      Object.keys(xRaw[0]).filter(k=>k!=='date').forEach(k=>{ cols[k] = fillInterior(rows.map(x=>num(x.r[k]))); });
-      return {dates, cols, has:k=>!!cols[k] && lastIdx(cols[k])>=0};
-    })();
+    // ---------- supporting FRED series (monthly) ----------
+    const X = wideTable(xRaw, ['gs30']);
     function seriesFrom(col, start){
       if(!X || !X.has(col)) return null;
       const v = X.cols[col]; const out=[];
@@ -712,7 +1140,52 @@
       return X.dates.map((d,i)=>({date:d, v:y[i]})).filter(p=>p.v!=null);
     }
 
-    // =============== page markup ===============
+    // ---------- CPI categories (BLS) ----------
+    const COMP = wideTable(compRaw);
+    const cpiNodes = wRaw.map(r=>({code:r.code, name:r.name, parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null);
+    const cpiMajor = cpiNodes.filter(n=>n.parent==='SA0').map(n=>{
+      const v = COMP && COMP.cols[n.code]; if(!v || lastIdx(v)<0) return {...n, yoy:null};
+      const y = yoyOf(v), li = lastIdx(v); return {...n, yoy:y[li], yoyS:y, date:COMP.dates[li]};
+    });
+    const hasCats = !!COMP && cpiNodes.length>0 && cpiMajor.some(n=>n.yoy!=null);
+
+    // ---------- PCE ----------
+    const PT = wideTable(pceRaw);
+    const pceSeries = (()=>{
+      if(!PT || !PT.has('pce')) return [];
+      const y = yoyOf(PT.cols.pce), yc = PT.cols.core_pce ? yoyOf(PT.cols.core_pce) : [];
+      return PT.dates.map((d,i)=>({date:d, v:y[i], core:yc[i]!=null?yc[i]:null, level:PT.cols.pce[i]})).filter(p=>p.v!=null);
+    })();
+    const pceLast = pceSeries[pceSeries.length-1];
+    const pceAt = new Map(pceSeries.map(p=>[p.date.getTime(), p]));
+    const pceFc = s => pceFcRaw.filter(r=>r.series===s).map(r=>({date:parseDate(r.date), mean:num(r.mean), lo:num(r.lower), hi:num(r.upper), model:r.model})).filter(r=>r.mean!=null).sort((a,b)=>a.date-b.date);
+    const pceF = {pce:pceFc('pce'), core_pce:pceFc('core_pce')};
+    const pceHz = hzParse(pceHzRaw);
+    const pceNodes = pceWRaw.map(r=>({code:r.code, name:r.name, parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null && n.weight>0);
+    const pceWDate = pceWRaw.length && pceWRaw[0].date ? parseDate(pceWRaw[0].date) : null;
+    const PCOMP = wideTable(pceCompRaw);
+
+    // ---------- interest rates ----------
+    const RATES = [
+      {key:'fed_funds', label:'Federal funds rate', short:'Fed funds', cls:'actual'},
+      {key:'gs2', label:'2-year Treasury', short:'2-year', cls:'model'},
+      {key:'gs10', label:'10-year Treasury', short:'10-year', cls:'c3'},
+      {key:'gs30', label:'30-year Treasury', short:'30-year', cls:'c5'},
+    ].map(r=>{
+      const s = seriesFrom(r.key); if(!s || !s.length) return null;
+      const l = s[s.length-1], y = s.find(p=>p.date.getTime()===addMonths(l.date,-12).getTime());
+      const fc = rFcRaw.filter(x=>x.series===r.key).map(x=>({date:parseDate(x.date), mean:num(x.mean), lo:num(x.lower), hi:num(x.upper), model:x.model})).filter(x=>x.mean!=null).sort((a,b)=>a.date-b.date);
+      return {...r, s, last:l, yearAgo:y, fc, hz:hzParse(rBtRaw.filter(x=>x.series===r.key))};
+    }).filter(Boolean);
+    const rate = k => RATES.find(r=>r.key===k);
+
+    // side status
+    const sideBits = [`<span class="row"><span class="dot"></span>CPI through ${fmtMonth(latest.date)}</span>`];
+    if(pceLast) sideBits.push(`<span class="sub">PCE through ${fmtMonth(pceLast.date)}</span>`);
+    if(rate('gs10')) sideBits.push(`<span class="sub">Yields through ${fmtMonth(rate('gs10').last.date)}</span>`);
+    if(nextText) sideBits.push(`<span class="sub">Next CPI release: ${nextText}</span>`);
+    document.getElementById('sideStatus').innerHTML = sideBits.join('');
+
     const yoyChange = latest.yoy - prev.yoy, gap = latest.yoy - FED_TARGET;
     const COMPONENTS = [
       {key:'core', label:'Core'},
@@ -721,14 +1194,73 @@
       {key:'shelter', label:'Shelter'},
     ];
     const compLatest = COMPONENTS.map(c=>{ const s=compYoY(c.key); return s && s.length ? {...c, v:s[s.length-1].v, date:s[s.length-1].date, series:s} : null; }).filter(Boolean);
+    const coreLatest = compLatest.find(c=>c.key==='core');
+    const forecastLegend = `<div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Forecast</span><span><i class="key-area" style="background:var(--c-model);opacity:.3"></i>95% interval</span></div>`;
+    const rl = k => rate(k) ? rate(k).last : null;
+    const fc12 = r => r && r.fc.length ? r.fc[r.fc.length-1] : null;
+
+    // =============== page markup ===============
+    const tile = (o) => `<a class="kpi linky" href="${o.href}" style="text-decoration:none;color:inherit;display:block">
+        <div class="kpi-label">${o.label}</div><div class="kpi-value num">${o.value}</div>
+        <div class="kpi-sub">${o.sub}</div><div class="chart spark" id="${o.spark}"></div></a>`;
+    const ovTiles = [
+      {label:'CPI inflation', value:pct(latest.yoy), sub:`${fmtMonth(latest.date)} · forecast ${last12?pct(last12.mean):'—'} by ${last12?fmtMonth(last12.date):'—'}`, href:'#forecast', spark:'spk-cpi'},
+      {label:'Core CPI', value:coreLatest?pct(coreLatest.v):'—', sub:coreLatest?`Excluding food and energy, ${fmtMonth(coreLatest.date)}`:'Pending data', href:'#drivers', spark:'spk-core'},
+      {label:'PCE inflation', value:pceLast?pct(pceLast.v):'—', sub:pceLast?`${fmtMonth(pceLast.date)}${pceF.pce.length?' · forecast '+pct(pceF.pce[pceF.pce.length-1].mean)+' by '+fmtMonth(pceF.pce[pceF.pce.length-1].date):''}`:'Pending data', href:'#pce', spark:'spk-pce'},
+      {label:'Core PCE', value:pceLast&&pceLast.core!=null?pct(pceLast.core):'—', sub:pceLast?`The Fed's preferred gauge, ${fmtMonth(pceLast.date)}`:'Pending data', href:'#pce', spark:'spk-pcecore'},
+      {label:'Federal funds rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?`${fmtMonth(rl('fed_funds').date)}${fc12(rate('fed_funds'))?' · forecast '+pct(fc12(rate('fed_funds')).mean,2)+' by '+fmtMonth(fc12(rate('fed_funds')).date):''}`:'Pending data', href:'#rates', spark:'spk-ff'},
+      {label:'10-year Treasury yield', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?`${fmtMonth(rl('gs10').date)} average${fc12(rate('gs10'))?' · forecast '+pct(fc12(rate('gs10')).mean,2)+' by '+fmtMonth(fc12(rate('gs10')).date):''}`:'Pending data', href:'#rates', spark:'spk-10y'},
+    ];
+    const headline = `CPI inflation is ${pct(latest.yoy)}${pceLast?`, PCE inflation ${pct(pceLast.v)}`:''}${rl('fed_funds')?`, and the Fed funds rate ${pct(rl('fed_funds').v,2)}`:''}.`;
 
     app.innerHTML = `
-      <!-- ================= OVERVIEW ================= -->
-      <section class="page" id="page-overview" data-title="Overview">
+      <!-- ================= OVERVIEW / DASHBOARD ================= -->
+      <section class="page" id="page-overview" data-title="Dashboard">
+        <div class="eyebrow"><span class="pill"><span class="dot"></span>CPI through ${fmtMonthLong(latest.date)}</span>${pceLast?`<span class="pill">PCE through ${fmtMonthLong(pceLast.date)}</span>`:''}${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}</div>
+        <h1>${headline}</h1>
+        <p class="lede">A self-updating view of U.S. prices and interest rates: <b>CPI</b> and <b>PCE</b> inflation broken into more than 200 categories with their weights,
+          <b>Treasury yields</b> and the <b>Fed funds rate</b>, each with a 12-month statistical forecast and a public track record. <a class="link-more" href="#findings">Key findings →</a></p>
+        <div class="grid-6">${ovTiles.map(tile).join('')}</div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="card"><div class="card-head"><div><p class="card-title">CPI inflation and forecast</p><p class="card-sub">Year over year, last 3 years and next 12 months.</p></div><a class="link-more" href="#forecast">CPI →</a></div>
+            ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
+          <div class="card"><div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The measure behind the Fed's 2% target.</p></div><a class="link-more" href="#pce">PCE →</a></div>
+            ${pceSeries.length?forecastLegend+'<div class="chart" id="ovPce"></div>':pending('PCE data')}</div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="card"><div class="card-head"><div><p class="card-title">10-year Treasury yield and forecast</p><p class="card-sub">Monthly average, last 5 years and next 12 months.</p></div><a class="link-more" href="#rates">Rates →</a></div>
+            ${rate('gs10')?forecastLegend+'<div class="chart" id="ovRates"></div>':pending('Treasury yield data')}</div>
+          <div class="card"><div class="card-head"><div><p class="card-title">Yield curve</p><p class="card-sub">Interest rate by maturity: today, a year ago and the model's view 12 months ahead.</p></div><a class="link-more" href="#rates">Details →</a></div>
+            <div class="legend" id="ovCurveLegend"></div><div class="chart" id="ovCurve"></div></div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-head"><div><p class="card-title">Where prices are rising</p><p class="card-sub">The CPI basket by weight${hasCats?`, coloured by 12-month change (${fmtMonth(cpiMajor.find(n=>n.date).date)})`:''}. Click a group to explore it.</p></div><a class="link-more" href="#prices">All categories →</a></div>
+          ${hasCats?`<div class="tm" id="ovTm"></div>${heatLegend()}`:pending('Category data')}
+        </div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= FINDINGS ================= -->
+      <section class="page" id="page-findings" data-title="Key findings">
+        <h1 class="page-title">Key findings</h1>
+        <p class="lede">What out-of-sample testing says about forecasting U.S. inflation and interest rates. Every number on this page is recomputed automatically when new data arrives.</p>
+        <div class="stack" id="findingsBody"></div>
+        <h2>What I would try next</h2>
+        <div class="card"><ul class="card-sub" style="padding-left:18px; margin:0; display:grid; gap:6px">
+          <li>Forecast the large CPI categories (shelter, food, energy, core goods, core services) separately and aggregate them with the published weights.</li>
+          <li>Add leading indicators with a real publication lead, such as import prices, producer prices, wage settlements and market rents.</li>
+          <li>Model the yield curve jointly (Nelson-Siegel factors) instead of one maturity at a time, and condition it on the inflation forecast.</li>
+          <li>Benchmark against professional forecasts (Survey of Professional Forecasters, Cleveland Fed nowcast) and score full forecast distributions (CRPS).</li>
+        </ul></div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= CPI FORECAST ================= -->
+      <section class="page" id="page-forecast" data-title="CPI forecast">
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(latest.date)}</span>${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}<span>CPI-U, all items, seasonally adjusted</span></div>
-        <h1>U.S. inflation is running at ${pct(latest.yoy)}, ${Math.abs(gap)<0.05 ? "right at the Fed's 2% target" : Math.abs(gap).toFixed(1)+" points "+(gap>0?"above":"below")+" the Fed's 2% target"}.</h1>
-        <p class="lede">A statistical model (<b>${esc(modelLabel)}</b>) projects year-over-year CPI inflation of <b>${pct(next.mean)}</b> for ${fmtMonthLong(next.date)},
-          with a 95% interval of ${pct(next.lo)} to ${pct(next.hi)}. Every forecast is checked against a naive benchmark in a rolling backtest. <a class="link-more" href="#findings">Read the key findings →</a></p>
+        <h1>CPI inflation is running at ${pct(latest.yoy)}, ${Math.abs(gap)<0.05 ? "right at the Fed's 2% target" : Math.abs(gap).toFixed(1)+" points "+(gap>0?"above":"below")+" the Fed's 2% target"}.</h1>
+        <p class="lede">A statistical model (<b>${esc(modelLabel)}</b>) projects year-over-year CPI inflation of <b>${pct(next.mean)}</b> for ${fmtMonthLong(next.date)}
+          and <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}. Every forecast is checked against a naive benchmark in a rolling backtest. <a class="link-more" href="#track-record">Track record →</a></p>
         <div class="grid-4">
           <div class="kpi hero"><div class="kpi-label">Annual inflation (YoY)</div><div class="kpi-value num">${pct(latest.yoy)}</div>
             <div class="kpi-sub">${Math.abs(yoyChange)<0.05 ? 'Unchanged vs '+fmtMonth(prev.date) : `<span class="${yoyChange>0?'up-bad':'down-good'}">${pp(yoyChange)}</span> vs ${fmtMonth(prev.date)}`}</div></div>
@@ -741,47 +1273,8 @@
             <div><p class="card-title">Year-over-year inflation and 12-month forecast</p><p class="card-sub">Shaded area is the 95% confidence interval; it widens as the horizon grows.</p></div>
             ${segControl('ovRange', [{v:'36',label:'3Y'},{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'All'}], '36')}
           </div>
-          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Forecast</span><span><i class="key-area" style="background:var(--c-model);opacity:.3"></i>95% interval</span></div>
+          ${forecastLegend}
           <div class="chart" id="ovChart"></div>
-        </div>
-        <div class="grid-2" style="margin-top:12px">
-          <div class="card">
-            <div class="card-head"><p class="card-title">What's driving it</p><a class="link-more" href="#drivers">Details →</a></div>
-            <p class="card-sub">Year-over-year change by component${compLatest.length?', '+fmtMonth(compLatest[0].date):''}.</p>
-            ${compLatest.length ? hbars([{label:'All items', value:latest.yoy, color:'ink', em:true}].concat(compLatest.map(c=>({label:c.label, value:c.v}))), {fmt:v=>spct(v)}) : pending('Component data')}
-          </div>
-          <div class="card">
-            <div class="card-head"><p class="card-title">How accurate is the model?</p><a class="link-more" href="#track-record">Track record →</a></div>
-            <p class="card-sub">Average one-month-ahead miss over the last ${hasErrors?errModel.length:24} months, in percentage points.</p>
-            ${model && naive ? hbars([{label:modelLabel, value:model.mae, color:'model', em:true},{label:'Naive benchmark', value:naive.mae, color:'ref'}], {fmt:v=>v.toFixed(2)+' pp'}) : ''}
-            <p class="card-sub" style="margin:12px 0 0">The naive benchmark assumes next month's inflation equals this month's.</p>
-          </div>
-        </div>
-        ${pageFoot()}
-      </section>
-
-      <!-- ================= FINDINGS ================= -->
-      <section class="page" id="page-findings" data-title="Key findings">
-        <h1 class="page-title">Key findings</h1>
-        <p class="lede">What four years of out-of-sample testing says about forecasting U.S. inflation. Every number on this page is recomputed automatically when new CPI data arrives.</p>
-        <div class="stack" id="findingsBody"></div>
-        <h2>What I would try next</h2>
-        <div class="card"><ul class="card-sub" style="padding-left:18px; margin:0; display:grid; gap:6px">
-          <li>Forecast core, food, energy and shelter separately and aggregate with CPI weights, so each part gets a model suited to its behaviour.</li>
-          <li>Add leading indicators with a real publication lead, such as import prices, producer prices and wage settlements.</li>
-          <li>Benchmark against professional forecasts (Survey of Professional Forecasters, Cleveland Fed nowcast), not only against naive.</li>
-          <li>Score the full forecast distribution (CRPS, log score) rather than the point forecast alone.</li>
-        </ul></div>
-        ${pageFoot()}
-      </section>
-
-      <!-- ================= FORECAST ================= -->
-      <section class="page" id="page-forecast" data-title="Forecast">
-        <h1 class="page-title">12-month forecast</h1>
-        <p class="lede">Year-over-year CPI inflation projected by ${esc(modelLabel)} from data through ${fmtMonthLong(latest.date)}. The model expects inflation of <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}.</p>
-        <div class="card">
-          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Forecast</span><span><i class="key-area" style="background:var(--c-model);opacity:.3"></i>95% interval</span></div>
-          <div class="chart" id="fcChart"></div>
         </div>
         <div class="grid-2" style="margin-top:12px">
           <div class="card">
@@ -800,6 +1293,10 @@
             <div class="card">
               <div class="card-head"><p class="card-title">Model vs consumers vs markets</p><a class="link-more" href="#expectations">Compare →</a></div>
               <p class="card-sub" style="margin-bottom:0" id="fcExpect"></p>
+            </div>
+            <div class="card">
+              <div class="card-head"><p class="card-title">CPI vs PCE forecast</p><a class="link-more" href="#pce">PCE →</a></div>
+              <p class="card-sub" style="margin-bottom:0">${pceF.pce.length?`PCE inflation, the Fed's target measure, is forecast at <b style="color:var(--ink)">${pct(pceF.pce[pceF.pce.length-1].mean)}</b> by ${fmtMonth(pceF.pce[pceF.pce.length-1].date)}, against ${pct(last12.mean)} for CPI.`:'The PCE forecast will appear after the next data update.'}</p>
             </div>
           </div>
         </div>
@@ -837,15 +1334,21 @@
       <!-- ================= DRIVERS ================= -->
       <section class="page" id="page-drivers" data-title="What's driving it">
         <h1 class="page-title">What's driving inflation?</h1>
-        <p class="lede">Headline CPI blends hundreds of prices. Splitting it into core, food, energy and shelter shows whether inflation is broad-based or driven by a few volatile categories.</p>
+        <p class="lede">Headline CPI blends hundreds of prices. Splitting it by spending group, and into core, food, energy and shelter, shows whether inflation is broad-based or driven by a few categories.</p>
+        <div id="contribBody"></div>
         <div id="driversBody"></div>
         ${pageFoot()}
       </section>
 
-      <!-- ================= PRICES ================= -->
+      <!-- ================= EVERYDAY PRICES (CPI categories) ================= -->
       <section class="page" id="page-prices" data-title="Everyday prices">
-        <h1 class="page-title">Everyday prices</h1>
-        <p class="lede">Average U.S. retail prices collected by the Bureau of Labor Statistics. Select an item to see its full history.</p>
+        <h1 class="page-title">Everyday prices: inside the CPI basket</h1>
+        <p class="lede">The Consumer Price Index tracks ${cpiNodes.length ? cpiNodes.length-1 : 'over 150'} categories shown here, from rent and gasoline to eggs, coffee, college tuition and hospital services.
+          Each has a <b>weight</b>: its share of the typical urban household's spending (BLS relative importance, December 2025). Start with the biggest tiles; click one to drill down.</p>
+        <div id="cpiExplorer">${hasCats?'':pending('Detailed CPI categories')}</div>
+        <div id="cpiMovers" style="margin-top:12px"></div>
+        <h2>Shelf prices</h2>
+        <p class="sec-sub">Average U.S. retail prices collected by the Bureau of Labor Statistics, in dollars. Select an item to see its history since 1980.</p>
         <div id="pricesBody"></div>
         ${pageFoot()}
       </section>
@@ -871,6 +1374,36 @@
             <p style="margin:10px 0 0"><a href="#" id="dl" style="font-size:13.5px">Download full series (CSV)</a></p>
           </details>
         </div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= PCE FORECAST ================= -->
+      <section class="page" id="page-pce" data-title="PCE forecast">
+        <div id="pceBody">${pceSeries.length?'':`<h1 class="page-title">PCE inflation</h1>${pending('PCE data')}`}</div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= PCE CATEGORIES ================= -->
+      <section class="page" id="page-pce-categories" data-title="PCE categories">
+        <h1 class="page-title">Inside PCE: what Americans spend on</h1>
+        <p class="lede">Personal consumption expenditures cover everything households buy, including what is paid on their behalf, such as employer health insurance and Medicare.
+          Weights are each category's share of total spending${pceWDate?` in ${fmtMonthLong(pceWDate)}`:''} and are updated every month. Click a tile to drill down.</p>
+        <div id="pceExplorer">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
+        <div id="pceMovers" style="margin-top:12px"></div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= RATES ================= -->
+      <section class="page" id="page-rates" data-title="Treasury yields">
+        <div id="ratesBody">${RATES.length?'':`<h1 class="page-title">Interest rates</h1>${pending('Interest rate data')}`}</div>
+        ${pageFoot()}
+      </section>
+
+      <!-- ================= FED ================= -->
+      <section class="page" id="page-fed" data-title="Fed policy">
+        <h1 class="page-title">The Fed's response</h1>
+        <p class="lede">The Federal Reserve raises its policy rate to cool inflation and cuts it to support growth. The gap between the two, the real policy rate, shows how tight policy is.</p>
+        <div id="fedBody"></div>
         ${pageFoot()}
       </section>
 
@@ -904,55 +1437,52 @@
         ${pageFoot()}
       </section>
 
-      <!-- ================= FED ================= -->
-      <section class="page" id="page-fed" data-title="Fed & rates">
-        <h1 class="page-title">The Fed's response</h1>
-        <p class="lede">The Federal Reserve raises its policy rate to cool inflation and cuts it to support growth. The gap between the two, the real policy rate, shows how tight policy is.</p>
-        <div id="fedBody"></div>
-        ${pageFoot()}
-      </section>
-
       <!-- ================= METHODOLOGY ================= -->
       <section class="page" id="page-methodology" data-title="Methodology">
         <h1 class="page-title">Methodology</h1>
-        <p class="lede">How the data is prepared, how the model is chosen and evaluated, and where it falls short.</p>
+        <p class="lede">How the data is prepared, how the models are chosen and evaluated, and where they fall short.</p>
         <div class="grid-2 method">
-          <div class="card"><h3>Data</h3><p>Monthly CPI for All Urban Consumers (CPI-U, all items, seasonally adjusted; FRED <code>CPIAUCSL</code>). Inflation is the 12-month percent change of the index.
+          <div class="card"><h3>CPI</h3><p>Monthly CPI for All Urban Consumers (CPI-U, all items, seasonally adjusted; FRED <code>CPIAUCSL</code>). Inflation is the 12-month percent change of the index.
             BLS did not publish October 2025 CPI because of the federal government shutdown; that month is filled by linear interpolation so every year-over-year rate compares the same calendar month a year apart.</p></div>
-          <div class="card"><h3>Models</h3><p>The published forecast comes from an ${esc(modelLabel)} model fit to the full year-over-year inflation series, projecting 12 months ahead with 95% confidence intervals.
-            Its order was selected by comparing nine candidate ARIMA specifications on out-of-sample error rather than in-sample fit.
-            It is benchmarked against a naive "no change" forecast, an ARIMAX model that adds last month's energy and core inflation, and a gradient-boosted tree model (scikit-learn) using lags of headline, core, energy and monthly CPI.</p></div>
+          <div class="card"><h3>CPI categories and weights</h3><p>About 160 categories of the CPI-U, U.S. city average, not seasonally adjusted, downloaded from the BLS time-series files (<code>download.bls.gov/pub/time.series/cu</code>).
+            Weights are BLS <a href="https://www.bls.gov/cpi/tables/relative-importance/" target="_blank" rel="noopener">relative importance</a> as of December 2025, the share of spending each category represents.
+            A category's contribution to inflation is approximated as its weight times its 12-month change; because relative importance drifts with prices, contributions do not add up exactly to the headline rate.</p></div>
+          <div class="card"><h3>PCE</h3><p>The PCE chain-type price index and 80+ categories from BEA's monthly NIPA tables 2.4.4U (prices) and 2.4.5U (spending).
+            PCE weights are each category's share of nominal spending in the latest month. PCE is broader than CPI (it includes spending on households' behalf, such as employer-paid health insurance)
+            and uses a chain-type formula, so it typically runs a few tenths below CPI. The Fed's 2% target is defined in terms of PCE.</p></div>
+          <div class="card"><h3>Interest rates</h3><p>Monthly averages of the effective federal funds rate and constant-maturity Treasury yields (3-month bill, 2, 5, 10 and 30 years) from the Federal Reserve via FRED.
+            The 30-year bond was not issued from February 2002 to January 2006, so its model uses only data after the gap.</p></div>
+          <div class="card"><h3>Models</h3><p>CPI: ${esc(modelLabel)} fit to year-over-year inflation, chosen from nine candidate orders by out-of-sample error and benchmarked against naive, ARIMAX and gradient-boosted trees.
+            PCE: ARIMA on year-over-year headline and core PCE inflation, order chosen by AIC.
+            Rates: ARIMA(p, 1, q) on the level of each rate since 1990, p and q chosen by AIC. All forecasts run 12 months ahead with 95% intervals.</p></div>
           <div class="card"><h3>Evaluation</h3><ul>
-            <li>Rolling-origin backtest over the last 24 months, expanding training window, one-step-ahead forecasts.</li>
-            <li>MAE and RMSE in percentage points, against a naive "no change" benchmark.</li>
-            <li>Per-month errors are published so accuracy can be checked for stability, not just on average.</li>
-            <li>A second backtest scores 1- to 12-month-ahead forecasts and checks whether the 95% intervals really cover 95% of outcomes.</li>
-            <li>Model differences are tested with the Diebold-Mariano test (squared-error loss, Harvey-Leybourne-Newbold small-sample correction).</li>
-            <li>Every live forecast is archived and scored when the actual CPI print arrives.</li></ul></div>
-          <div class="card"><h3>Pipeline &amp; limitations</h3>
-            <p>A GitHub Actions job checks FRED daily and re-runs the models when a new CPI release lands.</p>
-            <div class="pipeline"><span class="step">FRED</span><span class="arrow">→</span><span class="step">Python · pandas · statsmodels · scikit-learn</span><span class="arrow">→</span><span class="step">CSV</span><span class="arrow">→</span><span class="step">This site</span></div>
-            <p style="margin-top:10px">Univariate ARIMA uses only past inflation. It does not see energy prices, wages or policy, and tends to lag turning points.</p></div>
+            <li>Rolling-origin backtests: the model is re-fit only on data available at each forecast origin.</li>
+            <li>Mean absolute error at 1 to 12 months ahead against a "no change" benchmark, plus 95%-interval coverage.</li>
+            <li>CPI models are compared with the Diebold-Mariano test (Harvey-Leybourne-Newbold correction).</li>
+            <li>Every live CPI forecast is archived and scored when the actual print arrives.</li></ul></div>
+          <div class="card"><h3>Pipeline</h3>
+            <p>A GitHub Actions job runs daily, downloads new data from FRED, BLS and BEA, re-runs the models when new data lands and redeploys this static site.</p>
+            <div class="pipeline"><span class="step">FRED · BLS · BEA</span><span class="arrow">→</span><span class="step">Python · pandas · statsmodels · scikit-learn</span><span class="arrow">→</span><span class="step">CSV</span><span class="arrow">→</span><span class="step">This site</span></div></div>
+          <div class="card"><h3>Limitations</h3><p>Univariate ARIMA models use only each series' own past. They do not see energy prices, wages, Fed communication or the economic outlook, and tend to lag turning points.
+            Interest rates are close to a random walk, so a "no change" forecast is very hard to beat; the value of the rate model lies mainly in its uncertainty bands.</p></div>
         </div>
         <h2>Data sources</h2>
-        <div class="card"><table>
-          <thead><tr><th>Series</th><th>FRED ID</th><th>Source</th></tr></thead>
+        <div class="card" style="overflow-x:auto"><table>
+          <thead><tr><th>Series</th><th>ID</th><th>Source</th></tr></thead>
           <tbody>
-            ${[['CPI, all items','CPIAUCSL','BLS'],['CPI less food & energy (core)','CPILFESL','BLS'],['CPI food','CPIUFDSL','BLS'],['CPI energy','CPIENGSL','BLS'],['CPI shelter','CUSR0000SAH1','BLS'],
-               ['Average prices: eggs, gasoline, milk, coffee, bread','APU0000708111, APU000074714, APU0000709112, APU0000717311, APU0000702111','BLS'],
+            ${[['CPI, all items','CPIAUCSL','BLS'],['CPI less food & energy (core)','CPILFESL','BLS'],['CPI food, energy, shelter','CPIUFDSL, CPIENGSL, CUSR0000SAH1','BLS'],
                ['Average hourly earnings, production & nonsupervisory','AHETPI','BLS'],['Effective federal funds rate','FEDFUNDS','Federal Reserve'],
-               ['Expected inflation, next 12 months','MICH','University of Michigan'],['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis']]
+               ['Treasury yields: 3-month, 2, 5, 10, 30 years','TB3MS, GS2, GS5, GS10, GS30','Federal Reserve'],['10-year TIPS yield','DFII10','Federal Reserve'],['30-year mortgage rate','MORTGAGE30US','Freddie Mac'],
+               ['Expected inflation, next 12 months','MICH','University of Michigan'],['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis'],
+               ['PCE price index, headline and core','PCEPI, PCEPILFE','BEA']]
               .map(r=>`<tr><td>${r[0]}</td><td>${r[1].split(', ').map(id=>`<a href="https://fred.stlouisfed.org/series/${id}" target="_blank" rel="noopener"><code>${id}</code></a>`).join(' ')}</td><td class="muted">${r[2]}</td></tr>`).join('')}
+            <tr><td>CPI categories (≈160) and average prices (24 items)</td><td><a href="https://download.bls.gov/pub/time.series/cu/" target="_blank" rel="noopener"><code>cu</code></a> <a href="https://download.bls.gov/pub/time.series/ap/" target="_blank" rel="noopener"><code>ap</code></a></td><td class="muted">BLS</td></tr>
+            <tr><td>CPI relative importance (weights), December 2025</td><td><a href="https://www.bls.gov/cpi/tables/relative-importance/2025.htm" target="_blank" rel="noopener"><code>data/cpi_weights.csv</code></a></td><td class="muted">BLS</td></tr>
+            <tr><td>PCE prices and spending by category</td><td><a href="https://apps.bea.gov/iTable/?reqid=19&amp;step=2&amp;isuri=1&amp;categories=survey" target="_blank" rel="noopener"><code>NIPA 2.4.4U, 2.4.5U</code></a></td><td class="muted">BEA</td></tr>
           </tbody></table></div>
         ${pageFoot()}
       </section>
     `;
-
-    // =============== page renderers (charts drawn when a page becomes visible) ===============
-    // chart height grows with width on large screens so wide charts don't look flat
-    const H = (desk, mob) => W => W < 520 ? mob : Math.round(Math.min(desk*1.35, Math.max(desk, W*0.28)));
-    const padN = n => Array(n).fill(null);
-
     // ---- overview chart ----
     let ovMonths = 36;
     function forecastCfg(hist){
@@ -975,8 +1505,6 @@
     mount(ovEl, el=>lineChart(forecastCfg(ovMonths ? yoyData.slice(-ovMonths) : yoyData))(el));
     bindSeg('ovRange', v=>{ ovMonths=+v; ovEl.__draw(ovEl); });
 
-    // ---- forecast page ----
-    mount(document.getElementById('fcChart'), el=>lineChart(forecastCfg(yoyData.slice(-24)))(el));
 
     // ---- track record ----
     const callouts = document.getElementById('callouts');
@@ -1093,6 +1621,29 @@
           text:`BLS never published October 2025 CPI because of the government shutdown. Computing year-over-year inflation by counting back twelve rows, a common shortcut, would silently compare against the wrong month for the following year, overstating inflation by as much as ${maxDiff.toFixed(2)} points (${fmtMonth(diffAt)}). The pipeline rebuilds a complete monthly calendar and interpolates the gap instead.`,
           link:'#methodology'});
       }
+      // 7. CPI vs PCE
+      if(pceSeries.length){
+        const gaps = pceSeries.filter(p=>p.date>=parseDate('2000-01-01')).map(p=>{ const c=cpiAt.get(p.date.getTime()); return c && c.yoy!=null ? c.yoy-p.v : null; }).filter(v=>v!=null);
+        if(gaps.length>24){
+          const avg = gaps.reduce((a,b)=>a+b,0)/gaps.length, nowGap = gaps[gaps.length-1];
+          const shelterCPI = (cpiNodes.find(n=>n.code==='SAH1')||{}).weight, housePCE = (pceNodes.find(n=>n.code==='DHSG')||{}).weight;
+          const healthCPI = (cpiNodes.find(n=>n.code==='SAM')||{}).weight, healthPCE = (pceNodes.find(n=>n.code==='DHLC')||{}).weight;
+          items.push({title: avg>0 ? 'CPI runs hotter than PCE, mostly because of what each one weighs' : 'PCE and CPI tell a similar story',
+            stat:`CPI − PCE gap: ${pp(avg,2)} on average since 2000, ${pp(nowGap,2)} now`,
+            text:`Since 2000, CPI inflation has averaged ${Math.abs(avg).toFixed(2)} points ${avg>0?'above':'below'} PCE inflation. ${shelterCPI&&housePCE?`Housing is ${shelterCPI.toFixed(0)}% of the CPI basket but only ${housePCE.toFixed(0)}% of PCE, `:''}${healthCPI&&healthPCE?`while health care is ${healthCPI.toFixed(0)}% of CPI against ${healthPCE.toFixed(0)}% of PCE, because PCE also counts care paid for by employers and government. `:''}PCE's chain-weighting also lets households' switching between products pull the index down. The Fed targets PCE, so a 2% PCE goal is roughly 2.3–2.5% in CPI terms.`,
+            link:'#pce'});
+        }
+      }
+      // 8. interest rates
+      const r10 = rate('gs10');
+      if(r10 && r10.hz.length){
+        const h1 = r10.hz[0], h12 = r10.hz[r10.hz.length-1], g = r => (1-r.m/r.nv)*100;
+        items.push({title: Math.max(g(h1), g(h12)) < 5 ? 'Treasury yields are close to a random walk' : 'The rate model adds a little over "no change"',
+          stat:`10-year yield: ${h12.h}-month error ${h12.m.toFixed(2)} vs ${h12.nv.toFixed(2)} points for "no change"`,
+          text:`Over ${h1.n} monthly forecast origins, the 10-year yield model missed by ${h1.m.toFixed(2)} points one month ahead (no change: ${h1.nv.toFixed(2)}) and ${h12.m.toFixed(2)} points twelve months ahead (no change: ${h12.nv.toFixed(2)}).
+            Bond prices already reflect public information, so today's yield is the best simple forecast of tomorrow's. The value of the model lies in its uncertainty band: ${h12.cov.toFixed(0)}% of outcomes fell inside its 95% interval at twelve months.`,
+          link:'#rates'});
+      }
       body.innerHTML = items.length ? items.map((it,i)=>`<div class="card finding"><span class="n">${i+1}</span><div><h3>${it.title}</h3><p>${it.text}</p>
           <span class="stat">${it.stat}</span>${it.link?`<a class="link-more more" href="${it.link}">See the data →</a>`:''}</div></div>`).join('') : pending('Findings');
     })();
@@ -1183,48 +1734,64 @@
       });
     })();
 
-    // ---- everyday prices ----
+    // ---- shelf prices (BLS average prices) ----
     (function(){
       const body = document.getElementById('pricesBody');
-      const ITEMS = [
-        {key:'eggs', name:'Eggs', unit:'Grade A large, per dozen'},
-        {key:'gasoline', name:'Gasoline', unit:'Regular unleaded, per gallon'},
-        {key:'milk', name:'Milk', unit:'Whole, per gallon'},
-        {key:'coffee', name:'Coffee', unit:'Ground roast, per pound'},
-        {key:'bread', name:'Bread', unit:'White pan, per pound'},
-      ].map(it=>{ const s=seriesFrom(it.key); if(!s || s.length<13) return null;
+      const AP = wideTable(apRaw);
+      const DEFS = [
+        ['eggs','Eggs','Grade A large, per dozen','Food'], ['milk','Milk','Whole, per gallon','Food'], ['bread','Bread','White pan, per pound','Food'],
+        ['coffee','Coffee','Ground roast, per pound','Food'], ['ground_beef','Ground beef','100% beef, per pound','Food'], ['steak','Sirloin steak','USDA Choice, boneless, per pound','Food'],
+        ['bacon','Bacon','Sliced, per pound','Food'], ['chicken','Chicken','Whole, per pound','Food'], ['cheese','Cheddar cheese','Natural, per pound','Food'],
+        ['ice_cream','Ice cream','Per half gallon','Food'], ['bananas','Bananas','Per pound','Food'], ['oranges','Navel oranges','Per pound','Food'],
+        ['potatoes','Potatoes','White, per pound','Food'], ['tomatoes','Tomatoes','Field grown, per pound','Food'], ['sugar','Sugar','White, per pound','Food'],
+        ['flour','Flour','White, all purpose, per pound','Food'], ['rice','Rice','White, long grain, per pound','Food'], ['potato_chips','Potato chips','Per 16 oz','Food'],
+        ['orange_juice','Orange juice','Frozen concentrate, 12 oz','Food'], ['beer','Beer','Malt beverages, per 16 oz','Food'],
+        ['gasoline','Gasoline','Regular unleaded, per gallon','Energy'], ['diesel','Diesel','Per gallon','Energy'],
+        ['electricity','Electricity','Per kilowatt-hour','Energy'], ['natural_gas','Natural gas','Utility (piped), per therm','Energy'],
+      ];
+      const src = k => (AP && AP.has(k)) ? {T:AP, v:AP.cols[k]} : (X && X.has(k)) ? {T:X, v:X.cols[k]} : null;
+      const ITEMS = DEFS.map(([key,name,unit,group])=>{
+        const s0 = src(key); if(!s0) return null;
+        const s = []; s0.v.forEach((v,i)=>{ if(v!=null) s.push({date:s0.T.dates[i], v}); });
+        if(s.length<13) return null;
         const l=s[s.length-1], y=s.find(p=>p.date.getTime()===addMonths(l.date,-12).getTime());
-        return {...it, s, latest:l, chg: y ? (l.v/y.v-1)*100 : null}; }).filter(Boolean);
+        return {key, name, unit, group, s, latest:l, chg: y ? (l.v/y.v-1)*100 : null};
+      }).filter(Boolean);
       if(!ITEMS.length){ body.innerHTML = pending('Price data'); return; }
-      body.innerHTML = `<div class="grid-4" id="priceCards" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">${ITEMS.map((it,i)=>`
-        <button class="price-card" data-k="${it.key}" aria-pressed="${i===0}">
+      const dp = v => v<1 ? 3 : 2;
+      const groups = [...new Set(ITEMS.map(i=>i.group))];
+      body.innerHTML = groups.map(g=>`<p class="card-title" style="margin:14px 0 8px">${g}</p><div class="grid-4 price-grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${ITEMS.filter(it=>it.group===g).map(it=>`
+        <button class="price-card" data-k="${it.key}" aria-pressed="${it===ITEMS[0]}">
           <div class="p-name">${it.name}</div><div class="p-unit">${it.unit}</div>
-          <div class="p-val num">${usd(it.latest.v)}</div>
+          <div class="p-val num">${usd(it.latest.v, dp(it.latest.v))}</div>
           <div class="p-chg ${it.chg>0?'up-bad':'down-good'}">${spct(it.chg)} <span style="color:var(--muted);font-weight:400">vs a year ago</span></div>
           <div class="chart" id="spark-${it.key}"></div>
-        </button>`).join('')}</div>
-        <div class="card" style="margin-top:12px">
+        </button>`).join('')}</div>`).join('') + `
+        <div class="card" style="margin-top:12px" id="priceDetail">
           <div class="card-head"><div><p class="card-title" id="priceTitle"></p><p class="card-sub" id="priceSub"></p></div>
-            ${segControl('priceRange', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'All'}], '120')}</div>
+            ${segControl('priceRange', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '0')}</div>
           <div class="chart" id="priceChart"></div>
         </div>`;
       ITEMS.forEach(it=>{
         const s = it.s.filter(p=>p.date>=addMonths(it.latest.date,-60));
-        mount(document.getElementById('spark-'+it.key), lineChart({compact:true, height:44, dates:s.map(p=>p.date), series:[{label:it.name, cls:'actual', values:s.map(p=>p.v), endMarker:true}], tipFmt:v=>usd(v), aria:it.name+' price, last 5 years'}));
+        mount(document.getElementById('spark-'+it.key), lineChart({compact:true, height:44, dates:s.map(p=>p.date), series:[{label:it.name, cls:'actual', values:s.map(p=>p.v), endMarker:true}], tipFmt:v=>usd(v, dp(v)), aria:it.name+' price, last 5 years'}));
       });
-      let sel = ITEMS[0], months = 120;
+      let sel = ITEMS[0], months = 0;
       const el = document.getElementById('priceChart');
       function drawSel(){
         const s = months ? sel.s.filter(p=>p.date>=addMonths(sel.latest.date,-months)) : sel.s;
-        const hi = sel.s.reduce((a,b)=>b.v>a.v?b:a);
+        const hi = sel.s.reduce((a,b)=>b.v>a.v?b:a), f = sel.s[0];
         document.getElementById('priceTitle').textContent = `${sel.name}, ${sel.unit.toLowerCase()}`;
-        document.getElementById('priceSub').textContent = `${usd(sel.latest.v)} in ${fmtMonth(sel.latest.date)}. Record high ${usd(hi.v)} in ${fmtMonth(hi.date)}.`;
-        lineChart({aria:sel.name+' price', height:H(300,240), dates:s.map(p=>p.date), series:[{label:sel.name, cls:'actual', values:s.map(p=>p.v), endMarker:true}], area:true, yFmt:(v,d)=>'$'+v.toFixed(Math.max(d, v<10?2:0)), tipFmt:v=>usd(v)})(el);
+        document.getElementById('priceSub').textContent = `${usd(sel.latest.v, dp(sel.latest.v))} in ${fmtMonth(sel.latest.date)}, ${spct((sel.latest.v/f.v-1)*100,0)} since ${fmtMonth(f.date)}. Record high ${usd(hi.v, dp(hi.v))} in ${fmtMonth(hi.date)}.`;
+        lineChart({aria:sel.name+' price', height:H(300,240), dates:s.map(p=>p.date), series:[{label:sel.name, cls:'actual', values:s.map(p=>p.v), endMarker:true}], area:true, yFmt:(v,d)=>'$'+v.toFixed(Math.max(d, v<10?2:0)), tipFmt:v=>usd(v, dp(v))})(el);
       }
       el.__draw = drawSel; charts.push(el);
-      document.querySelectorAll('#priceCards .price-card').forEach(b=>b.addEventListener('click', ()=>{
-        document.querySelectorAll('#priceCards .price-card').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+      const cards = document.querySelectorAll('#pricesBody .price-card');
+      cards.forEach(b=>b.addEventListener('click', ()=>{
+        cards.forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
         sel = ITEMS.find(i=>i.key===b.dataset.k); drawSel();
+        const d = document.getElementById('priceDetail'), r = d.getBoundingClientRect();
+        if(r.top > window.innerHeight || r.bottom < 0) d.scrollIntoView({behavior:'smooth', block:'nearest'});
       }));
       bindSeg('priceRange', v=>{ months=+v; drawSel(); });
     })();
@@ -1394,15 +1961,304 @@
       bindSeg('fedRange', v=>{ months=+v; el.__draw(el); });
     })();
 
+    // generic "history + forecast with 95% band" chart config
+    function histFcCfg(o){
+      const hist=o.hist, fc=o.fc||[], nH=hist.length, nF=fc.length, lastV=hist[nH-1].v, d=o.dec==null?1:o.dec;
+      return {
+        aria:o.aria, height:o.height||H(340,260),
+        dates: hist.map(p=>p.date).concat(fc.map(f=>f.date)),
+        series:(o.extra||[]).map(e=>({...e, values:e.values.concat(padN(nF))})).concat([
+          {label:o.label||'Actual', cls:'actual', values: hist.map(p=>p.v).concat(padN(nF)), endMarker:true, endLabel: nF ? 'above' : undefined},
+        ]).concat(nF ? [{label:'Forecast', cls:'model', dashed:true, values: padN(nH-1).concat([lastV], fc.map(f=>f.mean)), skipTipAt:i=>i===nH-1, endMarker:true, endLabel:'right'}] : []),
+        endFmt:v=>v.toFixed(d)+'%',
+        band: nF ? {lower: padN(nH-1).concat([lastV], fc.map(f=>f.lo)), upper: padN(nH-1).concat([lastV], fc.map(f=>f.hi)), label:'95% interval', skipTipAt:i=>i===nH-1} : null,
+        refs:o.refs||[], zeroLine:o.zeroLine,
+        yFmt:(v,dd)=>v.toFixed(dd)+'%', tipFmt:v=>v.toFixed(2)+'%',
+      };
+    }
+    const sparkCfg = (pts, aria, fmt) => lineChart({compact:true, height:40, dates:pts.map(p=>p.date), series:[{label:aria, cls:'actual', values:pts.map(p=>p.v), endMarker:true}], tipFmt:fmt||(v=>v.toFixed(2)+'%'), aria});
+
+    // ---- overview / dashboard ----
+    (function(){
+      const last36 = arr => arr.slice(-36);
+      mount(document.getElementById('spk-cpi'), sparkCfg(last36(yoyData.map(d=>({date:d.date, v:d.yoy}))), 'CPI inflation'));
+      if(coreLatest) mount(document.getElementById('spk-core'), sparkCfg(last36(coreLatest.series), 'Core CPI'));
+      if(pceSeries.length){
+        mount(document.getElementById('spk-pce'), sparkCfg(last36(pceSeries), 'PCE inflation'));
+        mount(document.getElementById('spk-pcecore'), sparkCfg(last36(pceSeries.filter(p=>p.core!=null).map(p=>({date:p.date, v:p.core}))), 'Core PCE'));
+      }
+      if(rate('fed_funds')) mount(document.getElementById('spk-ff'), sparkCfg(last36(rate('fed_funds').s), 'Fed funds rate'));
+      if(rate('gs10')) mount(document.getElementById('spk-10y'), sparkCfg(last36(rate('gs10').s), '10-year yield'));
+
+      mount(document.getElementById('ovCpi'), el=>lineChart({...forecastCfg(yoyData.slice(-36)), height:H(260,220)})(el));
+      if(pceSeries.length) mount(document.getElementById('ovPce'), el=>lineChart(histFcCfg({aria:'PCE inflation and forecast', hist:pceSeries.slice(-36), fc:pceF.pce, refs:[{value:FED_TARGET, label:'Fed target 2%'}], height:H(260,220)}))(el));
+      const r10 = rate('gs10');
+      if(r10) mount(document.getElementById('ovRates'), el=>lineChart(histFcCfg({aria:'10-year Treasury yield and forecast', hist:r10.s.slice(-60), fc:r10.fc, dec:2, height:H(260,220)}))(el));
+      drawCurve(document.getElementById('ovCurve'), document.getElementById('ovCurveLegend'), 240);
+      const tm = document.getElementById('ovTm');
+      if(tm){ tm.__draw = el=>miniTreemap(el, cpiMajor, code=>{ location.hash='#prices'; setTimeout(()=>cpiEx && cpiEx.select(code), 30); }); charts.push(tm); }
+    })();
+
+    // yield curve: latest month, a year ago, and the 12-month-ahead forecast
+    function drawCurve(el, legendEl, height){
+      const MAT = [['fed_funds','Fed funds'],['tbill_3m','3-mo'],['gs2','2-yr'],['gs5','5-yr'],['gs10','10-yr'],['gs30','30-yr']];
+      if(!X || !X.has('gs10')){ el.innerHTML = pending('Treasury yield data'); return; }
+      const li = lastIdx(X.cols.gs10), d = X.dates[li];
+      const at = (k,i) => X.has(k) && i>=0 ? X.cols[k][i] : null;
+      const series = [
+        {label:fmtMonth(d), cls:'actual', values:MAT.map(([k])=>at(k,li))},
+        {label:fmtMonth(X.dates[li-12]), cls:'ref', values:MAT.map(([k])=>at(k,li-12))},
+      ];
+      const fcVals = MAT.map(([k])=>{ const r=rate(k); const f=r && fc12(r); return f ? f.mean : null; });
+      if(fcVals.filter(v=>v!=null).length>=2) series.push({label:'Forecast, '+fmtMonth(fc12(rate('gs10')).date), cls:'model', dashed:true, values:fcVals});
+      legendEl.innerHTML = series.map(s=>`<span><i class="${s.dashed?'key-dash':'key-line'}" style="${s.dashed?'border-color':'background'}:var(${COLOR_VAR[s.cls]})"></i>${esc(s.label)}</span>`).join('');
+      mount(el, curveChart({aria:'Treasury yield curve', labels:MAT.map(m=>m[1]), series, height}));
+    }
+
+    // ---- drivers: contributions by major group ----
+    (function(){
+      const body = document.getElementById('contribBody');
+      if(!hasCats){ body.innerHTML = ''; return; }
+      const COLORS = ['--c-actual','--c-model','--c-3','--c-5','--c-6','--c-7','--c-4','--c-8'];
+      const groups = cpiMajor.slice().sort((a,b)=>b.weight-a.weight).map((g,k)=>({...g, color:COLORS[k%8]}));
+      const n = 60, li = lastIdx(COMP.cols.SA0), idx = []; for(let i=Math.max(0,li-n+1); i<=li; i++) idx.push(i);
+      const head = yoyOf(COMP.cols.SA0);
+      const withData = groups.filter(g=>g.yoy!=null);
+      const sorted = withData.slice().sort((a,b)=>b.weight*b.yoy-a.weight*a.yoy);
+      body.innerHTML = `
+        <div class="grid-2">
+          <div class="card"><p class="card-title">Inflation by spending group, ${fmtMonth(COMP.dates[li])}</p>
+            <p class="card-sub">12-month change, not seasonally adjusted. The number in brackets is the group's weight in the CPI basket.</p>
+            ${hbars([{label:'All items', value:head[li], color:'ink', em:true}].concat(groups.filter(g=>g.yoy!=null).map(g=>({label:`${g.name} (${g.weight.toFixed(0)}%)`, value:g.yoy}))), {fmt:v=>spct(v), nameW:'minmax(120px,230px)'})}
+          </div>
+          <div class="card"><p class="card-title">Who contributes the most?</p>
+            <p class="card-sub">Percentage points of the ${pct(head[li])} headline rate, weight × 12-month change.</p>
+            ${hbars(sorted.map(g=>({label:g.name, value:g.weight*g.yoy/100})), {fmt:v=>pp(v,2), nameW:'minmax(120px,230px)'})}
+            <p class="note">${esc(sorted[0].name)} alone adds ${pp(sorted[0].weight*sorted[0].yoy/100,2)}, ${(sorted[0].weight*sorted[0].yoy/100/head[li]*100).toFixed(0)}% of headline inflation.</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <p class="card-title">Contributions to CPI inflation, last 5 years</p>
+          <p class="card-sub">Each bar splits the 12-month inflation rate into the eight spending groups (approximate, using December 2025 weights). The black line is all-items inflation.</p>
+          <div class="legend">${groups.map(g=>`<span><i class="key-area" style="background:var(${g.color})"></i>${esc(g.name)}</span>`).join('')}<span><i class="key-line" style="background:var(--ink)"></i>All items</span></div>
+          <div class="chart" id="contribChart"></div>
+        </div>
+        <h2>Core, food, energy and shelter</h2>`;
+      mount(document.getElementById('contribChart'), stackedColumns({aria:'Contributions to CPI inflation by group', height:H(320,260), dates:idx.map(i=>COMP.dates[i]),
+        stacks: groups.map(g=>({label:g.name, color:g.color, values: idx.map(i=>g.yoyS && g.yoyS[i]!=null ? g.weight*g.yoyS[i]/100 : null)})),
+        line:{label:'All items', values: idx.map(i=>head[i])}, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+(Math.abs(v)<20?' pp':'')}));
+    })();
+
+    // ---- CPI category explorer ----
+    let cpiEx = null;
+    if(hasCats){
+      cpiEx = explorer({el:document.getElementById('cpiExplorer'), id:'cx', nodes:cpiNodes, table:COMP, rootCode:'SA0', rootLabel:'All items',
+        weightLabel:'BLS relative importance, December 2025', target:FED_TARGET, movers:document.getElementById('cpiMovers')});
+    }
+
+    // ---- PCE page ----
+    (function(){
+      if(!pceSeries.length) return;
+      const body = document.getElementById('pceBody');
+      const fcH = pceF.pce, fcC = pceF.core_pce, l = pceLast;
+      const cAt = cpiAt.get(l.date.getTime());
+      const gapP = l.v - FED_TARGET;
+      const prevP = pceAt.get(addMonths(l.date,-1).getTime());
+      const modelP = fcH.length ? fcH[0].model : 'ARIMA';
+      body.innerHTML = `
+        <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(l.date)}</span><span>PCE chain-type price index, seasonally adjusted (BEA)</span></div>
+        <h1>PCE inflation, the Fed's target measure, is ${pct(l.v)}${Math.abs(gapP)<0.05?', right at 2%':`, ${Math.abs(gapP).toFixed(1)} points ${gapP>0?'above':'below'} the 2% goal`}.</h1>
+        <p class="lede">The Federal Reserve defines its 2% inflation target with the personal consumption expenditures (PCE) price index. Core PCE, which excludes food and energy, is <b>${pct(l.core)}</b>.
+          ${fcH.length?`The model projects headline PCE inflation of <b>${pct(fcH[fcH.length-1].mean)}</b> by ${fmtMonthLong(fcH[fcH.length-1].date)}.`:''}</p>
+        <div class="grid-4">
+          <div class="kpi hero"><div class="kpi-label">PCE inflation (YoY)</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${prevP?`<span class="${l.v-prevP.v>0?'up-bad':'down-good'}">${pp(l.v-prevP.v)}</span> vs ${fmtMonth(prevP.date)}`:''}</div></div>
+          <div class="kpi"><div class="kpi-label">Core PCE (YoY)</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
+          <div class="kpi"><div class="kpi-label">Forecast, ${fcH.length?fmtMonth(fcH[fcH.length-1].date):'—'}</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?`95% interval ${pct(fcH[fcH.length-1].lo)} – ${pct(fcH[fcH.length-1].hi)}`:'Pending'}</div></div>
+          <div class="kpi"><div class="kpi-label">CPI minus PCE</div><div class="kpi-value num">${cAt?pp(cAt.yoy-l.v):'—'}</div><div class="kpi-sub">CPI ${cAt?pct(cAt.yoy):'—'} in ${fmtMonth(l.date)}</div></div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-head"><div><p class="card-title">PCE inflation and 12-month forecast</p><p class="card-sub">${esc(modelP.replace(/\s/g,''))}, order chosen by AIC. Shaded area is the 95% interval.</p></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('pceWhich', [{v:'pce',label:'Headline'},{v:'core_pce',label:'Core'}], 'pce')}${segControl('pceRange', [{v:'36',label:'3Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '36')}</div></div>
+          ${forecastLegend}<div class="chart" id="pceChart"></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="card"><p class="card-title">Forecast by month</p><p class="card-sub">Point forecast and 95% interval, year-over-year.</p>
+            <div style="overflow-x:auto"><table><thead><tr><th>Month</th><th class="r">PCE</th><th class="r hide-sm">95% interval</th><th class="r">Core PCE</th></tr></thead><tbody>
+            ${fcH.map((r,i)=>`<tr><td>${fmtMonth(r.date)}</td><td class="r">${pct(r.mean)}</td><td class="r muted hide-sm">${pct(r.lo)} – ${pct(r.hi)}</td><td class="r">${fcC[i]?pct(fcC[i].mean):'—'}</td></tr>`).join('')}</tbody></table></div></div>
+          <div class="card"><p class="card-title">Track record: accuracy by horizon</p>
+            <p class="card-sub">Headline PCE, ${pceHz.filter(r=>r.series==='pce').length?pceHz.filter(r=>r.series==='pce')[0].n:48} forecast origins, each re-fit on data available at the time.</p>
+            ${pceHz.filter(r=>r.series==='pce').length ? horizonTable(pceHz.filter(r=>r.series==='pce'), {model:modelP.replace(/\s/g,''), naive:'No change'}) : pending('The PCE backtest')}</div>
+        </div>
+        <h2>CPI vs PCE since 1980</h2>
+        <p class="sec-sub">Both measure consumer prices, but they weigh things differently and PCE covers more spending.</p>
+        <div class="card">
+          <div class="card-head"><div class="legend" style="margin:0"><span><i class="key-line" style="background:var(--c-actual)"></i>CPI</span><span><i class="key-line" style="background:var(--c-3)"></i>PCE</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
+            ${segControl('cvpWhich', [{v:'head',label:'Headline'},{v:'core',label:'Core'}], 'head')}</div>
+          <div class="chart" id="cvpChart" style="margin-top:8px"></div>
+        </div>
+        <div class="card" style="margin-top:12px" id="wcmpCard"></div>`;
+
+      let which='pce', months=36;
+      const el = document.getElementById('pceChart');
+      mount(el, el=>{
+        const src = which==='pce' ? pceSeries : pceSeries.filter(p=>p.core!=null).map(p=>({date:p.date, v:p.core}));
+        const hist = months ? src.slice(-months) : src.filter(p=>p.date>=parseDate('1980-01-01'));
+        lineChart(histFcCfg({aria:'PCE inflation forecast', hist, fc:pceF[which], refs:[{value:FED_TARGET, label:'Fed target 2%'}], height:H(360,270)}))(el);
+      });
+      bindSeg('pceWhich', v=>{ which=v; el.__draw(el); });
+      bindSeg('pceRange', v=>{ months=+v; el.__draw(el); });
+
+      let cv='head';
+      const cvEl = document.getElementById('cvpChart');
+      mount(cvEl, el=>{
+        const pts = pceSeries.filter(p=>p.date>=parseDate('1980-01-01'));
+        const coreMap = new Map((compYoY('core')||[]).map(p=>[p.date.getTime(), p.v]));
+        const cpiV = pts.map(p=>{ if(cv==='head'){ const c=cpiAt.get(p.date.getTime()); return c?c.yoy:null; } return coreMap.has(p.date.getTime())?coreMap.get(p.date.getTime()):null; });
+        lineChart({aria:'CPI vs PCE inflation', height:H(320,250), dates:pts.map(p=>p.date),
+          series:[{label:cv==='head'?'CPI':'Core CPI', cls:'actual', values:cpiV}, {label:cv==='head'?'PCE':'Core PCE', cls:'c3', values:pts.map(p=>cv==='head'?p.v:p.core), endMarker:true}],
+          refs:[{value:FED_TARGET, label:''}], zeroLine:true, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})(el);
+      });
+      bindSeg('cvpWhich', v=>{ cv=v; cvEl.__draw(cvEl); });
+
+      // weight comparison
+      const card = document.getElementById('wcmpCard');
+      const cw = c => { const n=cpiNodes.find(x=>x.code===c); return n?n.weight:null; };
+      const pw = cs => { const v=cs.map(c=>{ const n=pceNodes.find(x=>x.code===c); return n?n.weight:null; }); return v.some(x=>x==null)?null:v.reduce((a,b)=>a+b,0); };
+      const PAIRS = [
+        ['Housing (rent and owners\' equivalent)', ['SAH1'], ['DHSG']], ['Health care', ['SAM'], ['DHLC','DPHM','DTAE']],
+        ['Food at home', ['SAF11'], ['DFOF','DNBV']], ['Restaurants and hotels', ['SEFV','SEHB'], ['DFSA']],
+        ['Vehicles and parts', ['SETA','SETC'], ['DMOT']], ['Motor fuel', ['SETB'], ['DMFL']], ['Electricity and gas', ['SEHF01','SEHF02'], ['DELG']],
+        ['Education', ['SAE1'], ['DTED']], ['Communication', ['SAE2'], ['DCOM']], ['Apparel', ['SAA'], ['DCLO']],
+        ['Financial services and insurance', ['SETE','SEME','SEHD','SEGD05'], ['DIFS']],
+      ].map(([label, c, p])=>{ const a=c.map(cw); return {label, cpi:a.some(x=>x==null)?null:a.reduce((s,x)=>s+x,0), pce:pw(p)}; }).filter(r=>r.cpi!=null && r.pce!=null);
+      if(!PAIRS.length){ card.innerHTML = `<p class="card-title">Why CPI and PCE differ</p>${pending('PCE weights')}`; return; }
+      const mx = Math.max(...PAIRS.map(r=>Math.max(r.cpi, r.pce)));
+      card.innerHTML = `<p class="card-title">Why CPI and PCE differ: the weights</p>
+        <p class="card-sub">Share of each index, % (CPI: BLS relative importance, December 2025; PCE: share of spending${pceWDate?', '+fmtMonth(pceWDate):''}). Categories are matched approximately.</p>
+        <div class="legend"><span><i class="key-area" style="background:var(--c-actual)"></i>CPI weight</span><span><i class="key-area" style="background:var(--c-3)"></i>PCE weight</span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Category</th><th style="min-width:180px"></th><th class="r">CPI</th><th class="r">PCE</th></tr></thead><tbody>
+        ${PAIRS.map(r=>`<tr><td>${esc(r.label)}</td><td><span class="bm-bar" style="background:var(--c-actual);width:${(r.cpi/mx*160).toFixed(0)}px;display:block;margin:0 0 3px"></span><span class="bm-bar" style="background:var(--c-3);width:${(r.pce/mx*160).toFixed(0)}px;display:block"></span></td>
+          <td class="r">${r.cpi.toFixed(1)}%</td><td class="r">${r.pce.toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>
+        <p class="note">CPI measures what households pay out of pocket; PCE also counts spending made on their behalf, such as employer-paid health insurance and Medicare, which is why health care weighs far more in PCE and housing far less.</p>`;
+    })();
+
+    // ---- PCE explorer ----
+    if(pceNodes.length && PCOMP){
+      explorer({el:document.getElementById('pceExplorer'), id:'px', nodes:pceNodes, table:PCOMP, rootCode:'DPCE', rootLabel:'Total PCE', rootLower:'total PCE',
+        weightLabel:`Share of consumer spending${pceWDate?', '+fmtMonth(pceWDate):''}`, target:FED_TARGET, movers:document.getElementById('pceMovers')});
+    }
+
+    // ---- interest rates page ----
+    (function(){
+      if(!RATES.length) return;
+      const body = document.getElementById('ratesBody');
+      const r2 = rate('gs2'), r10 = rate('gs10'), ff = rate('fed_funds');
+      const spread = (X.has('gs10') && X.has('gs2')) ? X.dates.map((d,i)=>({date:d, v: X.cols.gs10[i]!=null && X.cols.gs2[i]!=null ? X.cols.gs10[i]-X.cols.gs2[i] : null})).filter(p=>p.v!=null) : [];
+      const sNow = spread.length ? spread[spread.length-1] : null;
+      let inv=0; const s80 = spread.filter(p=>p.date>=parseDate('1980-01-01')); s80.forEach(p=>{ if(p.v<0) inv++; });
+      const lastInv = s80.slice().reverse().find(p=>p.v<0);
+      const ttl = r10 ? `The 10-year Treasury yields ${pct(r10.last.v,2)}${ff?`; the Fed funds rate is ${pct(ff.last.v,2)}`:''}.` : 'Interest rates';
+      body.innerHTML = `
+        <div class="eyebrow"><span class="pill"><span class="dot"></span>Monthly averages through ${fmtMonthLong((r10||RATES[0]).last.date)}</span><span>Federal Reserve H.15 via FRED</span></div>
+        <h1>${ttl}</h1>
+        <p class="lede">The Fed sets the short-term policy rate; markets set longer Treasury yields based on expected policy, inflation and risk. Each rate below is forecast 12 months ahead
+          with an ARIMA model and checked against the hard-to-beat "no change" forecast.</p>
+        <div class="grid-4">${RATES.map(r=>{ const f=fc12(r), ch = r.yearAgo ? r.last.v-r.yearAgo.v : null;
+          return `<div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(${COLOR_VAR[r.cls]})"></span>${r.label}</div><div class="kpi-value num">${pct(r.last.v,2)}</div>
+            <div class="kpi-sub">${ch!=null?`${pp(ch,2)} vs a year ago`:''}${f?`<br>Forecast ${fmtMonth(f.date)}: <b style="color:var(--ink)">${pct(f.mean,2)}</b> (${pct(f.lo,1)} – ${pct(f.hi,1)})`:''}</div></div>`; }).join('')}</div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-head"><div><p class="card-title" id="rtTitle"></p><p class="card-sub" id="rtSub"></p></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('rtWhich', RATES.map(r=>({v:r.key,label:r.short})), r10?'gs10':RATES[0].key)}${segControl('rtRange', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '60')}</div></div>
+          ${forecastLegend}<div class="chart" id="rtChart"></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="card"><p class="card-title">Forecast by month</p><p class="card-sub">Point forecasts, monthly average rate.</p>
+            <div style="overflow-x:auto"><table><thead><tr><th>Month</th>${RATES.map(r=>`<th class="r">${r.short}</th>`).join('')}</tr></thead><tbody>
+            ${(RATES.find(r=>r.fc.length)||{fc:[]}).fc.map((f,i)=>`<tr><td>${fmtMonth(f.date)}</td>${RATES.map(r=>`<td class="r">${r.fc[i]?pct(r.fc[i].mean,2):'—'}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="5">${pending('Rate forecasts')}</td></tr>`}</tbody></table></div></div>
+          <div class="card"><p class="card-title">Yield curve</p><p class="card-sub">Rates by maturity. Normally longer maturities pay more; an inverted curve has often preceded recessions.</p>
+            <div class="legend" id="rtCurveLegend"></div><div class="chart" id="rtCurve"></div></div>
+        </div>
+        <h2>Treasury yields since 1980</h2>
+        <p class="sec-sub">From the double-digit rates of the Volcker era to near zero after 2008 and 2020, and back up during the 2022–23 tightening.</p>
+        <div class="card">
+          <div class="card-head"><div class="legend" style="margin:0">${RATES.map(r=>`<span><i class="key-line" style="background:var(${COLOR_VAR[r.cls]})"></i>${r.label}</span>`).join('')}</div>
+            ${segControl('ryRange', [{v:'120',label:'10Y'},{v:'240',label:'20Y'},{v:'0',label:'Since 1980'}], '0')}</div>
+          <div class="chart" id="ryChart" style="margin-top:8px"></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="card"><p class="card-title">10-year minus 2-year spread</p>
+            <p class="card-sub">${sNow?`Now ${pp(sNow.v,2).replace(' pp',' points')}. `:''}Below zero the curve is inverted: ${inv} months since 1980${lastInv?`, most recently ${fmtMonth(lastInv.date)}`:''}.</p>
+            <div class="chart" id="spreadChart"></div></div>
+          <div class="card"><p class="card-title">Mortgage rates follow the 10-year</p>
+            <p class="card-sub">30-year fixed mortgage rate (Freddie Mac) and the 10-year Treasury yield, monthly averages.</p>
+            <div class="legend"><span><i class="key-line" style="background:var(--c-8)"></i>30-year mortgage</span><span><i class="key-line" style="background:var(--c-3)"></i>10-year Treasury</span></div>
+            <div class="chart" id="mortChart"></div></div>
+        </div>
+        <div class="card" style="margin-top:12px"><p class="card-title">Real and expected inflation in the 10-year yield</p>
+          <p class="card-sub">The nominal 10-year yield is roughly the real (inflation-protected, TIPS) yield plus the inflation investors expect (breakeven).</p>
+          <div class="legend"><span><i class="key-line" style="background:var(--c-3)"></i>10-year nominal</span><span><i class="key-line" style="background:var(--c-4)"></i>10-year real (TIPS)</span><span><i class="key-line" style="background:var(--c-model)"></i>10-year breakeven inflation</span></div>
+          <div class="chart" id="realChart"></div></div>
+        <h2>Track record</h2>
+        <p class="sec-sub">Mean absolute error in percentage points over the last 48 monthly forecast origins, each model re-fit on data available at the time. "No change" assumes the rate stays where it is.</p>
+        <div class="card" style="overflow-x:auto">${RATES.some(r=>r.hz.length)?`<table><thead><tr><th>Rate</th><th>Model</th>${[1,3,6,12].map(h=>`<th class="r">${h} mo: model</th><th class="r hide-sm">no change</th>`).join('')}<th class="r">In 95% band</th></tr></thead><tbody>
+          ${RATES.filter(r=>r.hz.length).map(r=>{ const cov = r.hz.reduce((s,x)=>s+x.cov*x.n,0)/r.hz.reduce((s,x)=>s+x.n,0);
+            return `<tr><td>${r.label}</td><td class="muted">${esc((r.fc[0]||{}).model||'ARIMA')}</td>${[1,3,6,12].map(h=>{ const x=r.hz.find(z=>z.h===h); return x?`<td class="r"><b class="${x.m<x.nv?'down-good':''}">${x.m.toFixed(2)}</b></td><td class="r muted hide-sm">${x.nv.toFixed(2)}</td>`:'<td></td><td class="hide-sm"></td>'; }).join('')}<td class="r">${cov.toFixed(0)}%</td></tr>`; }).join('')}
+          </tbody></table><p class="note">Green: the model beat "no change" at that horizon.</p>`:pending('The rates backtest')}</div>`;
+
+      let which = r10 ? 'gs10' : RATES[0].key, months = 60;
+      const el = document.getElementById('rtChart');
+      mount(el, el=>{
+        const r = rate(which), f = fc12(r);
+        document.getElementById('rtTitle').textContent = `${r.label}: history and 12-month forecast`;
+        document.getElementById('rtSub').textContent = `${pct(r.last.v,2)} in ${fmtMonth(r.last.date)}${f?`; ${(r.fc[0]||{}).model||'ARIMA'} expects ${pct(f.mean,2)} by ${fmtMonth(f.date)}, 95% interval ${pct(f.lo,2)} – ${pct(f.hi,2)}`:''}.`;
+        const hist = months ? r.s.slice(-months) : r.s.filter(p=>p.date>=parseDate('1980-01-01'));
+        lineChart(histFcCfg({aria:r.label+' forecast', hist, fc:r.fc, dec:2, height:H(360,270)}))(el);
+      });
+      bindSeg('rtWhich', v=>{ which=v; el.__draw(el); });
+      bindSeg('rtRange', v=>{ months=+v; el.__draw(el); });
+
+      drawCurve(document.getElementById('rtCurve'), document.getElementById('rtCurveLegend'), 260);
+
+      let ym = 0; const yEl = document.getElementById('ryChart');
+      mount(yEl, el=>{
+        const li = Math.max(...RATES.map(r=>r.last.i)), start = ym ? addMonths(X.dates[li], -ym) : parseDate('1980-01-01');
+        const ix = []; X.dates.forEach((d,i)=>{ if(d>=start && i<=li) ix.push(i); });
+        lineChart({aria:'Treasury yields since 1980', height:H(360,270), dates:ix.map(i=>X.dates[i]),
+          series:RATES.map(r=>({label:r.short, cls:r.cls, values:ix.map(i=>X.cols[r.key][i]), endMarker:true})),
+          zeroLine:true, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})(el);
+      });
+      bindSeg('ryRange', v=>{ ym=+v; yEl.__draw(yEl); });
+
+      if(spread.length) mount(document.getElementById('spreadChart'), lineChart({aria:'10-year minus 2-year spread', height:H(240,220), dates:s80.map(p=>p.date),
+        series:[{label:'10y − 2y', cls:'c4', values:s80.map(p=>p.v), endMarker:true}], zeroLine:true, area:true, yFmt:(v,d)=>v.toFixed(d), tipFmt:v=>(v>0?'+':'')+v.toFixed(2)+' pts'}));
+      else document.getElementById('spreadChart').innerHTML = pending('Spread data');
+
+      const mort = seriesFrom('mortgage_30y'), tips = seriesFrom('tips_10y');
+      const mEl = document.getElementById('mortChart');
+      if(mort && r10){ const st = addMonths(r10.last.date, -240), ix=[]; X.dates.forEach((d,i)=>{ if(d>=st && i<=r10.last.i) ix.push(i); });
+        mount(mEl, lineChart({aria:'Mortgage rate vs 10-year yield', height:H(240,220), dates:ix.map(i=>X.dates[i]),
+          series:[{label:'10-year Treasury', cls:'c3', values:ix.map(i=>X.cols.gs10[i])}, {label:'30-year mortgage', cls:'c8', values:ix.map(i=>X.cols.mortgage_30y[i]), endMarker:true}],
+          yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})); }
+      else mEl.innerHTML = pending('Mortgage rate data');
+
+      const rEl = document.getElementById('realChart');
+      if(tips && r10){ const st = tips[0].date, ix=[]; X.dates.forEach((d,i)=>{ if(d>=st && i<=r10.last.i) ix.push(i); });
+        mount(rEl, lineChart({aria:'Nominal and real 10-year yield', height:H(260,230), dates:ix.map(i=>X.dates[i]),
+          series:[{label:'10-year nominal', cls:'c3', values:ix.map(i=>X.cols.gs10[i]), endMarker:true}, {label:'10-year real (TIPS)', cls:'c4', values:ix.map(i=>X.cols.tips_10y[i]), endMarker:true},
+                  {label:'Breakeven inflation', cls:'model', values:ix.map(i=>X.has('exp_market_10y')?X.cols.exp_market_10y[i]:null)}],
+          zeroLine:true, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})); }
+      else rEl.innerHTML = pending('TIPS yield data');
+    })();
+
     // =============== router ===============
-    const PAGES = ['overview','findings','forecast','track-record','drivers','prices','history','money','expectations','fed','methodology'];
+    const PAGES = ['overview','findings','forecast','track-record','drivers','prices','history','pce','pce-categories','rates','fed','money','expectations','methodology'];
     function show(){
       let id = (location.hash||'').slice(1);
       if(!PAGES.includes(id)) id = 'overview';
       document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
       document.querySelectorAll('.nav-link').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+id ? 'page' : 'false'));
       const title = document.getElementById('page-'+id).dataset.title;
-      document.title = id==='overview' ? 'U.S. Inflation Forecast' : `${title} · U.S. Inflation Forecast`;
+      document.title = id==='overview' ? SITE : `${title} · ${SITE}`;
       window.scrollTo(0,0);
       const active = document.querySelector('.nav-link[aria-current="page"]');
       if(active && window.innerWidth<=900) active.scrollIntoView({inline:'center', block:'nearest'});
