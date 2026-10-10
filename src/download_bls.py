@@ -18,7 +18,8 @@ Outputs
 
 BLS rejects anonymous scripts, so requests carry a descriptive User-Agent.
 Set the BLS_USER_AGENT environment variable (for example to "name email") to
-override it. If a download fails, the previous file is kept unchanged.
+override it. If the flat files are blocked, the BLS JSON API is used instead
+(see api_update). If every download fails, the previous file is kept unchanged.
 """
 
 from __future__ import annotations
@@ -88,7 +89,7 @@ USER_AGENT = (
 )
 
 
-def fetch_text(name: str, retries: int = 3) -> str:
+def fetch_text(name: str, retries: int = 2) -> str:
     url = BASE + name.split(".")[0] + "/" + name
     headers = {"User-Agent": USER_AGENT, "Accept": "text/plain"}
     for attempt in range(retries):
@@ -96,11 +97,18 @@ def fetch_text(name: str, retries: int = 3) -> str:
             response = requests.get(url, headers=headers, timeout=120)
             response.raise_for_status()
             return response.text
+        except requests.HTTPError as error:
+            if error.response is not None and error.response.status_code == 403:
+                raise  # access denied (e.g. cloud IP ranges): retrying will not help
+            if attempt == retries - 1:
+                raise
+            print(f"  {name}: {error}, retrying")
+            time.sleep(5)
         except requests.RequestException as error:
             if attempt == retries - 1:
                 raise
             print(f"  {name}: {error}, retrying")
-            time.sleep(5 * (attempt + 1))
+            time.sleep(5)
     raise RuntimeError("unreachable")
 
 
@@ -137,17 +145,131 @@ def to_wide(long: pd.DataFrame, columns: dict[str, str]) -> pd.DataFrame:
     return wide
 
 
-def download_components() -> None:
+# ---------------------------------------------------------------------------
+# BLS Public Data API fallback
+#
+# download.bls.gov refuses some cloud networks (GitHub Actions runners get HTTP
+# 403). The JSON API at api.bls.gov is then used instead. Without a key it
+# allows 25 queries a day of 25 series and 10 years each; with a free key
+# (repository secret BLS_API_KEY, https://data.bls.gov/registrationEngine/)
+# 500 queries of 50 series and 20 years. Without a key a full history takes two
+# daily runs: the most recent decades are fetched first and older ones are
+# added on the next run, merging with what is already saved.
+# ---------------------------------------------------------------------------
+
+API_URL = "https://api.bls.gov/publicAPI/{}/timeseries/data/"  # v2 with a key, v1 without
+API_KEY = os.environ.get("BLS_API_KEY") or None
+FIRST_YEAR = int(START[:4])
+
+
+class ApiBudget:
+    def __init__(self) -> None:
+        self.left = 450 if API_KEY else 24
+        self.per_query = 50 if API_KEY else 25
+        self.years = 20 if API_KEY else 10
+
+
+def api_query(series_ids: list[str], start: int, end: int) -> pd.DataFrame:
+    payload: dict = {"seriesid": series_ids, "startyear": str(start), "endyear": str(end)}
+    if API_KEY:
+        payload["registrationkey"] = API_KEY
+    response = requests.post(
+        API_URL.format("v2" if API_KEY else "v1"),
+        json=payload,
+        headers={"User-Agent": USER_AGENT},
+        timeout=90,
+    )
+    response.raise_for_status()
+    body = response.json()
+    if body.get("status") != "REQUEST_SUCCEEDED":
+        raise RuntimeError(f"BLS API: {body.get('status')} {body.get('message')}")
+    rows = []
+    for series in body.get("Results", {}).get("series", []):
+        for obs in series.get("data", []):
+            period = obs.get("period", "")
+            if len(period) == 3 and period.startswith("M") and period != "M13":
+                rows.append((series["seriesID"], f"{obs['year']}-{period[1:]}-01", obs.get("value")))
+    long = pd.DataFrame(rows, columns=["series_id", "date", "value"])
+    long["date"] = pd.to_datetime(long["date"])
+    long["value"] = pd.to_numeric(long["value"], errors="coerce")
+    return long.dropna()
+
+
+def existing_long(path: Path, columns: dict[str, str]) -> pd.DataFrame:
+    """The saved wide file back in long form, keyed by BLS series id."""
+    if not path.exists():
+        return pd.DataFrame(columns=["series_id", "date", "value"])
+    wide = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+    reverse = {col: sid for sid, col in columns.items()}
+    long = wide.rename(columns=reverse).reset_index().melt(id_vars="date", var_name="series_id")
+    return long.dropna()[["series_id", "date", "value"]]
+
+
+def api_windows(have_from: int | None, this_year: int, span: int) -> list[tuple[int, int]]:
+    """Year windows to request, newest first.
+
+    With a saved file: refresh the last two years, then backfill anything older
+    than what is saved. Without one: the whole history in `span`-year windows.
+    """
+    windows = []
+    if have_from is not None:
+        windows.append((max(this_year - 1, FIRST_YEAR), this_year))
+        end = have_from - 1
+    else:
+        end = this_year
+    while end >= FIRST_YEAR:
+        start = max(FIRST_YEAR, end - span + 1)
+        windows.append((start, end))
+        end = start - 1
+    return windows
+
+
+def api_update(path: Path, columns: dict[str, str], budget: ApiBudget) -> pd.DataFrame:
+    """Merge API data into the saved file: refresh recent years, then backfill history."""
+    old = existing_long(path, columns)
+    this_year = pd.Timestamp.today().year
+    have_from = int(old["date"].min().year) if len(old) else None
+
+    ids = list(columns)
+    chunks = [ids[k : k + budget.per_query] for k in range(0, len(ids), budget.per_query)]
+    frames = [old]
+    for start, end in api_windows(have_from, this_year, budget.years):
+        if budget.left < len(chunks):
+            print("  BLS API daily budget used up; older history will be added on the next run.")
+            break
+        try:
+            window = [api_query(chunk, start, end) for chunk in chunks]
+        except Exception as error:
+            print(f"  API {start}-{end} failed: {error}")
+            break
+        budget.left -= len(chunks)
+        frames.extend(window)
+        print(f"  API {start}-{end}: ok ({budget.left} queries left today)")
+        time.sleep(0.5)
+    if len(frames) == 1:
+        raise RuntimeError("BLS API returned nothing new.")
+    merged = pd.concat(frames, ignore_index=True).drop_duplicates(["series_id", "date"], keep="last")
+    return to_wide(merged, columns)
+
+
+def flat_or_api(files: list[str], prefix: str, columns: dict[str, str], path: Path, budget: ApiBudget):
+    try:
+        frames = []
+        for name in files:
+            frames.append(parse_bls(fetch_text(name), prefix))
+            print(f"  {name}: ok")
+            time.sleep(1)
+        return to_wide(pd.concat(frames, ignore_index=True), columns)
+    except Exception as error:
+        print(f"  flat files unavailable ({error}); using the BLS API")
+        return api_update(path, columns, budget)
+
+
+def download_components(budget: ApiBudget) -> None:
     codes = pd.read_csv(WEIGHTS_PATH)["code"].tolist()
     wanted = {f"CUUR0000{code}": code for code in codes}
+    wide = flat_or_api(CU_FILES, "CUUR0000", wanted, COMPONENTS_PATH, budget)
 
-    frames = []
-    for name in CU_FILES:
-        frames.append(parse_bls(fetch_text(name), "CUUR0000"))
-        print(f"  {name}: ok")
-        time.sleep(1)
-
-    wide = to_wide(pd.concat(frames, ignore_index=True), wanted)
     missing = sorted(set(codes) - set(wide.columns))
     if missing:
         print(f"  no BLS data for: {', '.join(missing)}")
@@ -155,30 +277,25 @@ def download_components() -> None:
         raise RuntimeError("CPI component download looks incomplete; keeping the previous file.")
 
     wide.round(3).to_csv(COMPONENTS_PATH, date_format="%Y-%m-%d")
-    print(f"Saved {len(wide)} months x {len(wide.columns)} categories to {COMPONENTS_PATH}")
+    print(f"Saved {wide.index.min():%Y-%m}..{wide.index.max():%Y-%m} x {len(wide.columns)} categories")
 
 
-def download_prices() -> None:
+def download_prices(budget: ApiBudget) -> None:
     wanted = {f"APU0000{item}": col for item, col in AVG_PRICES.items()}
-    frames = []
-    for name in AP_FILES:
-        frames.append(parse_bls(fetch_text(name), "APU0000"))
-        print(f"  {name}: ok")
-        time.sleep(1)
-
-    wide = to_wide(pd.concat(frames, ignore_index=True), wanted)
+    wide = flat_or_api(AP_FILES, "APU0000", wanted, PRICES_PATH, budget)
     if len(wide.columns) < len(AVG_PRICES) * 0.7:
         raise RuntimeError("Average-price download looks incomplete; keeping the previous file.")
 
     wide.round(3).to_csv(PRICES_PATH, date_format="%Y-%m-%d")
-    print(f"Saved {len(wide)} months x {len(wide.columns)} items to {PRICES_PATH}")
+    print(f"Saved {wide.index.min():%Y-%m}..{wide.index.max():%Y-%m} x {len(wide.columns)} items")
 
 
 def main() -> None:
+    budget = ApiBudget()
     failures = 0
     for step in (download_components, download_prices):
         try:
-            step()
+            step(budget)
         except Exception as error:  # keep the previous file; one failure must not stop the other
             failures += 1
             print(f"{step.__name__} failed: {error}")
