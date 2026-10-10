@@ -32,11 +32,13 @@ jobs:
         continue-on-error: true
         run: python src/download_extra.py
 
-      # Detailed CPI categories (about 160) and average prices straight from BLS.
+      # Detailed CPI categories (about 160) and average prices straight from BLS
+      # (flat files, or the BLS JSON API when the runner's network is refused).
       - name: Download CPI components and average prices (BLS)
         continue-on-error: true
         env:
           BLS_USER_AGENT: ${{ secrets.BLS_USER_AGENT }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
         run: python src/download_bls.py
 
       # PCE price index, its categories and spending weights from BEA.
