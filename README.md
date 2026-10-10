@@ -121,7 +121,7 @@ Conclusions are recomputed with every data update and published on the [Key find
 
 `data/cpi_release_schedule.csv` holds the BLS CPI release calendar used for the "next release" date. Update it once a year from [bls.gov/schedule/news_release/cpi.htm](https://www.bls.gov/schedule/news_release/cpi.htm).
 
-`data/cpi_weights.csv` holds the CPI category tree and weights. BLS publishes new relative importance each January ([bls.gov/cpi/tables/relative-importance](https://www.bls.gov/cpi/tables/relative-importance/)); update the `weight` column once a year. BLS asks automated clients to identify themselves: set the repository secret `BLS_USER_AGENT` (e.g. your name and email) if BLS downloads start failing.
+`data/cpi_weights.csv` holds the CPI category tree and weights. BLS publishes new relative importance each January ([bls.gov/cpi/tables/relative-importance](https://www.bls.gov/cpi/tables/relative-importance/)); update the `weight` column once a year. BLS asks automated clients to identify themselves, so the workflow sends the repository secret `BLS_USER_AGENT` (name and email). BLS refuses its bulk-download server to GitHub's runners, so the workflow falls back to the BLS JSON API: without a key it builds the full 1979–today history over two daily runs and then refreshes the last two years each day; adding a free [API key](https://data.bls.gov/registrationEngine/) as the secret `BLS_API_KEY` raises the limits.
 
 ## Data sources
 
