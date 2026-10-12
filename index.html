@@ -1213,13 +1213,19 @@
     ];
     const headline = `CPI inflation is ${pct(latest.yoy)}${pceLast?`, PCE inflation ${pct(pceLast.v)}`:''}${rl('fed_funds')?`, and the Fed funds rate ${pct(rl('fed_funds').v,2)}`:''}.`;
 
+    const ovDrivers = (()=>{
+      if(!hasCats || !COMP.cols.SA0) return null;
+      const li = lastIdx(COMP.cols.SA0), head = yoyOf(COMP.cols.SA0)[li];
+      const rows = cpiMajor.filter(g=>g.yoy!=null).map(g=>({label:g.name, value:g.weight*g.yoy/100})).sort((a,b)=>b.value-a.value);
+      return rows.length ? {head, date:COMP.dates[li], rows} : null;
+    })();
+
     app.innerHTML = `
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
         <div class="eyebrow"><span class="pill"><span class="dot"></span>CPI through ${fmtMonthLong(latest.date)}</span>${pceLast?`<span class="pill">PCE through ${fmtMonthLong(pceLast.date)}</span>`:''}${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}</div>
         <h1>${headline}</h1>
-        <p class="lede">A self-updating view of U.S. prices and interest rates: <b>CPI</b> and <b>PCE</b> inflation broken into more than 200 categories with their weights,
-          <b>Treasury yields</b> and the <b>Fed funds rate</b>, each with a 12-month statistical forecast and a public track record. <a class="link-more" href="#findings">Key findings →</a></p>
+        <p class="lede">U.S. inflation and interest rates, updated daily, with a 12-month forecast for each. <a class="link-more" href="#findings">Key findings →</a></p>
         <div class="grid-6">${ovTiles.map(tile).join('')}</div>
         <div class="grid-2" style="margin-top:12px">
           <div class="card"><div class="card-head"><div><p class="card-title">CPI inflation and forecast</p><p class="card-sub">Year over year, last 3 years and next 12 months.</p></div><a class="link-more" href="#forecast">CPI →</a></div>
@@ -1227,15 +1233,9 @@
           <div class="card"><div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The measure behind the Fed's 2% target.</p></div><a class="link-more" href="#pce">PCE →</a></div>
             ${pceSeries.length?forecastLegend+'<div class="chart" id="ovPce"></div>':pending('PCE data')}</div>
         </div>
-        <div class="grid-2" style="margin-top:12px">
-          <div class="card"><div class="card-head"><div><p class="card-title">10-year Treasury yield and forecast</p><p class="card-sub">Monthly average, last 5 years and next 12 months.</p></div><a class="link-more" href="#rates">Rates →</a></div>
-            ${rate('gs10')?forecastLegend+'<div class="chart" id="ovRates"></div>':pending('Treasury yield data')}</div>
-          <div class="card"><div class="card-head"><div><p class="card-title">Yield curve</p><p class="card-sub">Interest rate by maturity: today, a year ago and the model's view 12 months ahead.</p></div><a class="link-more" href="#rates">Details →</a></div>
-            <div class="legend" id="ovCurveLegend"></div><div class="chart" id="ovCurve"></div></div>
-        </div>
         <div class="card" style="margin-top:12px">
-          <div class="card-head"><div><p class="card-title">Where prices are rising</p><p class="card-sub">The CPI basket by weight${hasCats?`, coloured by 12-month change (${fmtMonth(cpiMajor.find(n=>n.date).date)})`:''}. Click a group to explore it.</p></div><a class="link-more" href="#prices">All categories →</a></div>
-          ${hasCats?`<div class="tm" id="ovTm"></div>${heatLegend()}`:pending('Category data')}
+          <div class="card-head"><div><p class="card-title">What is driving inflation?</p><p class="card-sub">${ovDrivers?`Percentage points each spending group adds to the ${pct(ovDrivers.head)} CPI inflation rate (weight × 12-month change, ${fmtMonth(ovDrivers.date)}).`:'Contribution of each spending group to CPI inflation.'}</p></div><a class="link-more" href="#drivers">Details →</a></div>
+          ${ovDrivers?hbars(ovDrivers.rows, {fmt:v=>pp(v,2), nameW:'minmax(120px,230px)'})+`<p class="note">${esc(ovDrivers.rows[0].label)} adds the most: ${pp(ovDrivers.rows[0].value,2)} of the ${pct(ovDrivers.head)}.</p>`:pending('Category data')}
         </div>
         ${pageFoot()}
       </section>
@@ -1992,11 +1992,6 @@
 
       mount(document.getElementById('ovCpi'), el=>lineChart({...forecastCfg(yoyData.slice(-36)), height:H(260,220)})(el));
       if(pceSeries.length) mount(document.getElementById('ovPce'), el=>lineChart(histFcCfg({aria:'PCE inflation and forecast', hist:pceSeries.slice(-36), fc:pceF.pce, refs:[{value:FED_TARGET, label:'Fed target 2%'}], height:H(260,220)}))(el));
-      const r10 = rate('gs10');
-      if(r10) mount(document.getElementById('ovRates'), el=>lineChart(histFcCfg({aria:'10-year Treasury yield and forecast', hist:r10.s.slice(-60), fc:r10.fc, dec:2, height:H(260,220)}))(el));
-      drawCurve(document.getElementById('ovCurve'), document.getElementById('ovCurveLegend'), 240);
-      const tm = document.getElementById('ovTm');
-      if(tm){ tm.__draw = el=>miniTreemap(el, cpiMajor, code=>{ location.hash='#prices'; setTimeout(()=>cpiEx && cpiEx.select(code), 30); }); charts.push(tm); }
     })();
 
     // yield curve: latest month, a year ago, and the 12-month-ahead forecast
