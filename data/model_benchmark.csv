@@ -1,5 +1,5 @@
 model,label,n,mae,rmse,mae_vs_naive_pct,dm_stat,dm_pvalue,dm_pvalue_vs_arima
-naive,Naive (no change),48,0.2828,0.388,0.0,,,
-arima,"ARIMA(1,0,2)",48,0.2719,0.3581,-3.86,-1.203,0.2349,
-arimax,"ARIMAX (+ energy, core)",48,0.2756,0.3608,-2.54,-0.96,0.3418,0.561
-gbm,Gradient boosting,48,0.2371,0.322,-16.14,-1.333,0.1889,0.3313
+naive,Naive (no change),48,0.2897,0.3915,0.0,,,
+arima,"ARIMA(1,0,2)",48,0.2752,0.3601,-5.02,-1.275,0.2085,
+arimax,"ARIMAX (+ energy, core)",48,0.2782,0.3625,-3.97,-1.034,0.3066,0.6049
+gbm,Gradient boosting,48,0.2411,0.3258,-16.79,-1.341,0.1865,0.354
