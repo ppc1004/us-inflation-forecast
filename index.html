@@ -1216,9 +1216,10 @@
       {label:'Federal funds rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?`${fmtMonth(rl('fed_funds').date)}${fc12(rate('fed_funds'))?' · forecast '+pct(fc12(rate('fed_funds')).mean,2)+' by '+fmtMonth(fc12(rate('fed_funds')).date):''}`:'Pending data', href:'#rates', spark:'spk-ff'},
       {label:'10-year Treasury yield', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?`${fmtMonth(rl('gs10').date)} average${fc12(rate('gs10'))?' · forecast '+pct(fc12(rate('gs10')).mean,2)+' by '+fmtMonth(fc12(rate('gs10')).date):''}`:'Pending data', href:'#rates', spark:'spk-10y'},
     ];
-    // one message in the headline; the numbers live in the tiles below
-    const hlV = pceLast ? pceLast.v : latest.yoy, hlGap = hlV - 2;
-    const headline = `Inflation is ${pct(hlV)}, ${Math.abs(hlGap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(hlGap).toFixed(1)+"\u00a0points "+(hlGap>0?"above":"below")+" the Fed\u2019s 2% target"}.`;
+    // plain-language headline: the CPI number people know, compared with the Fed's goal in the lede
+    const hlGap = latest.yoy - 2;
+    const headline = `Prices are up ${pct(latest.yoy)} from a year ago.`;
+    const hlVsTarget = Math.abs(hlGap)<0.05 ? "That\u2019s right at the Fed\u2019s 2% target." : `That\u2019s ${hlGap>0?"above":"below"} the Fed\u2019s 2% target.`;
     const sameMonth = pceLast && fmtMonthLong(pceLast.date)===fmtMonthLong(latest.date);
     const metaLine = `<p class="meta"><span><span class="dot"></span><b>${sameMonth?'CPI and PCE through '+fmtMonthLong(latest.date):'CPI through '+fmtMonthLong(latest.date)+(pceLast?' · PCE through '+fmtMonthLong(pceLast.date):'')}</b></span>${nextText?`<span>Next CPI release ${nextText}</span>`:''}</p>`;
 
@@ -1234,7 +1235,7 @@
       <section class="page" id="page-overview" data-title="Dashboard">
         ${metaLine}
         <h1>${headline}</h1>
-        <p class="lede">U.S. inflation and interest rates, updated daily, with a 12-month forecast for each. <a class="link-more" href="#findings">Key findings →</a></p>
+        <p class="lede"><b>${hlVsTarget}</b> U.S. inflation and interest rates, updated daily, with a 12-month forecast for each. <a class="link-more" href="#findings">Key findings →</a></p>
         <div class="grid-6">${ovTiles.map(tile).join('')}</div>
         <div class="grid-2" style="margin-top:12px">
           <div class="card"><div class="card-head"><div><p class="card-title">CPI inflation and forecast</p><p class="card-sub">Year over year, last 3 years and next 12 months.</p></div><a class="link-more" href="#forecast">CPI →</a></div>
