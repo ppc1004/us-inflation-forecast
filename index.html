@@ -20,7 +20,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%232a78d6%22/><path d=%22M6 22 L12 15 L17 18 L26 8%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: light;
@@ -34,7 +34,7 @@
     --h0:#104281; --h1:#2a78d6; --h2:#9ec5f4; --h3:#e6e4de; --h4:#f6bfae; --h5:#e5735a; --h6:#b42318;
     --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#0b0b0b; --hi4:#0b0b0b; --hi5:#0b0b0b; --hi6:#fff;
     --band-opacity:.13;
-    --sans:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --sans:"Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
     --radius:14px;
   }
   @media (prefers-color-scheme: dark){
@@ -95,7 +95,7 @@
   .eyebrow{font-size:13px; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:3px 10px; border-radius:999px; background:var(--surface); border:1px solid var(--border); color:var(--ink-2);}
   .pill .dot{width:7px; height:7px; border-radius:50%; background:var(--c-good);}
-  h1{font-size:clamp(26px, 3.2vw, 36px); line-height:1.12; letter-spacing:-.005em; font-weight:600; font-optical-sizing:auto; margin:14px 0 10px; max-width:24em; text-wrap:balance;}
+  h1{font-size:clamp(26px, 3.2vw, 36px); line-height:1.12; letter-spacing:-.02em; font-weight:600; margin:14px 0 10px; max-width:24em; text-wrap:balance;}
   .meta{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:13px; color:var(--muted); margin:0;}
   .meta span{display:inline-flex; align-items:center; gap:7px;}
   .meta span + span::before{content:""; width:3px; height:3px; border-radius:50%; background:currentColor; opacity:.6; margin-right:7px;}
@@ -197,6 +197,13 @@
   .finding p{margin:0; color:var(--ink-2); font-size:14.5px;}
   .finding .stat{display:inline-block; font-size:13px; font-weight:600; color:var(--ink); background:var(--page); border:1px solid var(--border); border-radius:7px; padding:2px 8px; margin-top:10px;}
   .finding .more{display:inline-block; margin-top:10px; margin-left:8px;}
+  .eyebrow, .sec-sub, .note{display:none;}
+  details.fold{margin-top:20px;}
+  details.fold > summary{cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; color:var(--ink-2); padding:8px 14px; border:1px solid var(--border); border-radius:999px; background:var(--surface);}
+  details.fold > summary::-webkit-details-marker{display:none;}
+  details.fold > summary::after{content:"+"; font-size:15px; line-height:1;}
+  details.fold[open] > summary::after{content:"−";}
+  details.fold > .fold-body{margin-top:4px;}
   .findings-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:12px;}
   .finding h3{font-size:17px;}
   .finding p.short{color:var(--ink-2); font-size:15px;}
@@ -1276,15 +1283,12 @@
       <!-- ================= CPI FORECAST ================= -->
       <section class="page" id="page-forecast" data-title="CPI forecast">
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(latest.date)}</span>${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}<span>CPI-U, all items, seasonally adjusted</span></div>
-        <h1>CPI inflation is running at ${pct(latest.yoy)}, ${Math.abs(gap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(gap).toFixed(1)+" points "+(gap>0?"above":"below")+" the Fed\u2019s 2% target"}.</h1>
-        <p class="lede">A statistical model (<b>${esc(modelLabel)}</b>) projects year-over-year CPI inflation of <b>${pct(next.mean)}</b> for ${fmtMonthLong(next.date)}
-          and <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}. Every forecast is checked against a naive benchmark in a rolling backtest. <a class="link-more" href="#track-record">Track record →</a></p>
-        <div class="grid-4">
-          <div class="kpi hero"><div class="kpi-label">Annual inflation (YoY)</div><div class="kpi-value num">${pct(latest.yoy)}</div>
-            <div class="kpi-sub">${Math.abs(yoyChange)<0.05 ? 'Unchanged vs '+fmtMonth(prev.date) : `<span class="${yoyChange>0?'up-bad':'down-good'}">${pp(yoyChange)}</span> vs ${fmtMonth(prev.date)}`}</div></div>
-          <div class="kpi"><div class="kpi-label">Monthly change (MoM)</div><div class="kpi-value num">${pct(latest.mom)}</div><div class="kpi-sub">${fmtMonth(latest.date)} vs ${fmtMonth(prev.date)}</div></div>
-          <div class="kpi"><div class="kpi-label">Forecast, ${fmtMonth(next.date)}</div><div class="kpi-value num">${pct(next.mean)}</div><div class="kpi-sub">95% interval ${pct(next.lo)} – ${pct(next.hi)}</div></div>
-          <div class="kpi"><div class="kpi-label">${maeGain!=null && maeGain<0 ? 'Higher error than naive' : 'Lower error than naive'}</div><div class="kpi-value num">${maeGain!=null ? Math.abs(maeGain).toFixed(0)+'%' : '—'}</div><div class="kpi-sub">MAE ${model?model.mae.toFixed(2):'—'} vs ${naive?naive.mae.toFixed(2):'—'} pp, last ${hasErrors?errModel.length:24} months · <a class="link-more" href="#findings">is it significant?</a></div></div>
+        <h1>Inflation is forecast at ${pct(last12.mean)} a year from now.</h1>
+        <p class="lede">It is ${pct(latest.yoy)} today. The shaded band is the likely range.</p>
+        <div class="grid-3">
+          <div class="kpi"><div class="kpi-label">Today</div><div class="kpi-value num">${pct(latest.yoy)}</div><div class="kpi-sub">${fmtMonth(latest.date)}</div></div>
+          <div class="kpi"><div class="kpi-label">Next month</div><div class="kpi-value num">${pct(next.mean)}</div><div class="kpi-sub">${fmtMonth(next.date)}</div></div>
+          <div class="kpi"><div class="kpi-label">In 12 months</div><div class="kpi-value num">${pct(last12.mean)}</div><div class="kpi-sub">${fmtMonth(last12.date)}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head">
@@ -1324,7 +1328,7 @@
       <!-- ================= TRACK RECORD ================= -->
       <section class="page" id="page-track-record" data-title="Track record">
         <h1 class="page-title">Track record</h1>
-        <p class="lede">Rolling-origin backtest over the last ${hasErrors?errModel.length:24} months: each month the model is re-fit only on data available at the time and forecasts one month ahead. The naive benchmark repeats last month's inflation rate.</p>
+        <p class="lede">Each month the model forecast the next month using only data it had at the time. Here is how close it got.</p>
         <div class="grid-3" id="callouts"></div>
         <div class="card" style="margin-top:12px" ${hasErrors?'':'hidden'}>
           <p class="card-title">Forecast error over time</p>
@@ -1352,7 +1356,7 @@
       <!-- ================= DRIVERS ================= -->
       <section class="page" id="page-drivers" data-title="What's driving it">
         <h1 class="page-title">What's driving inflation?</h1>
-        <p class="lede">Headline CPI blends hundreds of prices. Splitting it by spending group, and into core, food, energy and shelter, shows whether inflation is broad-based or driven by a few categories.</p>
+        <p class="lede">Which parts of the budget are pushing prices up.</p>
         <div id="contribBody"></div>
         <div id="driversBody"></div>
         ${pageFoot()}
@@ -1361,8 +1365,7 @@
       <!-- ================= EVERYDAY PRICES (CPI categories) ================= -->
       <section class="page" id="page-prices" data-title="Everyday prices">
         <h1 class="page-title">Everyday prices: inside the CPI basket</h1>
-        <p class="lede">The Consumer Price Index tracks ${cpiNodes.length ? cpiNodes.length-1 : 'over 150'} categories shown here, from rent and gasoline to eggs, coffee, college tuition and hospital services.
-          Each has a <b>weight</b>: its share of the typical urban household's spending (BLS relative importance, December 2025). Start with the biggest tiles; click one to drill down.</p>
+        <p class="lede">What is in the CPI basket and how fast each price is rising. Click a tile to drill down.</p>
         <div id="cpiExplorer">${hasCats?'':pending('Detailed CPI categories')}</div>
         <div id="cpiMovers" style="margin-top:12px"></div>
         <h2>Shelf prices</h2>
@@ -1404,8 +1407,7 @@
       <!-- ================= PCE CATEGORIES ================= -->
       <section class="page" id="page-pce-categories" data-title="PCE categories">
         <h1 class="page-title">Inside PCE: what Americans spend on</h1>
-        <p class="lede">Personal consumption expenditures cover everything households buy, including what is paid on their behalf, such as employer health insurance and Medicare.
-          Weights are each category's share of total spending${pceWDate?` in ${fmtMonthLong(pceWDate)}`:''} and are updated every month. Click a tile to drill down.</p>
+        <p class="lede">What Americans spend on and how fast each price is rising. Click a tile to drill down.</p>
         <div id="pceExplorer">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
         <div id="pceMovers" style="margin-top:12px"></div>
         ${pageFoot()}
@@ -1420,7 +1422,7 @@
       <!-- ================= FED ================= -->
       <section class="page" id="page-fed" data-title="Fed policy">
         <h1 class="page-title">The Fed's response</h1>
-        <p class="lede">The Federal Reserve raises its policy rate to cool inflation and cuts it to support growth. The gap between the two, the real policy rate, shows how tight policy is.</p>
+        <p class="lede">The Fed raises rates to cool inflation and cuts them to support growth.</p>
         <div id="fedBody"></div>
         ${pageFoot()}
       </section>
@@ -1450,7 +1452,7 @@
       <!-- ================= EXPECTATIONS ================= -->
       <section class="page" id="page-expectations" data-title="Expectations">
         <h1 class="page-title">Model vs consumers vs markets</h1>
-        <p class="lede">Three independent views of future inflation: this model, what households expect over the next year (University of Michigan survey), and what bond markets price in over the next ten years (10-year breakeven rate).</p>
+        <p class="lede">Where this model, households and bond markets expect inflation to go.</p>
         <div id="expBody"></div>
         ${pageFoot()}
       </section>
@@ -2088,9 +2090,8 @@
       const modelP = fcH.length ? fcH[0].model : 'ARIMA';
       body.innerHTML = `
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(l.date)}</span><span>PCE chain-type price index, seasonally adjusted (BEA)</span></div>
-        <h1>PCE inflation, the Fed's target measure, is ${pct(l.v)}${Math.abs(gapP)<0.05?', right at 2%':`, ${Math.abs(gapP).toFixed(1)} points ${gapP>0?'above':'below'} the 2% goal`}.</h1>
-        <p class="lede">The Federal Reserve defines its 2% inflation target with the personal consumption expenditures (PCE) price index. Core PCE, which excludes food and energy, is <b>${pct(l.core)}</b>.
-          ${fcH.length?`The model projects headline PCE inflation of <b>${pct(fcH[fcH.length-1].mean)}</b> by ${fmtMonthLong(fcH[fcH.length-1].date)}.`:''}</p>
+        <h1>PCE inflation is ${pct(l.v)}.</h1>
+        <p class="lede">This is the measure the Fed targets at 2%.</p>
         <div class="grid-4">
           <div class="kpi hero"><div class="kpi-label">PCE inflation (YoY)</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${prevP?`<span class="${l.v-prevP.v>0?'up-bad':'down-good'}">${pp(l.v-prevP.v)}</span> vs ${fmtMonth(prevP.date)}`:''}</div></div>
           <div class="kpi"><div class="kpi-label">Core PCE (YoY)</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
@@ -2178,15 +2179,14 @@
       const sNow = spread.length ? spread[spread.length-1] : null;
       let inv=0; const s80 = spread.filter(p=>p.date>=parseDate('1980-01-01')); s80.forEach(p=>{ if(p.v<0) inv++; });
       const lastInv = s80.slice().reverse().find(p=>p.v<0);
-      const ttl = r10 ? `The 10-year Treasury yields ${pct(r10.last.v,2)}${ff?`; the Fed funds rate is ${pct(ff.last.v,2)}`:''}.` : 'Interest rates';
+      const ttl = r10 ? `The 10-year Treasury yield is ${pct(r10.last.v,2)}.` : 'Interest rates';
       body.innerHTML = `
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Monthly averages through ${fmtMonthLong((r10||RATES[0]).last.date)}</span><span>Federal Reserve H.15 via FRED</span></div>
         <h1>${ttl}</h1>
-        <p class="lede">The Fed sets the short-term policy rate; markets set longer Treasury yields based on expected policy, inflation and risk. Each rate below is forecast 12 months ahead
-          with an ARIMA model and checked against the hard-to-beat "no change" forecast.</p>
+        <p class="lede">Current rates and where the model expects them in a year.</p>
         <div class="grid-4">${RATES.map(r=>{ const f=fc12(r), ch = r.yearAgo ? r.last.v-r.yearAgo.v : null;
           return `<div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(${COLOR_VAR[r.cls]})"></span>${r.label}</div><div class="kpi-value num">${pct(r.last.v,2)}</div>
-            <div class="kpi-sub">${ch!=null?`${pp(ch,2)} vs a year ago`:''}${f?`<br>Forecast ${fmtMonth(f.date)}: <b style="color:var(--ink)">${pct(f.mean,2)}</b> (${pct(f.lo,1)} – ${pct(f.hi,1)})`:''}</div></div>`; }).join('')}</div>
+            <div class="kpi-sub">${f?`Next year: ${pct(f.mean,2)}`:''}</div></div>`; }).join('')}</div>
         <div class="card" style="margin-top:12px">
           <div class="card-head"><div><p class="card-title" id="rtTitle"></p><p class="card-sub" id="rtSub"></p></div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('rtWhich', RATES.map(r=>({v:r.key,label:r.short})), r10?'gs10':RATES[0].key)}${segControl('rtRange', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '60')}</div></div>
@@ -2285,6 +2285,27 @@
       if(active && window.innerWidth<=900) active.scrollIntoView({inline:'center', block:'nearest'});
       requestAnimationFrame(redrawVisible);
     }
+    // keep each page to roughly one screen: secondary content goes behind "More detail"
+    function fold(pageId, startEl){
+      if(!startEl) return;
+      const d = document.createElement('details'); d.className = 'fold';
+      d.innerHTML = '<summary>More detail</summary><div class="fold-body"></div>';
+      const body = d.lastChild; startEl.parentElement.insertBefore(d, startEl);
+      let n = startEl; while(n){ const nx = n.nextSibling; if(n.classList && n.classList.contains('page-foot')) break; body.appendChild(n); n = nx; }
+    }
+    const $ = sel => document.querySelector(sel), card = sel => { const e=$(sel); return e ? e.closest('.card') : null; };
+    fold('findings', $('#page-findings > h2'));
+    fold('forecast', $('#page-forecast > .grid-2'));
+    fold('track-record', card('#leaderboard'));
+    { const h=$('#contribBody > h2:last-child'), d=$('#driversBody'); if(h && d) d.prepend(h); fold('drivers', d); }
+    fold('prices', $('#cpiMovers'));
+    fold('history', card('#momChart'));
+    fold('pce', $('#pceBody > .grid-2'));
+    fold('pce-categories', $('#pceMovers'));
+    fold('rates', $('#ratesBody > .grid-2'));
+    fold('money', $('#page-money > h2'));
+    fold('expectations', $('#expBody > .card:last-child'));
+    document.addEventListener('toggle', e=>{ if(e.target.classList && e.target.classList.contains('fold')) requestAnimationFrame(redrawVisible); }, true);
     window.addEventListener('hashchange', show);
     show();
   }
