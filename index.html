@@ -204,6 +204,9 @@
   details.fold > summary::after{content:"+"; font-size:15px; line-height:1;}
   details.fold[open] > summary::after{content:"−";}
   details.fold > .fold-body{margin-top:4px;}
+  .subtabs{display:flex; flex-wrap:wrap; gap:4px; margin:0 0 18px; padding:3px; background:var(--surface); border:1px solid var(--border); border-radius:10px; width:fit-content; max-width:100%;}
+  .subtabs a{font-size:13.5px; font-weight:500; color:var(--ink-2); text-decoration:none; padding:5px 12px; border-radius:7px; white-space:nowrap;}
+  .subtabs a[aria-current="page"]{background:var(--ink); color:var(--page);}
   .findings-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:12px;}
   .finding h3{font-size:17px;}
   .finding p.short{color:var(--ink-2); font-size:15px;}
@@ -354,37 +357,13 @@
       <span class="brand-mark"><svg width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 23 L12 15 L17 18 L27 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <span class="brand-text">U.S. Economic Forecast</span>
     </a>
-    <nav class="nav-group" aria-label="Overview">
-      <div class="nav-label">Overview</div>
-      <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Dashboard</a>
-      <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>Key findings</a>
-    </nav>
-    <nav class="nav-group" aria-label="CPI inflation">
-      <div class="nav-label">CPI inflation</div>
-      <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>CPI forecast</a>
-      <a class="nav-link" href="#track-record"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5"/></svg>Track record</a>
-      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What's driving it</a>
-      <a class="nav-link" href="#prices"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h2l1.5 7h7L14 5H5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="13" r="1"/><circle cx="12" cy="13" r="1"/></svg>Everyday prices</a>
-      <a class="nav-link" href="#history"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5" stroke-linecap="round"/></svg>History</a>
-    </nav>
-    <nav class="nav-group" aria-label="PCE inflation">
-      <div class="nav-label">PCE inflation</div>
-      <a class="nav-link" href="#pce"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>PCE forecast</a>
-      <a class="nav-link" href="#pce-categories"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M8 2v12M8 8h6M2 10.5h6"/></svg>PCE categories</a>
-    </nav>
-    <nav class="nav-group" aria-label="Interest rates">
-      <div class="nav-label">Interest rates</div>
-      <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Treasury yields</a>
-      <a class="nav-link" href="#fed"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6.5 8 3l6 3.5M3 7v5M6.3 7v5M9.7 7v5M13 7v5M2 13.5h12" stroke-linecap="round" stroke-linejoin="round"/></svg>Fed policy</a>
-    </nav>
-    <nav class="nav-group" aria-label="Consumer">
-      <div class="nav-label">Consumer</div>
+    <nav class="nav-group" aria-label="Pages">
+      <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Overview</a>
+      <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>Forecast</a>
+      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What’s driving it</a>
+      <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Interest rates</a>
       <a class="nav-link" href="#money"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><circle cx="8" cy="8" r="1.8"/></svg>Your money</a>
-      <a class="nav-link" href="#expectations"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>Expectations</a>
-    </nav>
-    <nav class="nav-group" aria-label="About">
-      <div class="nav-label">About</div>
-      <a class="nav-link" href="#methodology"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h6l3 3v9H4z" stroke-linejoin="round"/><path d="M6.5 8h4M6.5 10.5h4" stroke-linecap="round"/></svg>Methodology</a>
+      <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>About the model</a>
     </nav>
     <div class="side-foot">
       <span class="status" id="sideStatus"><span class="row"><span class="dot"></span>Loading…</span></span>
@@ -480,7 +459,7 @@
   // ================= chart engine (responsive inline SVG) =================
   const SVGNS = "http://www.w3.org/2000/svg";
   const charts = [];
-  function mount(el, draw){ el.__draw = draw; charts.push(el); if(el.offsetParent!==null) draw(el); }
+  function mount(el, draw){ if(!el) return; el.__draw = draw; charts.push(el); if(el.offsetParent!==null) draw(el); }
   function redrawVisible(){ charts.forEach(el=>{ if(document.body.contains(el) && el.offsetParent!==null) el.__draw(el); }); }
   let rT=null, lastW=window.innerWidth;
   window.addEventListener('resize', ()=>{ if(window.innerWidth===lastW) return; lastW=window.innerWidth; clearTimeout(rT); rT=setTimeout(redrawVisible,120); });
@@ -1217,7 +1196,7 @@
     ];
     const compLatest = COMPONENTS.map(c=>{ const s=compYoY(c.key); return s && s.length ? {...c, v:s[s.length-1].v, date:s[s.length-1].date, series:s} : null; }).filter(Boolean);
     const coreLatest = compLatest.find(c=>c.key==='core');
-    const forecastLegend = `<div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Forecast</span><span><i class="key-area" style="background:var(--c-model);opacity:.3"></i>95% interval</span></div>`;
+    const forecastLegend = `<div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Forecast</span><span><i class="key-area" style="background:var(--c-model);opacity:.3"></i>Likely range</span></div>`;
     const rl = k => rate(k) ? rate(k).last : null;
     const fc12 = r => r && r.fc.length ? r.fc[r.fc.length-1] : null;
 
@@ -1227,12 +1206,12 @@
         <div class="kpi-sub">${o.sub}</div><div class="chart spark" id="${o.spark}"></div></a>`;
     const nextYr = f => f ? `Next year: ${f}` : '';
     const ovTiles = [
-      {label:'CPI inflation', value:pct(latest.yoy), sub:nextYr(last12&&pct(last12.mean)), href:'#forecast', spark:'spk-cpi'},
+      {label:'Inflation', value:pct(latest.yoy), sub:nextYr(last12&&pct(last12.mean)), href:'#forecast', spark:'spk-cpi'},
       {label:'Core CPI', value:coreLatest?pct(coreLatest.v):'—', sub:coreLatest?'Excl. food and energy':'Pending data', href:'#drivers', spark:'spk-core'},
       {label:'PCE inflation', value:pceLast?pct(pceLast.v):'—', sub:pceLast?nextYr(pceF.pce.length&&pct(pceF.pce[pceF.pce.length-1].mean)):'Pending data', href:'#pce', spark:'spk-pce'},
       {label:'Core PCE', value:pceLast&&pceLast.core!=null?pct(pceLast.core):'—', sub:pceLast?'The Fed\u2019s preferred gauge':'Pending data', href:'#pce', spark:'spk-pcecore'},
-      {label:'Fed funds rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?nextYr(fc12(rate('fed_funds'))&&pct(fc12(rate('fed_funds')).mean,2)):'Pending data', href:'#rates', spark:'spk-ff'},
-      {label:'10-year Treasury', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?nextYr(fc12(rate('gs10'))&&pct(fc12(rate('gs10')).mean,2)):'Pending data', href:'#rates', spark:'spk-10y'},
+      {label:'Fed interest rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?nextYr(fc12(rate('fed_funds'))&&pct(fc12(rate('fed_funds')).mean,2)):'Pending data', href:'#rates', spark:'spk-ff'},
+      {label:'10-year Treasury yield', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?nextYr(fc12(rate('gs10'))&&pct(fc12(rate('gs10')).mean,2)):'Pending data', href:'#rates', spark:'spk-10y'},
     ];
     // plain-language headline: the CPI number people know, compared with the Fed's goal in the lede
     const hlGap = latest.yoy - 2;
@@ -1251,17 +1230,9 @@
       <section class="page" id="page-overview" data-title="Dashboard">
         <h1>${headline}</h1>
         <p class="lede">${hlVsTarget}</p>
-        <div class="grid-6">${ovTiles.map(tile).join('')}</div>
-        <div class="grid-2" style="margin-top:12px">
-          <div class="card"><div class="card-head"><div><p class="card-title">CPI inflation and forecast</p><p class="card-sub">Year over year, last 3 years and next 12 months.</p></div><a class="link-more" href="#forecast">CPI →</a></div>
-            ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
-          <div class="card"><div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The measure behind the Fed\u2019s 2% target.</p></div><a class="link-more" href="#pce">PCE →</a></div>
-            ${pceSeries.length?forecastLegend+'<div class="chart" id="ovPce"></div>':pending('PCE data')}</div>
-        </div>
-        <div class="card" style="margin-top:12px">
-          <div class="card-head"><div><p class="card-title">What is driving inflation?</p><p class="card-sub">${ovDrivers?`Percentage points each spending group adds to the ${pct(ovDrivers.head)} CPI inflation rate (weight × 12-month change, ${fmtMonth(ovDrivers.date)}).`:'Contribution of each spending group to CPI inflation.'}</p></div><a class="link-more" href="#drivers">Details →</a></div>
-          ${ovDrivers?hbars(ovDrivers.rows, {fmt:v=>pp(v,2), nameW:'minmax(120px,230px)'})+`<p class="note">${esc(ovDrivers.rows[0].label)} adds the most: ${pp(ovDrivers.rows[0].value,2)} of the ${pct(ovDrivers.head)}.</p>`:pending('Category data')}
-        </div>
+        <div class="grid-6">${ovTiles.filter(t=>['spk-cpi','spk-ff','spk-10y'].includes(t.spark)).map(tile).join('')}</div>
+        <div class="card" style="margin-top:12px"><div class="card-head"><div><p class="card-title">Inflation and forecast</p><p class="card-sub">Last 3 years and the next 12 months.</p></div><a class="link-more" href="#forecast">Forecast →</a></div>
+          ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
         ${pageFoot()}
       </section>
 
@@ -1292,7 +1263,7 @@
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head">
-            <div><p class="card-title">Year-over-year inflation and 12-month forecast</p><p class="card-sub">Shaded area is the 95% confidence interval; it widens as the horizon grows.</p></div>
+            <div><p class="card-title">Inflation and forecast</p><p class="card-sub">The band widens because the further out, the less certain.</p></div>
             ${segControl('ovRange', [{v:'36',label:'3Y'},{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'All'}], '36')}
           </div>
           ${forecastLegend}
@@ -1926,7 +1897,7 @@
       fcExp.innerHTML = `Model, 12 months ahead: <b style="color:var(--ink)">${pct(last12.mean)}</b>` + (lm?` · Consumers, next 12 months: <b style="color:var(--ink)">${pct(lm.v)}</b>`:'') + (lb?` · Markets, next 10 years: <b style="color:var(--ink)">${pct(lb.v,2)}</b>`:'');
       body.innerHTML = `
         <div class="grid-3">
-          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-model)"></span>Model, ${fmtMonth(last12.date)}</div><div class="kpi-value num">${pct(last12.mean)}</div><div class="kpi-sub">${esc(modelLabel)}, 12 months ahead</div></div>
+          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-model)"></span>Model, ${fmtMonth(last12.date)}</div><div class="kpi-value num">${pct(last12.mean)}</div><div class="kpi-sub">12 months ahead</div></div>
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-3)"></span>Consumers, next 12 months</div><div class="kpi-value num">${lm?pct(lm.v):'—'}</div><div class="kpi-sub">${lm?'U. Michigan survey, '+fmtMonth(lm.date):'Not yet available'}</div></div>
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-4)"></span>Markets, next 10 years</div><div class="kpi-value num">${lb?pct(lb.v,2):'—'}</div><div class="kpi-sub">${lb?'10-year breakeven, '+fmtMonth(lb.date)+' average':'Not yet available'}</div></div>
         </div>
@@ -1966,10 +1937,9 @@
       const lf = ff[ff.length-1], cp = cpiAt.get(lf.date.getTime()), realRate = cp ? lf.v - cp.yoy : null;
       const peak = ff.reduce((a,b)=>b.v>a.v?b:a);
       body.innerHTML = `
-        <div class="grid-3">
+        <div class="grid-2">
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-4)"></span>Federal funds rate</div><div class="kpi-value num">${pct(lf.v,2)}</div><div class="kpi-sub">Effective rate, ${fmtMonth(lf.date)}</div></div>
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-actual)"></span>CPI inflation</div><div class="kpi-value num">${cp?pct(cp.yoy):'—'}</div><div class="kpi-sub">Year over year, ${fmtMonth(lf.date)}</div></div>
-          <div class="kpi"><div class="kpi-label">Real policy rate</div><div class="kpi-value num">${realRate!=null?pp(realRate):'—'}</div><div class="kpi-sub">${realRate==null?'':realRate>1?'Well above zero: policy is restraining demand':realRate>=-0.5?'Near zero: policy is close to neutral':'Below zero: policy is still accommodative'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head"><div><p class="card-title">Federal funds rate and inflation</p><p class="card-sub">The highest rate on record was ${pct(peak.v,1)} in ${fmtMonth(peak.date)}${peak.date.getUTCFullYear()>=1979 && peak.date.getUTCFullYear()<=1982 ? ', when the Fed under Paul Volcker broke the inflation of the 1970s' : ''}.</p></div>
@@ -2049,14 +2019,10 @@
       const withData = groups.filter(g=>g.yoy!=null);
       const sorted = withData.slice().sort((a,b)=>b.weight*b.yoy-a.weight*a.yoy);
       body.innerHTML = `
-        <div class="grid-2">
-          <div class="card"><p class="card-title">Inflation by spending group, ${fmtMonth(COMP.dates[li])}</p>
-            <p class="card-sub">12-month change, not seasonally adjusted. The number in brackets is the group's weight in the CPI basket.</p>
-            ${hbars([{label:'All items', value:head[li], color:'ink', em:true}].concat(groups.filter(g=>g.yoy!=null).map(g=>({label:`${g.name} (${g.weight.toFixed(0)}%)`, value:g.yoy}))), {fmt:v=>spct(v), nameW:'minmax(120px,230px)'})}
-          </div>
-          <div class="card"><p class="card-title">Who contributes the most?</p>
-            <p class="card-sub">Percentage points of the ${pct(head[li])} headline rate, weight × 12-month change.</p>
-            ${hbars(sorted.map(g=>({label:g.name, value:g.weight*g.yoy/100})), {fmt:v=>pp(v,2), nameW:'minmax(120px,230px)'})}
+        <div>
+          <div class="card"><p class="card-title">How much each category adds to the ${pct(head[li])} inflation rate</p>
+            <p class="card-sub">In percentage points. Bigger bar, bigger push on prices.</p>
+            ${hbars(sorted.map(g=>({label:g.name, value:g.weight*g.yoy/100})), {fmt:v=>(v>=0?'+':'')+v.toFixed(2), nameW:'minmax(120px,230px)'})}
             <p class="note">${esc(sorted[0].name)} alone adds ${pp(sorted[0].weight*sorted[0].yoy/100,2)}, ${(sorted[0].weight*sorted[0].yoy/100/head[li]*100).toFixed(0)}% of headline inflation.</p>
           </div>
         </div>
@@ -2092,14 +2058,13 @@
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(l.date)}</span><span>PCE chain-type price index, seasonally adjusted (BEA)</span></div>
         <h1>PCE inflation is ${pct(l.v)}.</h1>
         <p class="lede">This is the measure the Fed targets at 2%.</p>
-        <div class="grid-4">
-          <div class="kpi hero"><div class="kpi-label">PCE inflation (YoY)</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${prevP?`<span class="${l.v-prevP.v>0?'up-bad':'down-good'}">${pp(l.v-prevP.v)}</span> vs ${fmtMonth(prevP.date)}`:''}</div></div>
-          <div class="kpi"><div class="kpi-label">Core PCE (YoY)</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
-          <div class="kpi"><div class="kpi-label">Forecast, ${fcH.length?fmtMonth(fcH[fcH.length-1].date):'—'}</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?`95% interval ${pct(fcH[fcH.length-1].lo)} – ${pct(fcH[fcH.length-1].hi)}`:'Pending'}</div></div>
-          <div class="kpi"><div class="kpi-label">CPI minus PCE</div><div class="kpi-value num">${cAt?pp(cAt.yoy-l.v):'—'}</div><div class="kpi-sub">CPI ${cAt?pct(cAt.yoy):'—'} in ${fmtMonth(l.date)}</div></div>
+        <div class="grid-3">
+          <div class="kpi hero"><div class="kpi-label">PCE inflation</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${fmtMonth(l.date)}</div></div>
+          <div class="kpi"><div class="kpi-label">Core PCE</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
+          <div class="kpi"><div class="kpi-label">In 12 months</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?fmtMonth(fcH[fcH.length-1].date):'Pending'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
-          <div class="card-head"><div><p class="card-title">PCE inflation and 12-month forecast</p><p class="card-sub">${esc(modelP.replace(/\s/g,''))}, order chosen by AIC. Shaded area is the 95% interval.</p></div>
+          <div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The band widens because the further out, the less certain.</p></div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('pceWhich', [{v:'pce',label:'Headline'},{v:'core_pce',label:'Core'}], 'pce')}${segControl('pceRange', [{v:'36',label:'3Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '36')}</div></div>
           ${forecastLegend}<div class="chart" id="pceChart"></div>
         </div>
@@ -2230,8 +2195,8 @@
       const el = document.getElementById('rtChart');
       mount(el, el=>{
         const r = rate(which), f = fc12(r);
-        document.getElementById('rtTitle').textContent = `${r.label}: history and 12-month forecast`;
-        document.getElementById('rtSub').textContent = `${pct(r.last.v,2)} in ${fmtMonth(r.last.date)}${f?`; ${(r.fc[0]||{}).model||'ARIMA'} expects ${pct(f.mean,2)} by ${fmtMonth(f.date)}, 95% interval ${pct(f.lo,2)} – ${pct(f.hi,2)}`:''}.`;
+        document.getElementById('rtTitle').textContent = `${r.label} and forecast`;
+        document.getElementById('rtSub').textContent = f ? `${pct(r.last.v,2)} now, expected ${pct(f.mean,2)} a year from now.` : '';
         const hist = months ? r.s.slice(-months) : r.s.filter(p=>p.date>=parseDate('1980-01-01'));
         lineChart(histFcCfg({aria:r.label+' forecast', hist, fc:r.fc, dec:2, height:H(360,270)}))(el);
       });
@@ -2277,7 +2242,7 @@
       let id = (location.hash||'').slice(1);
       if(!PAGES.includes(id)) id = 'overview';
       document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
-      document.querySelectorAll('.nav-link').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+id ? 'page' : 'false'));
+      document.querySelectorAll('.nav-link').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+groupOf(id) ? 'page' : 'false'));
       const title = document.getElementById('page-'+id).dataset.title;
       document.title = id==='overview' ? SITE : `${title} · ${SITE}`;
       window.scrollTo(0,0);
@@ -2297,7 +2262,8 @@
     fold('findings', $('#page-findings > h2'));
     fold('forecast', $('#page-forecast > .grid-2'));
     fold('track-record', card('#leaderboard'));
-    { const h=$('#contribBody > h2:last-child'), d=$('#driversBody'); if(h && d) d.prepend(h); fold('drivers', d); }
+    { const h=$('#contribBody > h2:last-child'), d=$('#driversBody'); if(h && d) d.prepend(h); fold('drivers', card('#contribChart'));
+      const f=$('#page-drivers details.fold > .fold-body'); if(f && d) f.appendChild(d); }
     fold('prices', $('#cpiMovers'));
     fold('history', card('#momChart'));
     fold('pce', $('#pceBody > .grid-2'));
@@ -2305,6 +2271,20 @@
     fold('rates', $('#ratesBody > .grid-2'));
     fold('money', $('#page-money > h2'));
     fold('expectations', $('#expBody > .card:last-child'));
+    // five sections in the sidebar; related pages are tabs inside each section
+    const GROUPS = {
+      forecast: [['forecast','CPI'],['pce','PCE'],['expectations','vs. expectations'],['history','Since 1948']],
+      drivers:  [['drivers','By category'],['prices','Every CPI item'],['pce-categories','Every PCE item']],
+      rates:    [['rates','Treasury yields'],['fed','The Fed']],
+      findings: [['findings','Key findings'],['track-record','Track record'],['methodology','How it works']],
+    };
+    Object.values(GROUPS).forEach(g=>g.forEach(([id])=>{
+      const sec=document.getElementById('page-'+id); if(!sec) return;
+      const t=document.createElement('nav'); t.className='subtabs'; t.setAttribute('aria-label','Section');
+      t.innerHTML=g.map(([k,l])=>`<a href="#${k}"${k===id?' aria-current="page"':''}>${l}</a>`).join('');
+      sec.prepend(t);
+    }));
+    const groupOf = id => Object.keys(GROUPS).find(k=>GROUPS[k].some(([p])=>p===id)) || id;
     document.addEventListener('toggle', e=>{ if(e.target.classList && e.target.classList.contains('fold')) requestAnimationFrame(redrawVisible); }, true);
     window.addEventListener('hashchange', show);
     show();
