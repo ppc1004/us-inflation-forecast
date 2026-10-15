@@ -197,6 +197,16 @@
   .finding p{margin:0; color:var(--ink-2); font-size:14.5px;}
   .finding .stat{display:inline-block; font-size:13px; font-weight:600; color:var(--ink); background:var(--page); border:1px solid var(--border); border-radius:7px; padding:2px 8px; margin-top:10px;}
   .finding .more{display:inline-block; margin-top:10px; margin-left:8px;}
+  .findings-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:12px;}
+  .finding h3{font-size:17px;}
+  .finding p.short{color:var(--ink-2); font-size:15px;}
+  .finding .f-foot{display:flex; align-items:center; gap:16px; margin-top:12px; font-size:13px;}
+  .finding details summary{cursor:pointer; color:var(--ink-2); font-weight:500; list-style:none;}
+  .finding details summary::-webkit-details-marker{display:none;}
+  .finding details[open]{flex-basis:100%;}
+  .finding details p{font-size:13.5px; margin-top:8px;}
+  .finding .f-foot:has(details[open]){flex-wrap:wrap;}
+  @media (max-width: 560px){ .findings-grid{grid-template-columns:1fr;} }
   .bm-table td.model{font-weight:500;} .bm-table tr.em td{background:color-mix(in srgb, var(--c-model) 7%, transparent);}
   .bm-bar{display:inline-block; height:8px; border-radius:0 4px 4px 0; background:var(--grid); vertical-align:middle; margin-right:8px;}
   .bm-bar.c-model{background:var(--c-model);} .bm-bar.c-ref{background:var(--c-ref);}
@@ -1251,8 +1261,8 @@
       <!-- ================= FINDINGS ================= -->
       <section class="page" id="page-findings" data-title="Key findings">
         <h1 class="page-title">Key findings</h1>
-        <p class="lede">What out-of-sample testing says about forecasting U.S. inflation and interest rates. Every number on this page is recomputed automatically when new data arrives.</p>
-        <div class="stack" id="findingsBody"></div>
+        <p class="lede">What happened when the model was tested on past data it had never seen.</p>
+        <div class="findings-grid" id="findingsBody"></div>
         <h2>What I would try next</h2>
         <div class="card"><ul class="card-sub" style="padding-left:18px; margin:0; display:grid; gap:6px">
           <li>Forecast the large CPI categories (shelter, food, energy, core goods, core services) separately and aggregate them with the published weights.</li>
@@ -1570,7 +1580,8 @@
       if(A && N){
         const better = A.mae < N.mae;
         const sigA = A.p!=null && A.p<0.05;
-        items.push({title: better && sigA ? `The model beats a "no change" forecast, but the margin is thin` : better ? `The model looks better than "no change", but not by more than luck` : `A "no change" forecast is hard to beat`,
+        items.push({title: better && sigA ? `Beats a simple guess, by a thin margin` : better ? `Barely better than a simple guess` : `A simple guess is hard to beat`,
+          short: `Next month\u2019s forecast misses by ${A.mae.toFixed(2)} points on average. Just repeating last month misses by ${N.mae.toFixed(2)}${better && !sigA ? ', too close to call' : ''}.`,
           stat: `${esc(A.label)}: ${spct(A.vs)} error vs naive · p = ${fmtP(A.p)}`,
           text: `Over the last ${A.n} months, ${esc(A.label)} missed actual inflation by ${A.mae.toFixed(2)} points on average, against ${N.mae.toFixed(2)} for simply repeating last month's rate.
             The Diebold-Mariano test puts the difference at p = ${fmtP(A.p)}: ${sigWord(A.p)}. Month-to-month inflation is highly persistent, so most of the information is already in the latest print.`,
@@ -1585,7 +1596,8 @@
         const rel = m => ((m.mae/A.mae-1)*100);
         const sigB = best.pA!=null && best.pA<0.05;
         const parts = challengers.map(m=>`${m.model==='arimax'?'adding last month\'s energy and core inflation (ARIMAX)':'gradient-boosted trees'} ${rel(m)<0?'cut':'raised'} ARIMA's average error by ${Math.abs(rel(m)).toFixed(1)}%`);
-        items.push({title: beats && sigB ? `${esc(best.label)} beats the simple model` : beats ? `${esc(best.label)} looks more accurate, but the gap could still be luck` : 'More data and machine learning did not beat the simple model',
+        items.push({title: beats && sigB ? `${esc(best.label)} beats the simple model` : beats ? `Machine learning did a bit better, not yet proven` : 'More data and machine learning didn\u2019t help',
+          short: beats ? `${esc(best.label)} missed ${Math.abs(rel(best)).toFixed(0)}% less than the current model${sigB ? '.' : ', but over ' + A.n + ' test months that could be luck.'}` : `Neither extra inputs nor gradient boosting beat the simple model.`,
           stat: challengers.map(m=>`${esc(m.label)}: ${spct(rel(m))} vs ARIMA (p = ${fmtP(m.pA)})`).join(' · '),
           text: `Over the same ${A.n} months, ${parts.join(', while ')}.
             ${best.pA!=null ? `For the best challenger the Diebold-Mariano test against ARIMA gives p = ${fmtP(best.pA)}: ${sigWord(best.pA)}.` : ''}
@@ -1596,12 +1608,14 @@
       const hz = hzRaw.map(r=>({h:+r.horizon, m:num(r.model_mae), nv:num(r.naive_mae), cov:num(r.coverage_95), n:+r.n})).filter(r=>r.m!=null).sort((a,b)=>a.h-b.h);
       if(hz.length){
         const f=hz[0], l=hz[hz.length-1], g = r => (1-r.m/r.nv)*100;
-        items.push({title: g(l) > g(f) ? 'The model earns its keep at longer horizons' : 'The advantage does not grow with the horizon',
+        items.push({title: g(l) > g(f) ? 'Most useful for long-range forecasts' : 'No extra edge further out',
+          short: `${l.h} months ahead it is ${g(l).toFixed(0)}% more accurate than the simple guess; one month ahead, ${g(f).toFixed(0)}%.`,
           stat: `${f.h}-month: ${g(f).toFixed(0)}% better than naive · ${l.h}-month: ${g(l).toFixed(0)}% better`,
           text: `One month ahead, the model's edge over naive is ${g(f).toFixed(0)}%. Twelve months ahead it is ${g(l).toFixed(0)}% (${l.m.toFixed(2)} vs ${l.nv.toFixed(2)} points), because the model pulls forecasts back toward the long-run average while "no change" keeps extrapolating today's rate.`,
           link:'#track-record'});
         const avgCov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-        items.push({title: Math.abs(avgCov-95) <= 4 ? 'The uncertainty bands are honest' : avgCov < 95 ? 'The uncertainty bands are too narrow' : 'The uncertainty bands are conservative',
+        items.push({title: Math.abs(avgCov-95) <= 4 ? 'Its uncertainty ranges can be trusted' : avgCov < 95 ? 'Its uncertainty ranges are too narrow' : 'Its uncertainty ranges are too wide',
+          short: `Actual inflation landed inside the 95% range ${avgCov.toFixed(0)}% of the time.`,
           stat: `${avgCov.toFixed(0)}% of outcomes inside the 95% interval`,
           text: `Across all horizons, the actual inflation rate landed inside the model's 95% interval ${avgCov.toFixed(0)}% of the time. A forecast that states its uncertainty correctly is often more useful than a slightly sharper point estimate.`,
           link:'#forecast'});
@@ -1614,7 +1628,8 @@
         const jump = prevD ? worst.actual - prevD.yoy : null;
         const same = bmErrRaw.filter(r=>r.date===isoDate(worst.date) && r.model!=='arima').map(r=>`${(bmBy[r.model]||{label:r.model}).label} ${pp(num(r.error),2)}`);
         const others = same.length ? ` The other models missed that month too: ${esc(same.join(', '))}.` : '';
-        items.push({title:'Turning points are the weak spot',
+        items.push({title:'Sudden turns catch it out',
+          short:`Its worst miss was ${fmtMonthLong(worst.date)}${jump!=null ? ', when inflation '+(jump>0?'jumped ':'fell ')+Math.abs(jump).toFixed(1)+' points in one month' : ''}. It reacts a month late.`,
           stat:`Largest miss: ${pp(worst.err,2)} in ${fmtMonth(worst.date)}`,
           text:`The biggest error came in ${fmtMonthLong(worst.date)}, when inflation ${jump!=null ? (jump>0?'jumped':'fell')+' '+Math.abs(jump).toFixed(2)+' points in a single month' : 'moved sharply'}. A model that only sees past inflation cannot anticipate sudden shifts such as energy price swings; it reacts a month late.${others}`,
           link:'#track-record'});
@@ -1624,7 +1639,8 @@
       let maxDiff = 0, diffAt = null;
       rawRows.forEach((r,i)=>{ if(i<12) return; const naiveYoY=(r.cpi/rawRows[i-12].cpi-1)*100; const d=cpiAt.get(r.date.getTime()); if(d && d.yoy!=null){ const diff=Math.abs(naiveYoY-d.yoy); if(diff>maxDiff){ maxDiff=diff; diffAt=r.date; } } });
       if(maxDiff > 0.05){
-        items.push({title:'One missing month would have distorted a year of data',
+        items.push({title:'Caught a hidden gap in the data',
+          short:`October 2025 CPI was never published. A common shortcut would have overstated inflation by up to ${maxDiff.toFixed(2)} points.`,
           stat:`Up to ${maxDiff.toFixed(2)} points of error avoided`,
           text:`BLS never published October 2025 CPI because of the government shutdown. Computing year-over-year inflation by counting back twelve rows, a common shortcut, would silently compare against the wrong month for the following year, overstating inflation by as much as ${maxDiff.toFixed(2)} points (${fmtMonth(diffAt)}). The pipeline rebuilds a complete monthly calendar and interpolates the gap instead.`,
           link:'#methodology'});
@@ -1636,7 +1652,8 @@
           const avg = gaps.reduce((a,b)=>a+b,0)/gaps.length, nowGap = gaps[gaps.length-1];
           const shelterCPI = (cpiNodes.find(n=>n.code==='SAH1')||{}).weight, housePCE = (pceNodes.find(n=>n.code==='DHSG')||{}).weight;
           const healthCPI = (cpiNodes.find(n=>n.code==='SAM')||{}).weight, healthPCE = (pceNodes.find(n=>n.code==='DHLC')||{}).weight;
-          items.push({title: avg>0 ? 'CPI runs hotter than PCE, mostly because of what each one weighs' : 'PCE and CPI tell a similar story',
+          items.push({title: avg>0 ? 'CPI usually runs higher than PCE' : 'CPI and PCE tell a similar story',
+            short: `By ${Math.abs(avg).toFixed(2)} points on average since 2000${shelterCPI&&housePCE ? `, mostly because housing is ${shelterCPI.toFixed(0)}% of CPI but ${housePCE.toFixed(0)}% of PCE` : ''}.`,
             stat:`CPI − PCE gap: ${pp(avg,2)} on average since 2000, ${pp(nowGap,2)} now`,
             text:`Since 2000, CPI inflation has averaged ${Math.abs(avg).toFixed(2)} points ${avg>0?'above':'below'} PCE inflation. ${shelterCPI&&housePCE?`Housing is ${shelterCPI.toFixed(0)}% of the CPI basket but only ${housePCE.toFixed(0)}% of PCE, `:''}${healthCPI&&healthPCE?`while health care is ${healthCPI.toFixed(0)}% of CPI against ${healthPCE.toFixed(0)}% of PCE, because PCE also counts care paid for by employers and government. `:''}PCE's chain-weighting also lets households' switching between products pull the index down. The Fed targets PCE, so a 2% PCE goal is roughly 2.3–2.5% in CPI terms.`,
             link:'#pce'});
@@ -1646,14 +1663,15 @@
       const r10 = rate('gs10');
       if(r10 && r10.hz.length){
         const h1 = r10.hz[0], h12 = r10.hz[r10.hz.length-1], g = r => (1-r.m/r.nv)*100;
-        items.push({title: Math.max(g(h1), g(h12)) < 5 ? 'Treasury yields are close to a random walk' : 'The rate model adds a little over "no change"',
+        items.push({title: g(h12) <= 0 || Math.max(g(h1), g(h12)) < 5 ? 'Interest rates are hard to predict' : 'The rate model adds a little',
+          short: g(h12) <= 0 ? `A year out, the 10-year yield forecast is no better than assuming rates stay put.` : `A year out, the 10-year yield forecast is ${g(h12).toFixed(0)}% more accurate than assuming rates stay put.`,
           stat:`10-year yield: ${h12.h}-month error ${h12.m.toFixed(2)} vs ${h12.nv.toFixed(2)} points for "no change"`,
           text:`Over ${h1.n} monthly forecast origins, the 10-year yield model missed by ${h1.m.toFixed(2)} points one month ahead (no change: ${h1.nv.toFixed(2)}) and ${h12.m.toFixed(2)} points twelve months ahead (no change: ${h12.nv.toFixed(2)}).
             Bond prices already reflect public information, so today's yield is the best simple forecast of tomorrow's. The value of the model lies in its uncertainty band: ${h12.cov.toFixed(0)}% of outcomes fell inside its 95% interval at twelve months.`,
           link:'#rates'});
       }
-      body.innerHTML = items.length ? items.map((it,i)=>`<div class="card finding"><span class="n">${i+1}</span><div><h3>${it.title}</h3><p>${it.text}</p>
-          <span class="stat">${it.stat}</span>${it.link?`<a class="link-more more" href="${it.link}">See the data →</a>`:''}</div></div>`).join('') : pending('Findings');
+      body.innerHTML = items.length ? items.map((it,i)=>`<div class="card finding"><span class="n">${i+1}</span><div><h3>${it.title}</h3><p class="short">${it.short}</p>
+          <div class="f-foot">${it.link?`<a class="link-more" href="${it.link}">See the data →</a>`:''}<details><summary>Details</summary><p>${it.text}</p><span class="stat">${it.stat}</span></details></div></div></div>`).join('') : pending('Findings');
     })();
 
     // accuracy by horizon
