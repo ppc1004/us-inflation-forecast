@@ -20,7 +20,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%232a78d6%22/><path d=%22M6 22 L12 15 L17 18 L26 8%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: light;
@@ -95,7 +95,12 @@
   .eyebrow{font-size:13px; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:3px 10px; border-radius:999px; background:var(--surface); border:1px solid var(--border); color:var(--ink-2);}
   .pill .dot{width:7px; height:7px; border-radius:50%; background:var(--c-good);}
-  h1{font-size:clamp(26px, 3.4vw, 38px); line-height:1.15; letter-spacing:-.02em; font-weight:700; margin:12px 0 10px; max-width:900px;}
+  h1{font-size:clamp(26px, 3.2vw, 36px); line-height:1.12; letter-spacing:-.02em; font-weight:600; font-optical-sizing:auto; margin:14px 0 10px; max-width:24em; text-wrap:balance;}
+  .meta{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:13px; color:var(--muted); margin:0;}
+  .meta span{display:inline-flex; align-items:center; gap:7px;}
+  .meta span + span::before{content:""; width:3px; height:3px; border-radius:50%; background:currentColor; opacity:.6; margin-right:7px;}
+  .meta .dot{width:7px; height:7px; border-radius:50%; background:var(--c-good);}
+  .meta b{font-weight:500; color:var(--ink-2);}
   .page-title{font-size:clamp(24px, 2.6vw, 30px); letter-spacing:-.02em; font-weight:700; margin:0 0 6px;}
   .lede{font-size:16px; color:var(--ink-2); max-width:740px; margin:0 0 26px;}
   .lede b{color:var(--ink); font-weight:600;}
@@ -1211,7 +1216,11 @@
       {label:'Federal funds rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?`${fmtMonth(rl('fed_funds').date)}${fc12(rate('fed_funds'))?' · forecast '+pct(fc12(rate('fed_funds')).mean,2)+' by '+fmtMonth(fc12(rate('fed_funds')).date):''}`:'Pending data', href:'#rates', spark:'spk-ff'},
       {label:'10-year Treasury yield', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?`${fmtMonth(rl('gs10').date)} average${fc12(rate('gs10'))?' · forecast '+pct(fc12(rate('gs10')).mean,2)+' by '+fmtMonth(fc12(rate('gs10')).date):''}`:'Pending data', href:'#rates', spark:'spk-10y'},
     ];
-    const headline = `CPI inflation is ${pct(latest.yoy)}${pceLast?`, PCE inflation ${pct(pceLast.v)}`:''}${rl('fed_funds')?`, and the Fed funds rate ${pct(rl('fed_funds').v,2)}`:''}.`;
+    // one message in the headline; the numbers live in the tiles below
+    const hlV = pceLast ? pceLast.v : latest.yoy, hlGap = hlV - 2;
+    const headline = `Inflation is running at ${pct(hlV)}, ${Math.abs(hlGap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(hlGap).toFixed(1)+"\u00a0points "+(hlGap>0?"above":"below")+" the Fed\u2019s 2% target"}.`;
+    const sameMonth = pceLast && fmtMonthLong(pceLast.date)===fmtMonthLong(latest.date);
+    const metaLine = `<p class="meta"><span><span class="dot"></span><b>${sameMonth?'CPI and PCE through '+fmtMonthLong(latest.date):'CPI through '+fmtMonthLong(latest.date)+(pceLast?' · PCE through '+fmtMonthLong(pceLast.date):'')}</b></span>${nextText?`<span>Next CPI release ${nextText}</span>`:''}</p>`;
 
     const ovDrivers = (()=>{
       if(!hasCats || !COMP.cols.SA0) return null;
@@ -1223,14 +1232,14 @@
     app.innerHTML = `
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
-        <div class="eyebrow"><span class="pill"><span class="dot"></span>CPI through ${fmtMonthLong(latest.date)}</span>${pceLast?`<span class="pill">PCE through ${fmtMonthLong(pceLast.date)}</span>`:''}${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}</div>
+        ${metaLine}
         <h1>${headline}</h1>
         <p class="lede">U.S. inflation and interest rates, updated daily, with a 12-month forecast for each. <a class="link-more" href="#findings">Key findings →</a></p>
         <div class="grid-6">${ovTiles.map(tile).join('')}</div>
         <div class="grid-2" style="margin-top:12px">
           <div class="card"><div class="card-head"><div><p class="card-title">CPI inflation and forecast</p><p class="card-sub">Year over year, last 3 years and next 12 months.</p></div><a class="link-more" href="#forecast">CPI →</a></div>
             ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
-          <div class="card"><div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The measure behind the Fed's 2% target.</p></div><a class="link-more" href="#pce">PCE →</a></div>
+          <div class="card"><div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The measure behind the Fed\u2019s 2% target.</p></div><a class="link-more" href="#pce">PCE →</a></div>
             ${pceSeries.length?forecastLegend+'<div class="chart" id="ovPce"></div>':pending('PCE data')}</div>
         </div>
         <div class="card" style="margin-top:12px">
@@ -1258,7 +1267,7 @@
       <!-- ================= CPI FORECAST ================= -->
       <section class="page" id="page-forecast" data-title="CPI forecast">
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(latest.date)}</span>${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}<span>CPI-U, all items, seasonally adjusted</span></div>
-        <h1>CPI inflation is running at ${pct(latest.yoy)}, ${Math.abs(gap)<0.05 ? "right at the Fed's 2% target" : Math.abs(gap).toFixed(1)+" points "+(gap>0?"above":"below")+" the Fed's 2% target"}.</h1>
+        <h1>CPI inflation is running at ${pct(latest.yoy)}, ${Math.abs(gap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(gap).toFixed(1)+" points "+(gap>0?"above":"below")+" the Fed\u2019s 2% target"}.</h1>
         <p class="lede">A statistical model (<b>${esc(modelLabel)}</b>) projects year-over-year CPI inflation of <b>${pct(next.mean)}</b> for ${fmtMonthLong(next.date)}
           and <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}. Every forecast is checked against a naive benchmark in a rolling backtest. <a class="link-more" href="#track-record">Track record →</a></p>
         <div class="grid-4">
