@@ -95,7 +95,7 @@
   .eyebrow{font-size:13px; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:3px 10px; border-radius:999px; background:var(--surface); border:1px solid var(--border); color:var(--ink-2);}
   .pill .dot{width:7px; height:7px; border-radius:50%; background:var(--c-good);}
-  h1{font-size:clamp(26px, 3.2vw, 36px); line-height:1.12; letter-spacing:-.02em; font-weight:600; font-optical-sizing:auto; margin:14px 0 10px; max-width:24em; text-wrap:balance;}
+  h1{font-size:clamp(26px, 3.2vw, 36px); line-height:1.12; letter-spacing:-.005em; font-weight:600; font-optical-sizing:auto; margin:14px 0 10px; max-width:24em; text-wrap:balance;}
   .meta{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:13px; color:var(--muted); margin:0;}
   .meta span{display:inline-flex; align-items:center; gap:7px;}
   .meta span + span::before{content:""; width:3px; height:3px; border-radius:50%; background:currentColor; opacity:.6; margin-right:7px;}
@@ -1218,7 +1218,7 @@
     ];
     // one message in the headline; the numbers live in the tiles below
     const hlV = pceLast ? pceLast.v : latest.yoy, hlGap = hlV - 2;
-    const headline = `Inflation is running at ${pct(hlV)}, ${Math.abs(hlGap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(hlGap).toFixed(1)+"\u00a0points "+(hlGap>0?"above":"below")+" the Fed\u2019s 2% target"}.`;
+    const headline = `Inflation is ${pct(hlV)}, ${Math.abs(hlGap)<0.05 ? "right at the Fed\u2019s 2% target" : Math.abs(hlGap).toFixed(1)+"\u00a0points "+(hlGap>0?"above":"below")+" the Fed\u2019s 2% target"}.`;
     const sameMonth = pceLast && fmtMonthLong(pceLast.date)===fmtMonthLong(latest.date);
     const metaLine = `<p class="meta"><span><span class="dot"></span><b>${sameMonth?'CPI and PCE through '+fmtMonthLong(latest.date):'CPI through '+fmtMonthLong(latest.date)+(pceLast?' · PCE through '+fmtMonthLong(pceLast.date):'')}</b></span>${nextText?`<span>Next CPI release ${nextText}</span>`:''}</p>`;
 
