@@ -504,6 +504,53 @@
   .step-c b{display:block; font-size:14.5px; font-weight:600; margin-bottom:4px;} .step-c span{font-size:13px; color:var(--ink-2);}
   .build .cta{justify-content:flex-start; margin-top:24px;}
 
+  /* ---------- what's driving it: contributions + explorer tools ---------- */
+  .drill-h{font-size:clamp(20px,2vw,24px); letter-spacing:-.02em; margin:40px 0 4px;}
+  .drill-sub{color:var(--ink-2); font-size:14px; margin:0 0 14px; max-width:760px;}
+  .cnote{font-size:13px; color:var(--ink-2); margin:14px 0 0;} .cnote b{color:var(--ink);}
+  .cbars{display:grid; gap:2px;}
+  .cb-row{display:grid; grid-template-columns:minmax(120px,240px) 1fr 92px; align-items:center; gap:12px; width:100%; padding:7px 8px; margin:0 -8px; width:calc(100% + 16px);
+    font:inherit; font-size:13.5px; color:inherit; text-align:left; background:none; border:0; border-radius:9px; cursor:pointer; transition:background .15s;}
+  .cb-row:hover, .cb-row:focus-visible{background:color-mix(in srgb, var(--ink) 6%, transparent); outline:none;}
+  .cb-row:hover .cb-bar{filter:brightness(1.15);}
+  .cb-name{color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;} .cb-row:hover .cb-name{color:var(--ink);}
+  .cb-track{position:relative; height:16px;}
+  .cb-bar{position:absolute; top:0; height:16px; border-radius:5px; transition:left .45s var(--ease), width .45s var(--ease), background .3s;}
+  .cb-v{text-align:right; font-weight:600; white-space:nowrap;}
+  .cshare{display:inline-block; min-width:34px; margin-left:6px; font-size:11.5px; font-weight:500; color:var(--muted);}
+  .clegend button{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:12.5px; color:var(--ink-2); background:none; border:1px solid transparent; border-radius:999px; padding:2px 9px 2px 6px; cursor:pointer;}
+  .clegend button:hover, .clegend button.hi{color:var(--ink); border-color:var(--border); background:color-mix(in srgb, var(--ink) 5%, transparent);}
+  .chart.dim rect[data-stack]{opacity:.18; transition:opacity .15s;} .chart.dim rect[data-stack].hi{opacity:1;}
+  .ex-tools{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; margin:0 0 14px;}
+  .ex-search{display:flex; align-items:center; gap:8px; flex:1 1 260px; max-width:420px; padding:0 12px; height:38px; border-radius:11px; border:1px solid var(--border); background:var(--page); color:var(--muted);}
+  .ex-search:focus-within{border-color:var(--glow); box-shadow:0 0 0 3px color-mix(in srgb, var(--glow) 20%, transparent);}
+  .ex-search input{flex:1; min-width:0; border:0; background:none; outline:none; font:inherit; font-size:14px; color:var(--ink);}
+  .ex-search input.miss{color:var(--c-bad);}
+  .ex-search.sm{height:34px; flex:1 1 200px; max-width:300px;}
+  .ex-time{display:flex; align-items:center; gap:10px; flex:1 1 320px; max-width:520px;}
+  .ex-time input[type=range]{flex:1; min-width:80px; -webkit-appearance:none; appearance:none; height:6px; border-radius:999px; cursor:pointer;
+    background:linear-gradient(90deg, var(--glow) 0 var(--p,100%), var(--grid) var(--p,100%) 100%);}
+  .ex-time input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--ink); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--border), 0 2px 8px rgba(0,0,0,.3);}
+  .ex-time input[type=range]::-moz-range-thumb{width:14px; height:14px; border-radius:50%; background:var(--ink); border:3px solid var(--surface);}
+  .ex-when{font-size:13px; font-weight:600; white-space:nowrap; min-width:104px;}
+  .ex-live{font:inherit; font-size:12.5px; font-weight:500; color:var(--glow); background:none; border:0; cursor:pointer; white-space:nowrap; padding:0;}
+  .ex-play{font-size:inherit; flex:none;} .ex-play .i-pause{display:none;} .ex-play.on .i-pause{display:block;} .ex-play.on .i-play{display:none;}
+  .ex-play.on{border-color:var(--glow); color:var(--glow);}
+  .ex-filters{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; margin:4px 0 12px;}
+  .ex-check{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2); cursor:pointer;}
+  .ex-check input{accent-color:var(--glow); width:15px; height:15px;}
+  .btn.sm{padding:7px 13px; font-size:13px; border-radius:10px;}
+  .ftable th.sortable{padding:0;} .ftable th.sortable button{font:inherit; font-size:12.5px; font-weight:500; color:var(--muted); background:none; border:0; padding:8px 10px; cursor:pointer; display:inline-flex; gap:4px; white-space:nowrap;}
+  .ftable th.r button{flex-direction:row-reverse;} .ftable th[aria-sort="ascending"] button, .ftable th[aria-sort="descending"] button{color:var(--ink);}
+  .sort-ic{opacity:.55; font-size:11px;}
+  .ftable td.name{min-width:200px;}
+  .ftable .lvl{display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:8px; vertical-align:1px; background:var(--axis);}
+  .ftable .lvl-1{background:var(--glow);} .ftable .lvl-2{background:var(--c-actual); opacity:.8;}
+  .ftable tr.click:focus-visible td{background:var(--page); outline:none;}
+  svg.mini{display:block;} svg.mini line{stroke:var(--axis); stroke-width:1; stroke-dasharray:2 2;} svg.mini path{fill:none; stroke:var(--c-actual); stroke-width:1.6; stroke-linejoin:round;}
+  .down-good{color:var(--c-good);}
+  @media (max-width: 560px){ .cb-row{grid-template-columns:110px 1fr 74px; gap:8px; font-size:12.5px;} .cshare{display:none;} .ex-time{max-width:none;} }
+
   /* scroll reveal */
   .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
   .reveal.in{opacity:1; transform:none;}
@@ -978,9 +1025,33 @@
     const path = n => { const p=[]; let c=n; while(c){ p.unshift(c); c = c.parent ? byCode.get(c.parent) : null; } return p; };
     const id = cfg.id;
     let zoom = root, sel = root, view = 'yoy', months = 0;
+    // time travel: every colour, table and contribution can be shown "as of" an earlier month
+    const rootLi = root.has ? root.li : 0;
+    const minTi = (()=>{ const y = root.yoyS || []; const f = y.findIndex(v=>v!=null && isFinite(v)); return f<0 ? rootLi : f; })();
+    let ti = rootLi;
+    const okv = v => v!=null && isFinite(v);
+    const yoyAt = n => n.has && n.yoyS && okv(n.yoyS[ti]) ? n.yoyS[ti] : null;
+    const prevAt = n => n.has && n.yoyS && ti>=12 && okv(n.yoyS[ti-12]) ? n.yoyS[ti-12] : null;
+    const contribAt = n => { const y = yoyAt(n); return y==null ? null : n.weight*y/100; };
+    const depthOf = n => path(n).length-1;
+    const all = [...byCode.values()].filter(n=>n!==root && n.weight>0);
+    const optLabel = n => n.parent && n.parent!==cfg.rootCode && byCode.has(n.parent) ? `${n.name} · in ${byCode.get(n.parent).name}` : n.name;
+    const nameToCode = new Map(all.map(n=>[optLabel(n).toLowerCase(), n.code]));
+    let fSort = 'weight', fDir = -1, fLevel = 'all', fQuery = '', fHot = false, fAll = false;
 
     cfg.el.innerHTML = `
       <div class="card">
+        <div class="ex-tools">
+          <label class="ex-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input type="search" id="${id}-q" list="${id}-names" placeholder="Search ${all.length} categories…" autocomplete="off" aria-label="Search categories"></label>
+          <datalist id="${id}-names">${all.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(n=>`<option value="${esc(optLabel(n))}"></option>`).join('')}</datalist>
+          <div class="ex-time" role="group" aria-label="Show the basket as of an earlier month">
+            <button class="icon-btn ex-play" id="${id}-play" type="button" aria-label="Play the last five years"><svg class="i-play" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg><svg class="i-pause" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
+            <input type="range" id="${id}-t" min="${minTi}" max="${rootLi}" value="${rootLi}" step="1" aria-label="Month">
+            <span class="ex-when num" id="${id}-when"></span>
+            <button class="ex-live" id="${id}-live" type="button" hidden>Back to latest</button>
+          </div>
+        </div>
         <div class="crumbs" id="${id}-crumbs"></div>
         <div class="tm" id="${id}-tm" role="group" aria-label="Treemap of category weights"></div>
         ${heatLegend()}
@@ -1002,6 +1073,17 @@
           <p class="card-sub">Largest weight first. Contribution = weight × 12-month change: the percentage points this item adds to the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate.</p>
           <div style="overflow-x:auto"><table class="xtable" id="${id}-table"></table></div>
         </div>
+      </div>
+      <div class="card" style="margin-top:12px" id="${id}-flat">
+        <div class="card-head"><div><p class="card-title">Every category in one table</p><p class="card-sub" id="${id}-fsub"></p></div>
+          <button class="btn sm" type="button" id="${id}-csv"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download CSV</button></div>
+        <div class="ex-filters">
+          <label class="ex-search sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="${id}-fq" placeholder="Filter by name…" aria-label="Filter categories"></label>
+          ${segControl(id+'-lvl', [{v:'all',label:'All levels'},{v:'groups',label:'Major groups'},{v:'items',label:'Detailed items'}], 'all')}
+          <label class="ex-check"><input type="checkbox" id="${id}-hot"> Only above 2%</label>
+        </div>
+        <div style="overflow-x:auto"><table class="xtable ftable" id="${id}-ftable"></table></div>
+        <div style="text-align:center; margin-top:12px"><button class="btn sm" type="button" id="${id}-more"></button></div>
       </div>`;
 
     const tmEl = document.getElementById(id+'-tm'), chartEl = document.getElementById(id+'-chart');
@@ -1037,12 +1119,12 @@
       el.innerHTML = rects.map((r,k)=>{
         const st = `left:${(r.x+1).toFixed(1)}px;top:${(r.y+1).toFixed(1)}px;width:${Math.max(0,r.w-2).toFixed(1)}px;height:${Math.max(0,r.h-2).toFixed(1)}px;`;
         if(r.other) return `<div class="tm-tile other" data-k="${k}" style="${st}">${r.w>80 && r.h>34 ? `<span class="tm-name">Other items</span><span class="tm-meta">${(r.v/sc).toFixed(2)}% weight</span>` : ''}</div>`;
-        const n = r.node, b = heatBin(n.yoy);
+        const n = r.node, ny = yoyAt(n), b = heatBin(ny);
         const color = b==null ? 'background:var(--grid);color:var(--ink-2);' : `background:var(--h${b});color:var(--hi${b});`;
         const big = r.w>220 && r.h>120, showName = r.w>=66 && r.h>=36, showMeta = r.w>=46 && r.h>=22;
-        const meta = `${n.weight.toFixed(n.weight>=10?1:2)}% · ${n.yoy!=null?spct(n.yoy):'n/a'}`;
-        return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: weight ${n.weight.toFixed(2)}%, 12-month change ${n.yoy!=null?spct(n.yoy):'not available'}">
-          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?`<span class="tm-meta">${showName?meta:(n.yoy!=null?spct(n.yoy):'')}</span>`:''}
+        const meta = `${n.weight.toFixed(n.weight>=10?1:2)}% · ${ny!=null?spct(ny):'n/a'}`;
+        return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: weight ${n.weight.toFixed(2)}%, 12-month change ${ny!=null?spct(ny):'not available'}">
+          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?`<span class="tm-meta">${showName?meta:(ny!=null?spct(ny):'')}</span>`:''}
           ${n.kids.length && r.h>=78 && r.w>=90 ? `<span class="tm-kids">${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'} ›</span>` : ''}</button>`;
       }).join('');
       el.appendChild(tip);
@@ -1056,8 +1138,9 @@
           else {
             const n=r.node; add('t-date', n.name);
             row('Weight', n.weight.toFixed(2)+'% of total');
-            row('12-month change', n.yoy!=null?spct(n.yoy):'n/a');
-            if(n.contrib!=null) row('Contribution', pp(n.contrib,2));
+            row('12-month change', yoyAt(n)!=null?spct(yoyAt(n)):'n/a');
+            if(prevAt(n)!=null) row('A year earlier', spct(prevAt(n)));
+            if(contribAt(n)!=null) row('Contribution', pp(contribAt(n),2));
             if(n.kids.length) add('t-note', `Click to open ${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'}`);
           }
           tip.style.opacity=1;
@@ -1092,20 +1175,20 @@
       }
     }
 
-    function detail(){
+    function detail(skipChart){
       const n = sel, r = byCode.get(cfg.rootCode);
       document.getElementById(id+'-dname').textContent = n.name;
       document.getElementById(id+'-dsub').innerHTML = n===r ? `${esc(cfg.weightLabel)}. Data through ${n.has?fmtMonthLong(n.date):'—'}.`
         : `Weight <b style="color:var(--ink)">${n.weight.toFixed(3)}%</b> of ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} (${esc(cfg.weightLabel)})${n.has?` · data ${n.first.getUTCFullYear()}–${fmtMonth(n.date)}`:''}.`;
       const sinceYr = n.has ? T.dates[n.base].getUTCFullYear() : 1980;
       document.getElementById(id+'-kpis').innerHTML = n.has ? `
-        <div class="k"><div class="l">12-month change</div><div class="v">${spct(n.yoy)}</div></div>
-        <div class="k"><div class="l">A year earlier</div><div class="v">${spct(n.yoyPrev)}</div></div>
+        <div class="k"><div class="l">12-month change${ti!==rootLi?', '+fmtMonth(T.dates[ti]):''}</div><div class="v">${spct(yoyAt(n))}</div></div>
+        <div class="k"><div class="l">A year earlier</div><div class="v">${spct(prevAt(n))}</div></div>
         <div class="k"><div class="l">Per year, last 5 years</div><div class="v">${spct(n.ann5)}</div></div>
         <div class="k"><div class="l">Total since ${sinceYr}</div><div class="v">${spct(n.cum,0)}</div></div>` : '';
       const cmp = n!==r && r.has;
       document.getElementById(id+'-legend').innerHTML = `<span><i class="key-line" style="background:var(--c-actual)"></i>${esc(n.name)}</span>` + (cmp?`<span><i class="key-line" style="background:var(--c-ref)"></i>${esc(cfg.rootLabel)}</span>`:'') + (view==='level'?`<span class="muted">Index, start of period = 100</span>`:'');
-      if(chartEl.offsetParent!==null) drawDetail(chartEl);
+      if(!skipChart && chartEl.offsetParent!==null) drawDetail(chartEl);
     }
 
     function table(){
@@ -1114,20 +1197,117 @@
       const rows = base.kids;
       const maxW = Math.max(...rows.map(k=>k.weight), 0.0001);
       document.getElementById(id+'-table').innerHTML = `<thead><tr><th>Category</th><th>Weight</th><th class="r">12-month</th><th class="r">Contribution</th></tr></thead><tbody>
-        <tr class="click ${sel===base?'sel':''}" data-code="${base.code}"><td class="name"><b>${esc(base.name)}</b></td><td>${base.weight.toFixed(2)}%</td><td class="r">${base.has?spct(base.yoy):'—'}</td><td class="r">${base.contrib!=null?pp(base.contrib,2):'—'}</td></tr>
+        <tr class="click ${sel===base?'sel':''}" data-code="${base.code}"><td class="name"><b>${esc(base.name)}</b></td><td>${base.weight.toFixed(2)}%</td><td class="r">${yoyAt(base)!=null?spct(yoyAt(base)):'—'}</td><td class="r">${contribAt(base)!=null?pp(contribAt(base),2):'—'}</td></tr>
         ${rows.map(k=>`<tr class="click ${sel===k?'sel':''}" data-code="${k.code}"><td class="name">${esc(k.name)}${k.kids.length?'<span class="kid-mark">›</span>':''}</td>
           <td style="white-space:nowrap"><span class="wbar" style="width:${(k.weight/maxW*60).toFixed(1)}px"></span>${k.weight.toFixed(k.weight>=1?2:3)}%</td>
-          <td class="r"><span class="chip ${k.yoy>3?'up-bad':''}">${k.has?spct(k.yoy):'—'}</span></td>
-          <td class="r">${k.contrib!=null?pp(k.contrib,2):'—'}</td></tr>`).join('')}</tbody>`;
+          <td class="r"><span class="chip ${yoyAt(k)>3?'up-bad':''}">${yoyAt(k)!=null?spct(yoyAt(k)):'—'}</span></td>
+          <td class="r">${contribAt(k)!=null?pp(contribAt(k),2):'—'}</td></tr>`).join('')}</tbody>`;
       document.querySelectorAll(`#${id}-table tr.click`).forEach(tr=>tr.addEventListener('click', ()=>select(tr.dataset.code)));
     }
 
-    function render(){ crumbs(); if(tmEl.offsetParent!==null) drawTM(tmEl); detail(); table(); }
+    // ---- every category, one sortable table ----
+    const spark = n => {
+      if(!n.has) return '';
+      const a = Math.max(0, ti-35), pts = [];
+      for(let i=a;i<=ti;i++){ const v=n.yoyS[i]; if(okv(v)) pts.push([i-a, v]); }
+      if(pts.length<2) return '';
+      const lo = Math.min(0, ...pts.map(p=>p[1])), hi = Math.max(0.5, ...pts.map(p=>p[1])), sx = 78/35, sy = 20/((hi-lo)||1);
+      const d = pts.map((p,k)=>(k?'L':'M')+(1+p[0]*sx).toFixed(1)+' '+(21-(p[1]-lo)*sy).toFixed(1)).join('');
+      const z = (21-(0-lo)*sy).toFixed(1);
+      return `<svg class="mini" viewBox="0 0 80 22" width="80" height="22" aria-hidden="true"><line x1="0" x2="80" y1="${z}" y2="${z}"/><path d="${d}"/></svg>`;
+    };
+    const FCOLS = [
+      {k:'name', l:'Category', v:n=>n.name},
+      {k:'weight', l:'Weight', r:true, v:n=>n.weight},
+      {k:'yoy', l:'12-month', r:true, v:yoyAt},
+      {k:'prev', l:'Year earlier', r:true, v:prevAt, hide:true},
+      {k:'accel', l:'Change in pace', r:true, v:n=>{ const a=yoyAt(n), b=prevAt(n); return a!=null&&b!=null ? a-b : null; }},
+      {k:'contrib', l:'Contribution', r:true, v:contribAt},
+    ];
+    function flatRows(){
+      const q = fQuery.trim().toLowerCase();
+      let rows = all.filter(n=>n.has);
+      if(fLevel==='groups') rows = rows.filter(n=>n.parent===cfg.rootCode);
+      if(fLevel==='items') rows = rows.filter(n=>!n.kids.length);
+      if(q) rows = rows.filter(n=>n.name.toLowerCase().includes(q) || (byCode.get(n.parent)||{name:''}).name.toLowerCase().includes(q));
+      if(fHot) rows = rows.filter(n=>{ const y=yoyAt(n); return y!=null && y>(cfg.target||2); });
+      const col = FCOLS.find(c=>c.k===fSort);
+      rows.sort((a,b)=>{ const x=col.v(a), y=col.v(b);
+        if(fSort==='name') return fDir*String(x).localeCompare(String(y));
+        if(x==null && y==null) return 0; if(x==null) return 1; if(y==null) return -1; return fDir*(x-y); });
+      return rows;
+    }
+    function flat(){
+      const tb = document.getElementById(id+'-ftable'); if(!tb) return;
+      const rows = flatRows(), LIMIT = 25, shown = fAll ? rows : rows.slice(0, LIMIT);
+      const maxW = Math.max(...all.map(n=>n.weight), 0.0001);
+      const fmt = {weight:n=>`<span class="wbar" style="width:${(Math.sqrt(n.weight/maxW)*46).toFixed(1)}px"></span>${n.weight.toFixed(n.weight>=1?2:3)}%`,
+        yoy:n=>{ const v=yoyAt(n); return v==null?'—':`<span class="chip ${v>3?'up-bad':''}">${spct(v)}</span>`; },
+        prev:n=>prevAt(n)==null?'—':spct(prevAt(n)),
+        accel:n=>{ const v=FCOLS[4].v(n); return v==null?'—':`<span class="${v>0.05?'up-bad':v<-0.05?'down-good':'muted'}">${v>0.05?'▲ ':v<-0.05?'▼ ':''}${pp(v,1)}</span>`; },
+        contrib:n=>contribAt(n)==null?'—':pp(contribAt(n),2)};
+      tb.innerHTML = `<thead><tr>${FCOLS.map(c=>`<th class="${c.r?'r ':''}${c.hide?'hide-sm ':''}sortable" data-k="${c.k}" aria-sort="${fSort===c.k?(fDir>0?'ascending':'descending'):'none'}"><button type="button">${c.l}<span class="sort-ic">${fSort===c.k?(fDir>0?'↑':'↓'):'↕'}</span></button></th>`).join('')}<th class="hide-sm">Last 3 years</th></tr></thead>
+        <tbody>${shown.length ? shown.map(n=>{ const par = n.parent && n.parent!==cfg.rootCode && byCode.get(n.parent);
+          return `<tr class="click${sel===n?' sel':''}" data-code="${n.code}" tabindex="0"><td class="name"><span class="lvl lvl-${Math.min(depthOf(n),4)}"></span>${esc(n.name)}${n.kids.length?`<span class="kid-mark">${n.kids.length} sub</span>`:''}${par?`<div class="muted" style="font-size:11.5px">${esc(par.name)}</div>`:''}</td>
+            ${FCOLS.slice(1).map(c=>`<td class="r${c.hide?' hide-sm':''}" style="white-space:nowrap">${fmt[c.k](n)}</td>`).join('')}<td class="hide-sm">${spark(n)}</td></tr>`; }).join('')
+          : `<tr><td colspan="${FCOLS.length+1}"><div class="empty">No categories match. Try a different filter.</div></td></tr>`}</tbody>`;
+      document.getElementById(id+'-fsub').innerHTML = `${rows.length} of ${all.filter(n=>n.has).length} categories · as of ${fmtMonth(T.dates[ti])} · click a column to sort, a row to chart it. “Change in pace” compares the 12-month rate with a year earlier.`;
+      const more = document.getElementById(id+'-more');
+      more.hidden = rows.length <= LIMIT; more.textContent = fAll ? 'Show fewer' : `Show all ${rows.length}`;
+      tb.querySelectorAll('th.sortable button').forEach(b=>b.addEventListener('click', ()=>{ const k=b.parentElement.dataset.k; if(fSort===k) fDir=-fDir; else { fSort=k; fDir = k==='name'?1:-1; } flat(); }));
+      tb.querySelectorAll('tr.click').forEach(tr=>{ const go=()=>{ select(tr.dataset.code); document.getElementById(id+'-detail').scrollIntoView({behavior:'smooth', block:'center'}); };
+        tr.addEventListener('click', go); tr.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); go(); } }); });
+    }
+    function csv(){
+      const rows = flatRows(), q = v => `"${String(v).replace(/"/g,'""')}"`, f = (v,d) => v==null ? '' : v.toFixed(d);
+      const lines = [['Category','Parent','Weight %','12-month %','Year earlier %','Change in pace pp','Contribution pp'].join(',')]
+        .concat(rows.map(n=>[q(n.name), q((byCode.get(n.parent)||{name:''}).name), f(n.weight,3), f(yoyAt(n),2), f(prevAt(n),2), f(FCOLS[4].v(n),2), f(contribAt(n),3)].join(',')));
+      const url = URL.createObjectURL(new Blob([lines.join('\n')], {type:'text/csv'}));
+      const a = document.createElement('a'); a.href = url; a.download = `${(cfg.rootLower||cfg.rootLabel).replace(/\W+/g,'-').toLowerCase()}-categories-${T.dates[ti].toISOString().slice(0,7)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }
+
+    // ---- time travel ----
+    const tIn = document.getElementById(id+'-t'), whenEl = document.getElementById(id+'-when'), liveBtn = document.getElementById(id+'-live'), playBtn = document.getElementById(id+'-play');
+    let timer = null;
+    function setTime(v, quiet){
+      ti = Math.max(minTi, Math.min(rootLi, v)); tIn.value = ti;
+      whenEl.textContent = fmtMonth(T.dates[ti]) + (ti===rootLi ? ' · latest' : '');
+      tIn.style.setProperty('--p', ((ti-minTi)/((rootLi-minTi)||1)*100).toFixed(1)+'%');
+      liveBtn.hidden = ti===rootLi;
+      if(quiet) return;
+      if(tmEl.offsetParent!==null) drawTM(tmEl); table(); detailKpis(); flat();
+    }
+    function stop(){ if(timer){ clearInterval(timer); timer=null; } playBtn.classList.remove('on'); playBtn.setAttribute('aria-label','Play the last five years'); }
+    playBtn.addEventListener('click', ()=>{
+      if(timer){ stop(); return; }
+      if(ti>=rootLi) setTime(rootLi-60);
+      playBtn.classList.add('on'); playBtn.setAttribute('aria-label','Pause');
+      timer = setInterval(()=>{ if(ti>=rootLi) stop(); else setTime(ti+1); }, 140);
+    });
+    tIn.addEventListener('input', ()=>{ stop(); setTime(+tIn.value); });
+    liveBtn.addEventListener('click', ()=>{ stop(); setTime(rootLi); });
+    const qIn = document.getElementById(id+'-q');
+    const tryPick = () => { const v = qIn.value.trim().toLowerCase(); if(!v) return false;
+      let code = nameToCode.get(v);
+      if(!code){ const hit = all.find(n=>n.name.toLowerCase()===v) || all.find(n=>n.name.toLowerCase().startsWith(v)) || all.find(n=>n.name.toLowerCase().includes(v)); code = hit && hit.code; }
+      if(code){ select(code); qIn.value=''; qIn.blur(); return true; } return false; };
+    qIn.addEventListener('change', tryPick);
+    qIn.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); if(!tryPick()) qIn.classList.add('miss'); } else qIn.classList.remove('miss'); });
+    document.getElementById(id+'-fq').addEventListener('input', e=>{ fQuery = e.target.value; flat(); });
+    document.getElementById(id+'-hot').addEventListener('change', e=>{ fHot = e.target.checked; flat(); });
+    document.getElementById(id+'-more').addEventListener('click', ()=>{ fAll = !fAll; flat(); });
+    document.getElementById(id+'-csv').addEventListener('click', csv);
+    bindSeg(id+'-lvl', v=>{ fLevel = v; flat(); });
+
+    const detailKpis = () => detail(true);
+    function render(){ crumbs(); if(tmEl.offsetParent!==null) drawTM(tmEl); detail(); table(); flat(); }
 
     tmEl.__draw = drawTM; charts.push(tmEl);
     chartEl.__draw = drawDetail; charts.push(chartEl);
     bindSeg(id+'-view', v=>{ view=v; detail(); });
     bindSeg(id+'-range', v=>{ months=+v; if(chartEl.offsetParent!==null) drawDetail(chartEl); });
+    setTime(rootLi, true);
 
     if(cfg.movers){
       const leaves = [...byCode.values()].filter(n=>!n.kids.length && n.has && n.yoy!=null && n.weight>=0.03 && n.date.getTime()===root.date.getTime());
@@ -1138,7 +1318,82 @@
       cfg.movers.querySelectorAll('tr.click').forEach(tr=>tr.addEventListener('click', ()=>{ select(tr.dataset.code); cfg.el.scrollIntoView({behavior:'smooth', block:'start'}); }));
     }
     if(cfg.initial && byCode.has(cfg.initial)) select(cfg.initial); else render();
-    return {select, byCode, root};
+    return {select, byCode, root, el:cfg.el, detailEl:document.getElementById(id+'-detail')};
+  }
+
+  // "what's driving it": each major group's contribution (weight x 12-month change), now and over time
+  function contribSection(cfg){
+    const ex = cfg.ex, el = cfg.el;
+    if(!ex || !ex.root || !ex.root.has){ el.innerHTML = ''; return; }
+    const root = ex.root, T = cfg.table, id = cfg.id, li = root.li, head = root.yoyS[li];
+    const okv = v => v!=null && isFinite(v);
+    const COLORS = ['--c-actual','--c-model','--c-3','--c-5','--c-6','--c-7','--c-4','--c-8'];
+    const majors = root.kids.filter(k=>k.has && k.weight>0 && okv(k.yoyS[li]));
+    // colour the groups that actually move the total (average size of contribution over 5 years); the rest share one grey
+    const avgAbs = g => { let t=0, c=0; for(let i=Math.max(0,li-59); i<=li; i++){ if(okv(g.yoyS[i])){ t+=Math.abs(g.weight*g.yoyS[i]/100); c++; } } return c?t/c:0; };
+    const byW = majors.slice().sort((a,b)=>avgAbs(b)-avgAbs(a)), maxG = cfg.maxGroups || 8;
+    const shown = byW.length>maxG ? byW.slice(0,maxG-1) : byW, rest = byW.length>maxG ? byW.slice(maxG-1) : [];
+    const colorOf = new Map(shown.map((g,k)=>[g.code, COLORS[k%COLORS.length]]));
+    const METRICS = {
+      contrib:{label:'Contribution', v:g=>g.weight*g.yoyS[li]/100, fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2), unit:'percentage points added to the total'},
+      yoy:{label:'12-month change', v:g=>g.yoyS[li], fmt:v=>spct(v), unit:'how fast each group’s own prices rose'},
+      weight:{label:'Weight', v:g=>g.weight, fmt:v=>v.toFixed(1)+'%', unit:'share of the basket'},
+    };
+    let metric = 'contrib', hover = null, range = 60;
+    const top = majors.slice().sort((a,b)=>METRICS.contrib.v(b)-METRICS.contrib.v(a))[0];
+    const topShare = METRICS.contrib.v(top)/head*100;
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-head"><div><p class="card-title" id="${id}-btitle"></p><p class="card-sub" id="${id}-bsub"></p></div>
+          ${segControl(id+'-m', Object.entries(METRICS).map(([v,m])=>({v, label:m.label})), 'contrib')}</div>
+        <div class="cbars" id="${id}-bars"></div>
+        <p class="cnote">${okv(topShare)&&topShare>0&&topShare<=100?`<b>${esc(top.name)}</b> alone adds ${pp(METRICS.contrib.v(top),2)}, about ${topShare.toFixed(0)}% of the ${pct(head)} total. `:''}Click any group to open it in the explorer below.</p>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-head"><div><p class="card-title">Contributions over time</p>
+          <p class="card-sub">Each bar splits the 12-month inflation rate into its spending groups (approximate, using ${esc(cfg.weightNote)} weights). The line is ${esc(cfg.rootLower)} inflation. Hover a legend item to highlight it.</p></div>
+          ${segControl(id+'-r', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'240',label:'20Y'}], '60')}</div>
+        <div class="legend clegend" id="${id}-legend">${shown.map(g=>`<button type="button" data-code="${g.code}"><i class="key-area" style="background:var(${colorOf.get(g.code)})"></i>${esc(g.name)}</button>`).join('')}${rest.length?`<button type="button" data-code="_rest"><i class="key-area" style="background:var(--c-ref)"></i>${rest.length} other groups</button>`:''}<span><i class="key-line" style="background:var(--ink)"></i>${esc(cfg.rootLabel)}</span></div>
+        <div class="chart" id="${id}-chart"></div>
+      </div>`;
+    function bars(){
+      const M = METRICS[metric], rows = majors.map(g=>({g, v:M.v(g)})).sort((a,b)=>b.v-a.v);
+      const lo = Math.min(0, ...rows.map(r=>r.v)), hi = Math.max(0, ...rows.map(r=>r.v)), span = (hi-lo)||1, zero = (0-lo)/span*100;
+      document.getElementById(id+'-btitle').textContent = metric==='contrib' ? `How much each group adds to the ${pct(head)} ${cfg.rootLower} inflation rate` : metric==='yoy' ? `How fast prices are rising in each group` : `How big each group is in the ${cfg.rootLower} basket`;
+      document.getElementById(id+'-bsub').textContent = `${fmtMonthLong(T.dates[li])} · ${M.unit}.` + (metric==='contrib' ? ' Contribution = weight × 12-month change.' : '');
+      document.getElementById(id+'-bars').innerHTML = rows.map(r=>{
+        const w = Math.abs(r.v)/span*100, left = r.v>=0 ? zero : zero-w, c = metric==='contrib' ? `var(${colorOf.get(r.g.code)||'--c-ref'})` : metric==='yoy' ? `var(--h${heatBin(r.v)})` : 'var(--c-actual)';
+        const share = metric==='contrib' && head>0 ? `<span class="cshare">${Math.abs(r.v/head*100)<0.5?'0':(r.v/head*100).toFixed(0)}%</span>` : '';
+        return `<button type="button" class="cb-row" data-code="${r.g.code}" aria-label="${esc(r.g.name)}: ${M.label} ${M.fmt(r.v)}"><span class="cb-name">${esc(r.g.name)}</span>
+          <span class="cb-track"><span class="hb-zero" style="left:${zero}%"></span><span class="cb-bar" style="left:${left}%;width:${Math.max(w,.4)}%;background:${c}"></span></span>
+          <span class="cb-v num">${M.fmt(r.v)}${share}</span></button>`;
+      }).join('');
+      el.querySelectorAll('.cb-row').forEach(b=>b.addEventListener('click', ()=>cfg.onPick(b.dataset.code)));
+    }
+    function chart(){
+      const idx = []; for(let i=Math.max(0, li-range+1); i<=li; i++) idx.push(i);
+      const stack = g => idx.map(i=>okv(g.yoyS[i]) ? g.weight*g.yoyS[i]/100 : null);
+      const stacks = shown.map(g=>({label:g.name, color:colorOf.get(g.code), code:g.code, values:stack(g)}));
+      if(rest.length) stacks.push({label:'Other groups', color:'--c-ref', code:'_rest', values:idx.map(i=>{ let s=0, any=false; rest.forEach(g=>{ if(okv(g.yoyS[i])){ s+=g.weight*g.yoyS[i]/100; any=true; } }); return any?s:null; })});
+      const chEl = document.getElementById(id+'-chart');
+      mount(chEl, stackedColumns({aria:'Contributions to '+cfg.rootLower+' inflation by group', height:H(320,260), dates:idx.map(i=>T.dates[i]),
+        stacks, line:{label:cfg.rootLabel, values:idx.map(i=>root.yoyS[i])}, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+(Math.abs(v)<20?' pp':'')}));
+      highlight();
+    }
+    function highlight(){
+      const chEl = document.getElementById(id+'-chart'), k = hover ? [...shown.map(g=>g.code), '_rest'].indexOf(hover) : -1;
+      chEl.classList.toggle('dim', k>=0);
+      chEl.querySelectorAll('[data-stack]').forEach(r=>r.classList.toggle('hi', +r.dataset.stack===k));
+      el.querySelectorAll('.clegend button').forEach(b=>b.classList.toggle('hi', b.dataset.code===hover));
+    }
+    el.querySelectorAll('.clegend button').forEach(b=>{
+      b.addEventListener('pointerenter', ()=>{ hover=b.dataset.code; highlight(); });
+      b.addEventListener('pointerleave', ()=>{ hover=null; highlight(); });
+      b.addEventListener('click', ()=>{ if(b.dataset.code!=='_rest') cfg.onPick(b.dataset.code); });
+    });
+    bindSeg(id+'-m', v=>{ metric=v; bars(); });
+    bindSeg(id+'-r', v=>{ range=+v; chart(); });
+    bars(); chart();
   }
 
   // static mini treemap of the top level (overview page)
@@ -1171,11 +1426,11 @@
       mt.ticks.forEach(d=>{ const i=cfg.dates.findIndex(x=>x.getTime()===d.getTime()); if(i>=0) s+=`<text x="${(m.l+band*i+band/2).toFixed(1)}" y="${Ht-8}" text-anchor="middle">${mt.fmt(d)}</text>`; });
       for(let i=0;i<N;i++){
         let up=0, dn=0; const x = m.l+band*i+band/2-bw/2;
-        cfg.stacks.forEach(st=>{
+        cfg.stacks.forEach((st,si)=>{
           const v=st.values[i]; if(v==null || v===0) return;
           const a = v>=0 ? up : dn, b = a+v; if(v>=0) up=b; else dn=b;
           const yA=Y(a), yB=Y(b);
-          s += `<rect x="${x.toFixed(1)}" y="${Math.min(yA,yB).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5,Math.abs(yA-yB)).toFixed(1)}" style="fill:var(${st.color})" stroke="var(--surface)" stroke-width="${bw>5?1:0}"/>`;
+          s += `<rect data-stack="${si}" x="${x.toFixed(1)}" y="${Math.min(yA,yB).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5,Math.abs(yA-yB)).toFixed(1)}" style="fill:var(${st.color})" stroke="var(--surface)" stroke-width="${bw>5?1:0}"/>`;
         });
       }
       s += `<line class="baseline" x1="${m.l}" x2="${W-m.r}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/>`;
@@ -1537,7 +1792,7 @@
     const xcards = [
       {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month ARIMA forecast for CPI and PCE inflation, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
       {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving it', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
-      {href:'#prices', icon:'grid', ic:'var(--c-3)', t:'Every CPI item', d:'Drill into an interactive treemap of every category in the CPI basket.', sl:'Categories', sv:hasCats?String(cpiNodes.length):'—'},
+      {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive treemap.', sl:'Categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
       {href:'#money', icon:'wallet', ic:'var(--c-5)', t:'Your money', d:'What inflation does to your savings, your paycheck and everyday prices.', sl:'$100 a year ago', sv:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—'},
       {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'1-month error vs. naive', sv:okN(maeGain)?(maeGain>=0?'−':'+')+Math.abs(maeGain).toFixed(0)+'%':'—'},
@@ -1665,25 +1920,22 @@
       </section>
 
       <!-- ================= DRIVERS ================= -->
-      <section class="page" id="page-drivers" data-title="What's driving it">
-        <h1 class="page-title">What's driving inflation?</h1>
-        <p class="lede">Which parts of the budget are pushing prices up.</p>
-        <div id="contribBody"></div>
-        <div id="driversBody"></div>
-        ${pageFoot()}
-      </section>
-
-      <!-- ================= EVERYDAY PRICES (CPI categories) ================= -->
-      <section class="page" id="page-prices" data-title="Everyday prices">
-        <h1 class="page-title">Everyday prices: inside the CPI basket</h1>
-        <p class="lede">What is in the CPI basket and how fast each price is rising. Click a tile to drill down.</p>
+      <section class="page" id="page-drivers" data-title="What's driving CPI">
+        <h1 class="page-title">What’s driving CPI inflation?</h1>
+        <p class="lede">The consumer price index (BLS) tracks what urban households pay. Start with the big groups, then drill into every one of its ${hasCats?cpiNodes.length-1:160} categories.</p>
+        <div id="contribBody">${hasCats?'':pending('Detailed CPI categories')}</div>
+        <h2 class="drill-h">Explore every CPI category</h2>
+        <p class="drill-sub">Search, click tiles to drill down, or drag the slider (or press play) to see how the basket looked in any month.</p>
         <div id="cpiExplorer">${hasCats?'':pending('Detailed CPI categories')}</div>
         <div id="cpiMovers" style="margin-top:12px"></div>
+        <h2 id="cpiMoreH">Core, food, energy and shelter</h2>
+        <div id="driversBody"></div>
         <h2>Shelf prices</h2>
         <p class="sec-sub">Average U.S. retail prices collected by the Bureau of Labor Statistics, in dollars. Select an item to see its history since 1980.</p>
         <div id="pricesBody"></div>
         ${pageFoot()}
       </section>
+
 
       <!-- ================= HISTORY ================= -->
       <section class="page" id="page-history" data-title="History">
@@ -1716,9 +1968,12 @@
       </section>
 
       <!-- ================= PCE CATEGORIES ================= -->
-      <section class="page" id="page-pce-categories" data-title="PCE categories">
-        <h1 class="page-title">Inside PCE: what Americans spend on</h1>
-        <p class="lede">What Americans spend on and how fast each price is rising. Click a tile to drill down.</p>
+      <section class="page" id="page-pce-categories" data-title="What's driving PCE">
+        <h1 class="page-title">What’s driving PCE inflation?</h1>
+        <p class="lede">The PCE price index (BEA) covers everything Americans spend on, including what employers and insurers pay on their behalf. It is the measure the Fed targets at 2%.</p>
+        <div id="pceContrib">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
+        <h2 class="drill-h">Explore every PCE category</h2>
+        <p class="drill-sub">Search, click tiles to drill down, or drag the slider (or press play) to see how spending looked in any month.</p>
         <div id="pceExplorer">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
         <div id="pceMovers" style="margin-top:12px"></div>
         ${pageFoot()}
@@ -2348,41 +2603,13 @@
       mount(el, curveChart({aria:'Treasury yield curve', labels:MAT.map(m=>m[1]), series, height}));
     }
 
-    // ---- drivers: contributions by major group ----
-    (function(){
-      const body = document.getElementById('contribBody');
-      if(!hasCats){ body.innerHTML = ''; return; }
-      const COLORS = ['--c-actual','--c-model','--c-3','--c-5','--c-6','--c-7','--c-4','--c-8'];
-      const groups = cpiMajor.slice().sort((a,b)=>b.weight-a.weight).map((g,k)=>({...g, color:COLORS[k%8]}));
-      const n = 60, li = lastIdx(COMP.cols.SA0), idx = []; for(let i=Math.max(0,li-n+1); i<=li; i++) idx.push(i);
-      const head = yoyOf(COMP.cols.SA0);
-      const withData = groups.filter(g=>g.yoy!=null);
-      const sorted = withData.slice().sort((a,b)=>b.weight*b.yoy-a.weight*a.yoy);
-      body.innerHTML = `
-        <div>
-          <div class="card"><p class="card-title">How much each category adds to the ${pct(head[li])} inflation rate</p>
-            <p class="card-sub">In percentage points. Bigger bar, bigger push on prices.</p>
-            ${hbars(sorted.map(g=>({label:g.name, value:g.weight*g.yoy/100})), {fmt:v=>(v>=0?'+':'')+v.toFixed(2), nameW:'minmax(120px,230px)'})}
-            <p class="note">${esc(sorted[0].name)} alone adds ${pp(sorted[0].weight*sorted[0].yoy/100,2)}, ${(sorted[0].weight*sorted[0].yoy/100/head[li]*100).toFixed(0)}% of headline inflation.</p>
-          </div>
-        </div>
-        <div class="card" style="margin-top:12px">
-          <p class="card-title">Contributions to CPI inflation, last 5 years</p>
-          <p class="card-sub">Each bar splits the 12-month inflation rate into the eight spending groups (approximate, using December 2025 weights). The black line is all-items inflation.</p>
-          <div class="legend">${groups.map(g=>`<span><i class="key-area" style="background:var(${g.color})"></i>${esc(g.name)}</span>`).join('')}<span><i class="key-line" style="background:var(--ink)"></i>All items</span></div>
-          <div class="chart" id="contribChart"></div>
-        </div>
-        <h2>Core, food, energy and shelter</h2>`;
-      mount(document.getElementById('contribChart'), stackedColumns({aria:'Contributions to CPI inflation by group', height:H(320,260), dates:idx.map(i=>COMP.dates[i]),
-        stacks: groups.map(g=>({label:g.name, color:g.color, values: idx.map(i=>g.yoyS && g.yoyS[i]!=null ? g.weight*g.yoyS[i]/100 : null)})),
-        line:{label:'All items', values: idx.map(i=>head[i])}, yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+(Math.abs(v)<20?' pp':'')}));
-    })();
-
     // ---- CPI category explorer ----
     let cpiEx = null;
     if(hasCats){
       cpiEx = explorer({el:document.getElementById('cpiExplorer'), id:'cx', nodes:cpiNodes, table:COMP, rootCode:'SA0', rootLabel:'All items',
         weightLabel:'BLS relative importance, December 2025', target:FED_TARGET, movers:document.getElementById('cpiMovers')});
+      const pick = ex => code => { ex.select(code); ex.el.scrollIntoView({behavior:'smooth', block:'start'}); };
+      contribSection({el:document.getElementById('contribBody'), id:'cc', ex:cpiEx, table:COMP, rootLabel:'All items', rootLower:'CPI', weightNote:'December 2025', onPick:pick(cpiEx)});
     }
 
     // ---- PCE page ----
@@ -2471,8 +2698,10 @@
 
     // ---- PCE explorer ----
     if(pceNodes.length && PCOMP){
-      explorer({el:document.getElementById('pceExplorer'), id:'px', nodes:pceNodes, table:PCOMP, rootCode:'DPCE', rootLabel:'Total PCE', rootLower:'total PCE',
+      const pceEx = explorer({el:document.getElementById('pceExplorer'), id:'px', nodes:pceNodes, table:PCOMP, rootCode:'DPCE', rootLabel:'Total PCE', rootLower:'total PCE',
         weightLabel:`Share of consumer spending${pceWDate?', '+fmtMonth(pceWDate):''}`, target:FED_TARGET, movers:document.getElementById('pceMovers')});
+      if(pceEx) contribSection({el:document.getElementById('pceContrib'), id:'pc', ex:pceEx, table:PCOMP, rootLabel:'Total PCE', rootLower:'PCE', weightNote:pceWDate?fmtMonth(pceWDate)+' spending':'latest spending', maxGroups:8,
+        onPick:code=>{ pceEx.select(code); pceEx.el.scrollIntoView({behavior:'smooth', block:'start'}); }});
     }
 
     // ---- interest rates page ----
@@ -2577,9 +2806,10 @@
     })();
 
     // =============== router ===============
-    const PAGES = ['overview','findings','forecast','track-record','drivers','prices','history','pce','pce-categories','rates','fed','money','expectations','methodology'];
+    const PAGES = ['overview','findings','forecast','track-record','drivers','history','pce','pce-categories','rates','fed','money','expectations','methodology'];
     function show(){
       let id = (location.hash||'').slice(1);
+      if(id==='prices') id = 'drivers';   // old link: every CPI item now lives on the CPI tab
       if(!PAGES.includes(id)) id = 'overview';
       document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
       document.querySelectorAll('.nav-link').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+groupOf(id) ? 'page' : 'false'));
@@ -2602,19 +2832,16 @@
     fold('findings', $('#page-findings > h2'));
     fold('forecast', $('#page-forecast > .grid-2'));
     fold('track-record', card('#leaderboard'));
-    { const h=$('#contribBody > h2:last-child'), d=$('#driversBody'); if(h && d) d.prepend(h); fold('drivers', card('#contribChart'));
-      const f=$('#page-drivers details.fold > .fold-body'); if(f && d) f.appendChild(d); }
-    fold('prices', $('#cpiMovers'));
+    fold('drivers', $('#cpiMoreH'));
     fold('history', card('#momChart'));
     fold('pce', $('#pceBody > .grid-2'));
-    fold('pce-categories', $('#pceMovers'));
     fold('rates', $('#ratesBody > .grid-2'));
     fold('money', $('#page-money > h2'));
     fold('expectations', $('#expBody > .card:last-child'));
     // five sections in the sidebar; related pages are tabs inside each section
     const GROUPS = {
       forecast: [['forecast','CPI'],['pce','PCE'],['expectations','vs. expectations'],['history','Since 1948']],
-      drivers:  [['drivers','By category'],['prices','Every CPI item'],['pce-categories','Every PCE item']],
+      drivers:  [['drivers','CPI'],['pce-categories','PCE']],
       rates:    [['rates','Treasury yields'],['fed','The Fed']],
       findings: [['findings','Key findings'],['track-record','Track record'],['methodology','How it works']],
     };
