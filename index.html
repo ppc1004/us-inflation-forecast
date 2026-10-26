@@ -1228,10 +1228,9 @@
       {label:'Fed interest rate', value:rl('fed_funds')?pct(rl('fed_funds').v,2):'—', sub:rl('fed_funds')?nextYr(fc12(rate('fed_funds'))&&pct(fc12(rate('fed_funds')).mean,2)):'Pending data', href:'#rates', spark:'spk-ff'},
       {label:'10-year Treasury yield', value:rl('gs10')?pct(rl('gs10').v,2):'—', sub:rl('gs10')?nextYr(fc12(rate('gs10'))&&pct(fc12(rate('gs10')).mean,2)):'Pending data', href:'#rates', spark:'spk-10y'},
     ];
-    // plain-language headline: the CPI number people know, compared with the Fed's goal in the lede
-    const hlGap = latest.yoy - 2;
-    const headline = `Prices are up ${pct(latest.yoy)} from a year ago.`;
-    const hlVsTarget = Math.abs(hlGap)<0.05 ? "That\u2019s right at the Fed\u2019s 2% target." : `That\u2019s ${hlGap>0?"above":"below"} the Fed\u2019s 2% target.`;
+    // page title says what the site is; the numbers live in the executive summary below it
+    const headline = 'U.S. Economic Forecast';
+    const hlVsTarget = `Tracking U.S. inflation and interest rates, with 12-month forecasts. Data through ${fmtMonthLong(latest.date)}, updated automatically.`;
 
     const ovDrivers = (()=>{
       if(!hasCats || !COMP.cols.SA0) return null;
@@ -1285,7 +1284,7 @@
         rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside our expected range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
-          <div class="card-head"><div><p class="card-title" id="execTitle">Executive summary</p><p class="card-sub">The short version, in plain English. Updated automatically with data through ${fmtMonthLong(latest.date)}.</p></div><a class="link-more" href="#findings">Key findings \u2192</a></div>
+          <div class="card-head"><div><p class="card-title" id="execTitle">Executive summary</p><p class="card-sub">The short version, in plain English.</p></div><a class="link-more" href="#findings">Key findings \u2192</a></div>
           <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>${verdict}.</b> It\u2019s ${above(latest.yoy)} the Fed\u2019s 2% goal${nextBit}.</span></p>
           <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
           <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed (America\u2019s central bank) aims for 2% a year.</p>
