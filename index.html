@@ -119,6 +119,16 @@
   .link-more{font-size:13px; font-weight:500; color:var(--c-actual); text-decoration:none; white-space:nowrap;}
   .link-more:hover{text-decoration:underline;}
 
+  /* ---------- executive summary ---------- */
+  .exec{margin:0 0 12px;}
+  .exec-list{display:grid; margin:0; border-top:1px solid var(--border);}
+  .exec-row{display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; padding:11px 0; border-bottom:1px solid var(--border);}
+  .exec-row:last-child{border-bottom:0; padding-bottom:0;}
+  .exec-row dt{font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); padding-top:2px;}
+  .exec-row dd{margin:0; font-size:14.5px; color:var(--ink-2);}
+  .exec-row dd b{color:var(--ink); font-weight:600;}
+  @media (max-width: 560px){ .exec-row{grid-template-columns:1fr; gap:2px;} }
+
   /* ---------- KPI tiles ---------- */
   .kpi{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px 18px; min-width:0;}
   .kpi-label{font-size:13px; color:var(--ink-2); font-weight:500;}
@@ -1225,11 +1235,52 @@
       return rows.length ? {head, date:COMP.dates[li], rows} : null;
     })();
 
+    // executive summary: one-line takeaways, rebuilt from the data on every update
+    const execSummary = (()=>{
+      const rows = [];
+      const dir = (a,b,eps=0.05) => Math.abs(a-b)<eps ? 'unchanged from' : a>b ? 'up from' : 'down from';
+      // 1. where inflation is now
+      let now = `CPI inflation is <b>${pct(latest.yoy)}</b> in ${fmtMonth(latest.date)}, ${dir(latest.yoy, prev.yoy)} ${pct(prev.yoy)} the month before`;
+      if(coreLatest) now += `; core CPI (excluding food and energy) is <b>${pct(coreLatest.v)}</b>`;
+      rows.push({k:'Inflation now', v: now + '.'});
+      // 2. outlook
+      if(last12){
+        const d = last12.mean - latest.yoy;
+        const word = Math.abs(d)<0.15 ? 'roughly flat at' : d>0 ? 'rising to' : 'easing to';
+        rows.push({k:'12-month outlook', v:`The ARIMA model sees inflation ${word} <b>${pct(last12.mean)}</b> by ${fmtMonth(last12.date)}${last12.lo!=null&&last12.hi!=null?` (95% range ${pct(last12.lo)} to ${pct(last12.hi)})`:''}, ${last12.mean-FED_TARGET>0.25?'still above':last12.mean-FED_TARGET<-0.25?'below':'close to'} the Fed\u2019s 2% target.`});
+      }
+      // 3. what is driving it
+      if(ovDrivers && ovDrivers.rows.length){
+        const top = ovDrivers.rows[0], share = ovDrivers.head ? top.value/ovDrivers.head*100 : null;
+        rows.push({k:'Main driver', v:`<b>${esc(top.label)}</b> adds ${top.value.toFixed(1)} points to the ${pct(ovDrivers.head)} headline${share!=null&&share>0&&share<=100?`, about ${share.toFixed(0)}% of the total`:''} (weight \u00d7 12-month change).`});
+      }
+      // 4. Fed's preferred gauge and rates
+      const ff = rate('fed_funds'), t10 = rate('gs10');
+      const bits = [];
+      if(pceLast && pceLast.core!=null) bits.push(`Core PCE, the Fed\u2019s preferred gauge, is <b>${pct(pceLast.core)}</b>`);
+      if(ff && fc12(ff)) bits.push(`the Fed funds rate is ${pct(ff.last.v,2)}, forecast at <b>${pct(fc12(ff).mean,2)}</b> in a year`);
+      if(t10 && fc12(t10)) bits.push(`the 10-year yield ${pct(t10.last.v,2)}, forecast at ${pct(fc12(t10).mean,2)}`);
+      if(bits.length) rows.push({k:'Fed & rates', v: bits.join('; ').replace(/^./, c=>c.toUpperCase()) + '.'});
+      // 5. can the forecast be trusted
+      const hz = hzRaw.map(r=>({h:+r.horizon, m:num(r.model_mae), nv:num(r.naive_mae), cov:num(r.coverage_95), n:+r.n})).filter(r=>r.m!=null&&r.nv).sort((a,b)=>a.h-b.h);
+      if(hz.length){
+        const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
+        const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
+        rows.push({k:'Track record', v:`In out-of-sample tests the model is <b>${Math.abs(edge).toFixed(0)}% ${edge>=0?'more':'less'} accurate</b> than a \u201cno change\u201d guess ${l.h} months ahead, and its 95% ranges contained the actual value ${cov.toFixed(0)}% of the time.`});
+      }
+      if(!rows.length) return '';
+      return `<div class="card exec" aria-labelledby="execTitle">
+          <div class="card-head"><div><p class="card-title" id="execTitle">Executive summary</p><p class="card-sub">Updated automatically with data through ${fmtMonthLong(latest.date)}.</p></div><a class="link-more" href="#findings">Key findings \u2192</a></div>
+          <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
+        </div>`;
+    })();
+
     app.innerHTML = `
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
         <h1>${headline}</h1>
         <p class="lede">${hlVsTarget}</p>
+        ${execSummary}
         <div class="grid-6">${ovTiles.filter(t=>['spk-cpi','spk-ff','spk-10y'].includes(t.spark)).map(tile).join('')}</div>
         <div class="card" style="margin-top:12px"><div class="card-head"><div><p class="card-title">Inflation and forecast</p><p class="card-sub">Last 3 years and the next 12 months.</p></div><a class="link-more" href="#forecast">Forecast →</a></div>
           ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
