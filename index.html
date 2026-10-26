@@ -418,7 +418,7 @@
   .seg button[aria-pressed="true"]{background:var(--ink); color:var(--page);}
 
   /* ---------- hero ---------- */
-  .hero{position:relative; isolation:isolate; overflow:hidden; width:100vw; margin:calc(-1 * var(--ctop)) 0 0 calc(50% - 50vw);
+  .ov-hero{position:relative; isolation:isolate; overflow:hidden; width:100vw; margin:calc(-1 * var(--ctop)) 0 0 calc(50% - 50vw);
     min-height:min(90vh, 860px); display:grid; place-items:center; padding:88px 20px 72px; text-align:center;}
   .wall{position:absolute; inset:-35% -25%; z-index:-2; display:flex; flex-direction:column; justify-content:center; gap:14px;
     transform:perspective(1300px) rotateX(50deg) rotateZ(-16deg); transform-origin:50% 45%; pointer-events:none;}
@@ -431,7 +431,7 @@
   :root[data-theme="dark"] .wtile{color:#fff;}
   .wtile span{opacity:.82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .wtile b{font-size:19px; font-weight:650; letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
-  .hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  .ov-hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
     background:
       radial-gradient(ellipse 58% 52% at 50% 50%, color-mix(in srgb, var(--page) 94%, transparent) 0%, color-mix(in srgb, var(--page) 70%, transparent) 50%, transparent 82%),
       linear-gradient(to bottom, color-mix(in srgb, var(--page) 55%, transparent) 0%, transparent 22%, transparent 68%, var(--page) 100%);}
@@ -572,7 +572,7 @@
   .fut-c{display:flex; flex-direction:column; gap:4px; padding:14px 16px; border-radius:12px; background:var(--page); border:1px solid var(--border);}
   .fut-c .l{font-size:13.5px; color:var(--ink-2);} .fut-c b{font-size:28px; font-weight:700; letter-spacing:-.02em; color:var(--c-model);} .fut-c .s{font-size:13px; color:var(--muted);}
   @media (max-width: 900px){ .why-grid, .fut-grid{grid-template-columns:1fr;} .aud{grid-template-columns:1fr;} }
-  @media (min-width: 701px){ .hero{min-height:min(74vh, 720px);} }
+  @media (min-width: 701px){ .ov-hero{min-height:min(74vh, 720px);} }
 
   /* ---------- the story ---------- */
   .story-top{max-width:860px; padding:8px 0 10px;}
@@ -637,7 +637,7 @@
     .nav-group{margin-left:0; flex:1;}
   }
   @media (max-width: 700px){
-    .hero{min-height:auto; padding:64px 16px 64px;}
+    .ov-hero{min-height:auto; padding:64px 16px 64px;}
     .hero-stats{grid-template-columns:1fr 1fr; margin-top:36px;}
     .scroll-cue{display:none;}
     .wtile{width:140px; height:62px;} .wtile b{font-size:16px;}
@@ -1832,7 +1832,7 @@
       {l:'10-year Treasury', v:tenR?pct(tenR.last.v,2):'—', c:tenR?countAttr(tenR.last.v,2):'', s:'Drives mortgage rates', href:'#rates'},
     ];
     const heroHTML = `
-      <div class="hero">
+      <div class="ov-hero">
         <div class="wall" aria-hidden="true">${wallHTML}</div>
         <div class="hero-inner">
           <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next CPI ${nextText}</span>`:''}</span>
@@ -2894,7 +2894,7 @@
         <div class="grid-3">
           <div class="kpi hero"><div class="kpi-label">PCE inflation</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${fmtMonth(l.date)}</div></div>
           <div class="kpi"><div class="kpi-label">Core PCE</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
-          <div class="kpi"><div class="kpi-label">In 12 months</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?fmtMonth(fcH[fcH.length-1].date):'Pending'}</div></div>
+          <div class="kpi"><div class="kpi-label">Projected next year</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?fmtMonth(fcH[fcH.length-1].date):'Pending'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The band widens because the further out, the less certain.</p></div>
