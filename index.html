@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>U.S. Economic Forecast</title>
 <meta name="description" content="U.S. Economic Forecast: CPI and PCE inflation across 160+ categories with their weights, Treasury yields and the Fed funds rate, with 12-month ARIMA forecasts and public backtests.">
@@ -362,6 +363,170 @@
     .xtable .hide-sm{display:none;}
     .tm-name{font-size:11.5px;}
   }
+
+  /* =====================================================================
+     SHOWCASE SKIN: glass top bar, cinematic hero, ticker, explore cards
+     ===================================================================== */
+  :root{
+    --grad:linear-gradient(92deg,#4f8ff7 0%,#9b7bff 48%,#ff8f57 100%);
+    --glow:#9b7bff;
+    --glass:color-mix(in srgb, var(--page) 72%, transparent);
+    --ease:cubic-bezier(.2,.7,.2,1);
+    --ctop:40px;
+  }
+  :root[data-theme="dark"]{
+    --page:#07070a; --surface:#111116; --side:#0b0b0f;
+    --grid:#24242b; --border:rgba(255,255,255,.08);
+  }
+  :root[data-theme="light"]{ --grad:linear-gradient(92deg,#1f63c9 0%,#6b4fe0 48%,#e0602c 100%); --glow:#6b4fe0; }
+  html{scroll-behavior:smooth;}
+  body{overflow-x:clip;
+    background:
+      radial-gradient(1100px 620px at 88% -12%, color-mix(in srgb, var(--glow) 13%, transparent), transparent 62%),
+      radial-gradient(900px 520px at -12% 8%, color-mix(in srgb, var(--c-actual) 10%, transparent), transparent 60%),
+      var(--page);
+    background-attachment:fixed;}
+  ::selection{background:color-mix(in srgb, var(--glow) 40%, transparent);}
+
+  /* top bar replaces the sidebar on every screen size */
+  .shell{display:block;}
+  .side{position:sticky; top:0; z-index:40; height:auto; overflow:visible; flex-direction:row; align-items:center; gap:18px;
+    padding:11px clamp(16px,3vw,40px); border-right:0; border-bottom:1px solid var(--border);
+    background:var(--glass); -webkit-backdrop-filter:saturate(1.5) blur(16px); backdrop-filter:saturate(1.5) blur(16px);}
+  .brand{padding:0; font-size:15px;}
+  .brand-mark{background:var(--grad); width:28px; height:28px; border-radius:9px; box-shadow:0 6px 18px -6px var(--glow);}
+  .nav-group{flex-direction:row; gap:2px; margin-left:auto; min-width:0; overflow-x:auto; scrollbar-width:none;}
+  .nav-group::-webkit-scrollbar{display:none;}
+  .nav-link{padding:6px 13px; font-size:13.5px; border-radius:999px; font-weight:500;}
+  .nav-link svg{display:none;}
+  .nav-link:hover{background:color-mix(in srgb, var(--ink) 7%, transparent);}
+  .nav-link[aria-current="page"]{background:color-mix(in srgb, var(--ink) 10%, transparent); box-shadow:none;}
+  .side-foot{margin-top:0; padding:0; display:flex; flex-direction:row; align-items:center; gap:6px;}
+  .side-foot .status{display:none;}
+  .side-foot a, .icon-btn{width:34px; height:34px; display:inline-grid; place-items:center; border-radius:999px; border:1px solid var(--border);
+    background:none; color:var(--ink-2); cursor:pointer; font-size:0; padding:0; transition:color .2s, border-color .2s, background .2s;}
+  .side-foot a:hover, .icon-btn:hover{color:var(--ink); border-color:color-mix(in srgb, var(--ink) 25%, transparent);}
+  .icon-btn .sun{display:none;} :root[data-theme="dark"] .icon-btn .sun{display:block;} :root[data-theme="dark"] .icon-btn .moon{display:none;}
+  .content{max-width:1480px; margin:0 auto; padding-top:var(--ctop);}
+
+  /* headings & surfaces */
+  .page-title{font-size:clamp(28px,3.4vw,40px); letter-spacing:-.028em; font-weight:650; line-height:1.12;}
+  .card, .kpi{background:linear-gradient(180deg, color-mix(in srgb, var(--ink) 3%, transparent), transparent 45%), var(--surface);}
+  .kpi.linky{transition:transform .25s var(--ease), border-color .25s;}
+  .kpi.linky:hover{transform:translateY(-3px); border-color:color-mix(in srgb, var(--glow) 45%, var(--border));}
+  .subtabs{border-radius:999px; padding:4px;} .subtabs a{border-radius:999px; padding:6px 14px;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:var(--page);}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; isolation:isolate; overflow:hidden; width:100vw; margin:calc(-1 * var(--ctop)) 0 0 calc(50% - 50vw);
+    min-height:min(90vh, 860px); display:grid; place-items:center; padding:88px 20px 72px; text-align:center;}
+  .wall{position:absolute; inset:-35% -25%; z-index:-2; display:flex; flex-direction:column; justify-content:center; gap:14px;
+    transform:perspective(1300px) rotateX(50deg) rotateZ(-16deg); transform-origin:50% 45%; pointer-events:none;}
+  .wall-row{display:flex; gap:14px; padding-right:14px; width:max-content; animation:drift var(--dur,90s) linear infinite; will-change:transform;}
+  .wall-row:nth-child(even){animation-direction:reverse;}
+  .wtile{flex:none; width:172px; height:72px; border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; justify-content:space-between; text-align:left;
+    background:linear-gradient(150deg, color-mix(in srgb, var(--tc) 62%, transparent), color-mix(in srgb, var(--tc) 22%, transparent));
+    border:1px solid color-mix(in srgb, var(--tc) 55%, rgba(255,255,255,.12)); color:var(--tt); font-size:11.5px; line-height:1.25;
+    box-shadow:0 14px 30px -12px rgba(0,0,0,.55);}
+  :root[data-theme="dark"] .wtile{color:#fff;}
+  .wtile span{opacity:.82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .wtile b{font-size:19px; font-weight:650; letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+  .hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 58% 52% at 50% 50%, color-mix(in srgb, var(--page) 94%, transparent) 0%, color-mix(in srgb, var(--page) 70%, transparent) 50%, transparent 82%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--page) 55%, transparent) 0%, transparent 22%, transparent 68%, var(--page) 100%);}
+  @keyframes drift{to{transform:translateX(-50%);}}
+  .hero-inner{display:flex; flex-direction:column; align-items:center; max-width:1000px; width:100%;}
+  .live-pill{display:inline-flex; align-items:center; gap:9px; padding:6px 14px; border-radius:999px; border:1px solid var(--border);
+    background:var(--glass); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); font-size:13px; color:var(--ink-2); font-weight:500;}
+  .live-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--c-good); color:var(--c-good); animation:pulse 2.2s ease-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb, currentColor 60%, transparent);} 100%{box-shadow:0 0 0 10px transparent;}}
+  .hero-title{font-size:clamp(40px, 10vw, 136px); line-height:.92; letter-spacing:-.048em; font-weight:700; margin:24px 0 20px; max-width:none;}
+  .hero-title .l2{display:block; padding-bottom:.06em; background:var(--grad); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:sheen 9s ease-in-out infinite alternate;}
+  @keyframes sheen{to{background-position:100% 0;}}
+  .hero-sub{font-size:clamp(16px,1.6vw,19px); line-height:1.55; color:var(--ink-2); max-width:640px; margin:0 0 32px; text-wrap:balance;}
+  .cta{display:flex; flex-wrap:wrap; gap:10px; justify-content:center;}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:12px; font:inherit; font-size:14.5px; font-weight:600; text-decoration:none;
+    border:1px solid var(--border); background:var(--glass); color:var(--ink); cursor:pointer; -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:transform .25s var(--ease), border-color .25s, box-shadow .25s;}
+  .btn:hover{transform:translateY(-2px); border-color:color-mix(in srgb, var(--ink) 28%, transparent);}
+  .btn.primary{background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 12px 32px -12px var(--glow);}
+  .btn.primary:hover{box-shadow:0 16px 40px -10px var(--glow);}
+  .btn .arr{transition:transform .25s var(--ease);} .btn:hover .arr{transform:translateX(3px);}
+  .btn:focus-visible, .xcard:focus-visible{outline:2px solid var(--glow); outline-offset:3px;}
+  .hero-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; width:100%; max-width:880px; margin-top:48px;
+    background:var(--border); border:1px solid var(--border); border-radius:18px; overflow:hidden; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);}
+  .hs{background:var(--glass); padding:16px 18px 15px; text-align:left; text-decoration:none; color:inherit; transition:background .2s;}
+  .hs:hover{background:color-mix(in srgb, var(--surface) 85%, transparent);}
+  .hs .l{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;}
+  .hs .v{font-size:clamp(24px,2.7vw,34px); font-weight:650; letter-spacing:-.025em; margin-top:2px; font-variant-numeric:tabular-nums; line-height:1.2;}
+  .hs .s{font-size:12.5px; color:var(--ink-2);}
+  .scroll-cue{position:absolute; left:50%; bottom:20px; translate:-50% 0; width:22px; height:34px; border-radius:12px; border:1.5px solid var(--axis);}
+  .scroll-cue::after{content:""; position:absolute; left:50%; top:7px; width:3px; height:7px; margin-left:-1.5px; border-radius:2px; background:var(--ink-2); animation:cue 1.8s ease-in-out infinite;}
+  @keyframes cue{0%{opacity:0; transform:translateY(-3px);} 40%{opacity:1;} 100%{opacity:0; transform:translateY(9px);}}
+
+  /* ---------- ticker ---------- */
+  .ticker{width:100vw; margin:0 0 8px calc(50% - 50vw); border-block:1px solid var(--border); padding:15px 0; overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);}
+  .ticker-track{display:flex; gap:44px; padding-right:44px; width:max-content; animation:drift 70s linear infinite;}
+  .ticker:hover .ticker-track{animation-play-state:paused;}
+  .tk{display:inline-flex; align-items:baseline; gap:9px; font-size:14px; color:var(--ink-2); white-space:nowrap;}
+  .tk b{font-weight:600; font-variant-numeric:tabular-nums;} .tk .up{color:var(--c-bad);} .tk .dn{color:var(--c-good);} .tk .nt{color:var(--ink);}
+  .tk::after{content:""; width:4px; height:4px; border-radius:50%; background:var(--axis); margin-left:35px; align-self:center;}
+
+  /* ---------- overview sections ---------- */
+  .sec-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin:64px 0 18px;}
+  .kicker{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .sec-title{font-size:clamp(26px,3.2vw,40px); font-weight:650; letter-spacing:-.03em; line-height:1.1; margin:8px 0 0; max-width:none;}
+  .sec-lede{color:var(--ink-2); font-size:15px; margin:8px 0 0; max-width:620px;}
+  .explore{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;}
+  .xcard{position:relative; display:flex; flex-direction:column; gap:8px; min-height:208px; padding:22px; border-radius:20px; text-decoration:none; color:inherit; overflow:hidden;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--ink) 3%, transparent), transparent 50%), var(--surface); border:1px solid var(--border);
+    transition:transform .3s var(--ease), border-color .3s;}
+  .xcard::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .3s;
+    background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%), color-mix(in srgb, var(--ic) 20%, transparent), transparent 55%);}
+  .xcard:hover{transform:translateY(-4px); border-color:color-mix(in srgb, var(--ic) 45%, var(--border));}
+  .xcard:hover::before{opacity:1;}
+  .xcard .ico{width:42px; height:42px; border-radius:13px; display:grid; place-items:center; color:var(--ic);
+    background:color-mix(in srgb, var(--ic) 15%, transparent); border:1px solid color-mix(in srgb, var(--ic) 30%, transparent);}
+  .xcard h3{margin:8px 0 0; font-size:17.5px; font-weight:600; letter-spacing:-.012em; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .xcard h3 .arr{color:var(--muted); transition:transform .3s var(--ease), color .3s;} .xcard:hover h3 .arr{transform:translateX(4px); color:var(--ic);}
+  .xcard p{margin:0; color:var(--ink-2); font-size:14px;}
+  .xstat{margin-top:auto; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:12.5px; color:var(--muted);}
+  .xstat b{font-size:19px; font-weight:650; letter-spacing:-.02em; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .build{margin-top:64px; padding:clamp(24px,4vw,44px); border-radius:24px; border:1px solid var(--border); position:relative; overflow:hidden;
+    background:radial-gradient(600px 260px at 100% 0%, color-mix(in srgb, var(--glow) 16%, transparent), transparent 70%), var(--surface);}
+  .build .sec-title{font-size:clamp(22px,2.6vw,32px);}
+  .steps{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:26px; counter-reset:st;}
+  .step-c{padding:16px; border-radius:14px; background:color-mix(in srgb, var(--page) 60%, transparent); border:1px solid var(--border); counter-increment:st;}
+  .step-c::before{content:"0" counter(st); display:block; font-size:12px; font-weight:700; letter-spacing:.08em; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:8px;}
+  .step-c b{display:block; font-size:14.5px; font-weight:600; margin-bottom:4px;} .step-c span{font-size:13px; color:var(--ink-2);}
+  .build .cta{justify-content:flex-start; margin-top:24px;}
+
+  /* scroll reveal */
+  .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  .reveal.in{opacity:1; transform:none;}
+
+  @media (max-width: 1000px){ .explore{grid-template-columns:1fr 1fr;} .steps{grid-template-columns:1fr 1fr;} }
+  @media (max-width: 900px){
+    :root{--ctop:26px;}
+    .side{padding:9px 12px; gap:8px;}
+    .side-foot{display:flex;} .side-foot a{display:none;}
+    .nav-group{margin-left:0; flex:1;}
+  }
+  @media (max-width: 700px){
+    .hero{min-height:auto; padding:64px 16px 64px;}
+    .hero-stats{grid-template-columns:1fr 1fr; margin-top:36px;}
+    .scroll-cue{display:none;}
+    .wtile{width:140px; height:62px;} .wtile b{font-size:16px;}
+  }
+  @media (max-width: 600px){ .pill-next{display:none;} .explore, .steps{grid-template-columns:1fr;} .sec-head{margin-top:48px;} .btn{padding:11px 16px;} }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .wall-row, .ticker-track, .hero-title .l2, .live-pill .dot, .scroll-cue::after, .page.active{animation:none;}
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
 </style>
 </head>
 <body>
@@ -382,6 +547,10 @@
     </nav>
     <div class="side-foot">
       <span class="status" id="sideStatus"><span class="row"><span class="dot"></span>Loading…</span></span>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light and dark mode" title="Toggle light / dark">
+        <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+      </button>
       <a href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Source code</a>
     </div>
   </aside>
@@ -392,6 +561,14 @@
 <script>
 (function(){
   "use strict";
+
+  // light / dark toggle (dark is the default; the choice is remembered per browser)
+  const themeBtn = document.getElementById('themeBtn');
+  if(themeBtn) themeBtn.addEventListener('click', ()=>{
+    const next = document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('theme', next); }catch(e){}
+  });
 
   // The model used by src/arima_forecast.py. Keep in sync if the order changes.
   const MODEL_NAME = "ARIMA(1, 0, 2)";
@@ -1291,15 +1468,111 @@
         </div>`;
     })();
 
+    // =============== showcase hero ===============
+    const okN = v => v!=null && isFinite(v);
+    // the moving wall: every CPI category, coloured by its 12-month change
+    const wallItems = (()=>{
+      if(hasCats){
+        const it = cpiNodes.filter(n=>n.code!=='SA0').map(n=>{
+          const v = COMP.cols[n.code]; if(!v) return null; const li = lastIdx(v); if(li<0) return null;
+          const y = yoyOf(v)[li]; return okN(y) ? {name:n.name, y} : null;
+        }).filter(Boolean);
+        if(it.length>=12) return it;
+      }
+      return yoyData.slice(-180).map(d=>({name:'CPI · '+fmtMonth(d.date), y:d.yoy}));
+    })();
+    const WALL_ROWS = 10, PER_ROW = 18;
+    const wallHTML = Array.from({length:WALL_ROWS}, (_,r)=>{
+      const row = Array.from({length:PER_ROW}, (_,k)=>wallItems[(r*PER_ROW + k*7 + r*13) % wallItems.length]);
+      const cell = t => { const b = heatBin(t.y); return `<div class="wtile" style="--tc:var(--h${b});--tt:var(--hi${b})"><span>${esc(t.name)}</span><b>${spct(t.y)}</b></div>`; };
+      return `<div class="wall-row" style="--dur:${70 + (r*17)%60}s">${row.map(cell).join('')}${row.map(cell).join('')}</div>`;
+    }).join('');
+    const countAttr = (v, d, suf='%') => okN(v) ? ` data-count="${v.toFixed(d)}" data-dec="${d}" data-suf="${suf}"` : '';
+    const ffR = rate('fed_funds'), tenR = rate('gs10');
+    const heroStats = [
+      {l:'Inflation now', v:pct(latest.yoy), c:countAttr(latest.yoy,1), s: prev && okN(prev.yoy) ? `${pct(prev.yoy)} the month before` : fmtMonthLong(latest.date), href:'#forecast'},
+      {l:'Next 12 months', v:last12?pct(last12.mean):'—', c:last12?countAttr(last12.mean,1):'', s:last12?`Forecast for ${fmtMonth(last12.date)}`:'Pending', href:'#forecast'},
+      {l:'Fed funds rate', v:ffR?pct(ffR.last.v,2):'—', c:ffR?countAttr(ffR.last.v,2):'', s:'Set by the Federal Reserve', href:'#fed'},
+      {l:'10-year Treasury', v:tenR?pct(tenR.last.v,2):'—', c:tenR?countAttr(tenR.last.v,2):'', s:'Drives mortgage rates', href:'#rates'},
+    ];
+    const heroHTML = `
+      <div class="hero">
+        <div class="wall" aria-hidden="true">${wallHTML}</div>
+        <div class="hero-inner">
+          <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next CPI ${nextText}</span>`:''}</span>
+          <h1 class="hero-title">U.S. Economic<span class="l2">Forecast</span></h1>
+          <p class="hero-sub">Inflation, interest rates and 12-month forecasts across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ price categories, rebuilt automatically every time new government data lands.</p>
+          <div class="cta">
+            <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
+            <a class="btn" href="#drivers">What’s driving it <span class="arr">→</span></a>
+            <button class="btn" type="button" id="surpriseBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>Surprise me</button>
+          </div>
+          <div class="hero-stats">${heroStats.map(h=>`<a class="hs" href="${h.href}"><div class="l">${h.l}</div><div class="v"${h.c}>${h.v}</div><div class="s">${h.s}</div></a>`).join('')}</div>
+        </div>
+        <span class="scroll-cue" aria-hidden="true"></span>
+      </div>`;
+
+    // ticker: major CPI groups plus the headline gauges
+    const tick = [];
+    tick.push({k:'CPI', v:latest.yoy});
+    if(coreLatest) tick.push({k:'Core CPI', v:coreLatest.v});
+    if(pceLast) tick.push({k:'PCE', v:pceLast.v});
+    if(pceLast && okN(pceLast.core)) tick.push({k:'Core PCE', v:pceLast.core});
+    cpiMajor.filter(g=>okN(g.yoy)).forEach(g=>tick.push({k:g.name, v:g.yoy}));
+    compLatest.filter(c=>c.key!=='core').forEach(c=>tick.push({k:c.label, v:c.v}));
+    RATES.forEach(r=>tick.push({k:r.label, v:r.last.v, rate:true}));
+    const tkCell = t => `<span class="tk">${esc(t.k)} <b class="${t.rate?'nt':t.v>FED_TARGET?'up':'dn'}">${t.rate?pct(t.v,2):spct(t.v)}</b></span>`;
+    const tickerHTML = `<div class="ticker" aria-label="Latest readings"><div class="ticker-track">${tick.map(tkCell).join('')}<span aria-hidden="true" style="display:contents">${tick.map(tkCell).join('')}</span></div></div>`;
+
+    // explore cards
+    const ICONS = {
+      trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+      bars:'<path d="M5 20V11M12 20V4M19 20v-6"/>',
+      grid:'<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/>',
+      wave:'<path d="M2 15c3-6 6-6 10 0s7 6 10 0"/><path d="M2 8h20" opacity=".5"/>',
+      wallet:'<rect x="2.5" y="6" width="19" height="13" rx="2.5"/><circle cx="12" cy="12.5" r="2.5"/>',
+      target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+    };
+    const topDriver = ovDrivers && ovDrivers.rows.length ? ovDrivers.rows[0].label : null;
+    const xcards = [
+      {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month ARIMA forecast for CPI and PCE inflation, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
+      {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving it', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
+      {href:'#prices', icon:'grid', ic:'var(--c-3)', t:'Every CPI item', d:'Drill into an interactive treemap of every category in the CPI basket.', sl:'Categories', sv:hasCats?String(cpiNodes.length):'—'},
+      {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
+      {href:'#money', icon:'wallet', ic:'var(--c-5)', t:'Your money', d:'What inflation does to your savings, your paycheck and everyday prices.', sl:'$100 a year ago', sv:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—'},
+      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'1-month error vs. naive', sv:okN(maeGain)?(maeGain>=0?'−':'+')+Math.abs(maeGain).toFixed(0)+'%':'—'},
+    ];
+    const exploreHTML = `<div class="explore">${xcards.map((c,i)=>`<a class="xcard reveal" href="${c.href}" style="--ic:${c.ic};transition-delay:${(i%3)*70}ms">
+        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[c.icon]}</svg></span>
+        <h3>${c.t}<span class="arr">→</span></h3><p>${c.d}</p>
+        <div class="xstat"><span>${c.sl}</span><b>${c.sv}</b></div></a>`).join('')}</div>`;
+
+    const buildHTML = `<div class="build reveal">
+        <span class="kicker">How it’s built</span>
+        <h2 class="sec-title">A forecasting pipeline that runs itself</h2>
+        <p class="sec-lede">No one updates this page by hand. A scheduled job pulls fresh data every day and re-runs the models whenever a new CPI report lands.</p>
+        <div class="steps">
+          <div class="step-c"><b>Collect</b><span>BLS, BEA, Treasury and Fed series via FRED and official flat files.</span></div>
+          <div class="step-c"><b>Model</b><span>${esc(modelLabel)} forecasts with 95% ranges, benchmarked against simpler models.</span></div>
+          <div class="step-c"><b>Backtest</b><span>Rolling out-of-sample tests at every horizon, published in full.</span></div>
+          <div class="step-c"><b>Publish</b><span>GitHub Actions commits the new numbers and this site redraws itself.</span></div>
+        </div>
+        <div class="cta"><a class="btn primary" href="#methodology">Read the methodology <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
+      </div>`;
+
     app.innerHTML = `
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
-        <h1>${headline}</h1>
-        <p class="lede">${hlVsTarget}</p>
-        ${execSummary}
-        <div class="grid-6">${ovTiles.filter(t=>['spk-cpi','spk-ff','spk-10y'].includes(t.spark)).map(tile).join('')}</div>
-        <div class="card" style="margin-top:12px"><div class="card-head"><div><p class="card-title">Inflation and forecast</p><p class="card-sub">Last 3 years and the next 12 months.</p></div><a class="link-more" href="#forecast">Forecast →</a></div>
+        ${heroHTML}
+        ${tickerHTML}
+        <div class="sec-head reveal"><div><span class="kicker">The short version</span><h2 class="sec-title">Where the economy stands</h2><p class="sec-lede">${hlVsTarget}</p></div></div>
+        <div class="reveal">${execSummary}</div>
+        <div class="grid-6 reveal">${ovTiles.filter(t=>['spk-cpi','spk-ff','spk-10y'].includes(t.spark)).map(tile).join('')}</div>
+        <div class="card reveal" style="margin-top:12px"><div class="card-head"><div><p class="card-title">Inflation and forecast</p><p class="card-sub">Last 3 years and the next 12 months.</p></div><a class="link-more" href="#forecast">Forecast →</a></div>
           ${forecastLegend}<div class="chart" id="ovCpi"></div></div>
+        <div class="sec-head reveal"><div><span class="kicker">Explore the data</span><h2 class="sec-title">Six ways into the numbers</h2></div></div>
+        ${exploreHTML}
+        ${buildHTML}
         ${pageFoot()}
       </section>
 
@@ -2354,7 +2627,36 @@
     const groupOf = id => Object.keys(GROUPS).find(k=>GROUPS[k].some(([p])=>p===id)) || id;
     document.addEventListener('toggle', e=>{ if(e.target.classList && e.target.classList.contains('fold')) requestAnimationFrame(redrawVisible); }, true);
     window.addEventListener('hashchange', show);
+
+    // =============== showcase interactions ===============
+    const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const surprise = document.getElementById('surpriseBtn');
+    if(surprise) surprise.addEventListener('click', ()=>{
+      const cur = (location.hash||'').slice(1), opts = PAGES.filter(p=>p!=='overview' && p!==cur);
+      location.hash = opts[Math.floor(Math.random()*opts.length)];
+    });
+    document.querySelectorAll('.xcard').forEach(c=>c.addEventListener('pointermove', e=>{
+      const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX-r.left)+'px'); c.style.setProperty('--my', (e.clientY-r.top)+'px');
+    }));
+    const io = ('IntersectionObserver' in window && !reduceMotion) ? new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    }), {threshold:.08, rootMargin:'0px 0px -40px 0px'}) : null;
+    document.querySelectorAll('.reveal').forEach(el=> io ? io.observe(el) : el.classList.add('in'));
+    let counted = false;
+    function countUp(){
+      if(counted || reduceMotion) return; counted = true;
+      document.querySelectorAll('[data-count]').forEach(el=>{
+        const end = +el.dataset.count, d = +el.dataset.dec || 0, suf = el.dataset.suf || '', final = el.textContent, t0 = performance.now(), dur = 1500;
+        const step = t => { const k = Math.min(1, (t-t0)/dur), e = 1 - Math.pow(1-k, 4);
+          el.textContent = k<1 ? (end*e).toFixed(d) + suf : final; if(k<1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      });
+    }
+    const maybeCount = () => { if(document.getElementById('page-overview').classList.contains('active')) countUp(); };
+    window.addEventListener('hashchange', maybeCount);
+
     show();
+    maybeCount();
   }
 
   main();
