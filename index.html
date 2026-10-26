@@ -556,6 +556,35 @@
   .down-good{color:var(--c-good);}
   @media (max-width: 560px){ .cb-row{grid-template-columns:110px 1fr 74px; gap:8px; font-size:12.5px;} .cshare{display:none;} .ex-time{max-width:none;} }
 
+  /* ---------- the story ---------- */
+  .story-top{max-width:860px; padding:8px 0 10px;}
+  .story-title{font-size:clamp(32px,4.6vw,56px); line-height:1.05; letter-spacing:-.035em; font-weight:700; margin:10px 0 14px; max-width:16em;}
+  .ch-nav{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
+  .ch-nav button{display:inline-flex; align-items:center; gap:9px; font:inherit; font-size:14px; font-weight:500; color:var(--ink-2); background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:8px 15px; cursor:pointer; transition:color .2s, border-color .2s, transform .2s var(--ease);}
+  .ch-nav button:hover{color:var(--ink); border-color:color-mix(in srgb, var(--glow) 45%, var(--border)); transform:translateY(-1px);}
+  .ch-nav b{font-size:11.5px; font-weight:700; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .chap{display:grid; grid-template-columns:88px minmax(0,1fr); gap:8px 24px; padding:48px 0 8px; border-top:1px solid var(--border); margin-top:40px; scroll-margin-top:80px;}
+  .chap-num{font-size:44px; font-weight:700; letter-spacing:-.04em; line-height:1; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .chap-title{font-size:clamp(26px,3vw,36px); letter-spacing:-.03em; font-weight:650; margin:0 0 12px; line-height:1.1;}
+  .story-p{font-size:16.5px; line-height:1.7; color:var(--ink-2); max-width:720px; margin:0 0 16px;} .story-p b{color:var(--ink);}
+  .qcards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:6px 0 20px;}
+  .qcard{display:flex; flex-direction:column; gap:10px; padding:18px; border-radius:16px; border:1px solid var(--border); background:var(--surface); text-decoration:none; color:inherit; transition:transform .25s var(--ease), border-color .25s;}
+  .qcard:hover{transform:translateY(-3px); border-color:color-mix(in srgb, var(--glow) 45%, var(--border));}
+  .qcard .q{font-size:17px; font-weight:600; letter-spacing:-.01em; line-height:1.3;} .qcard .a{font-size:13px; color:var(--glow); font-weight:500; margin-top:auto;}
+  .findings-list{display:grid; gap:10px; max-width:920px;}
+  .findings-list .finding{grid-template-columns:40px 1fr;}
+  .findings-list .finding h3{font-size:18px; margin-top:3px;}
+  .findings-list .finding p.short{font-size:15.5px; line-height:1.6;}
+  .findings-list .finding .n{background:color-mix(in srgb, var(--glow) 14%, transparent); border-color:color-mix(in srgb, var(--glow) 30%, transparent); color:var(--ink);}
+  .story-steps{margin:6px 0 16px;}
+  .limits{max-width:920px; font-size:15px; color:var(--ink-2); padding:16px 18px; border-radius:14px; border:1px dashed var(--axis);} .limits b{color:var(--ink);}
+  details.tech{margin-top:18px;} details.tech .fold-body{margin-top:14px;}
+  .tech-h{font-size:15px; margin:22px 0 10px;}
+  .next-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; max-width:920px;}
+  .next-c{padding:18px; border-radius:16px; border:1px solid var(--border); background:var(--surface);}
+  .next-c b{display:block; font-size:16px; font-weight:600; margin-bottom:6px;} .next-c span{font-size:14.5px; color:var(--ink-2);}
+  @media (max-width: 800px){ .chap{grid-template-columns:1fr; padding-top:36px;} .chap-num{font-size:34px;} .qcards, .next-grid{grid-template-columns:1fr;} }
+
   /* scroll reveal */
   .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
   .reveal.in{opacity:1; transform:none;}
@@ -595,7 +624,7 @@
       <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>Forecast</a>
       <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What’s driving it</a>
       <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Interest rates</a>
-      <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>About the model</a>
+      <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>The story</a>
     </nav>
     <div class="side-foot">
       <span class="status" id="sideStatus"><span class="row"><span class="dot"></span>Loading…</span></span>
@@ -1726,12 +1755,14 @@
         rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside our expected range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
-          <div class="card-head"><div><p class="card-title" id="execTitle">Executive summary</p><p class="card-sub">The short version, in plain English.</p></div><a class="link-more" href="#findings">Key findings \u2192</a></div>
+          <div class="card-head"><div><p class="card-title" id="execTitle">Executive summary</p><p class="card-sub">The short version, in plain English.</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
           <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>${verdict}.</b> It\u2019s ${above(latest.yoy)} the Fed\u2019s 2% goal${nextBit}.</span></p>
           <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
           <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed (America\u2019s central bank) aims for 2% a year.</p>
         </div>`;
     })();
+
+    const storyPeak = yoyData.filter(d=>d.date>=parseDate('2021-01-01') && d.date<=parseDate('2023-12-01')).reduce((a,b)=>!a||b.yoy>a.yoy?b:a, null);
 
     // =============== showcase hero ===============
     const okN = v => v!=null && isFinite(v);
@@ -1822,7 +1853,7 @@
           <div class="step-c"><b>Backtest</b><span>Rolling out-of-sample tests at every horizon, published in full.</span></div>
           <div class="step-c"><b>Publish</b><span>GitHub Actions commits the new numbers and this site redraws itself.</span></div>
         </div>
-        <div class="cta"><a class="btn primary" href="#methodology">Read the methodology <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
+        <div class="cta"><a class="btn primary" href="#findings">Read the story <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
       </div>`;
 
     app.innerHTML = `
@@ -1842,17 +1873,113 @@
       </section>
 
       <!-- ================= FINDINGS ================= -->
-      <section class="page" id="page-findings" data-title="Key findings">
-        <h1 class="page-title">Key findings</h1>
-        <p class="lede">What happened when the model was tested on past data it had never seen.</p>
-        <div class="findings-grid" id="findingsBody"></div>
-        <h2>What I would try next</h2>
-        <div class="card"><ul class="card-sub" style="padding-left:18px; margin:0; display:grid; gap:6px">
-          <li>Forecast the large CPI categories (shelter, food, energy, core goods, core services) separately and aggregate them with the published weights.</li>
-          <li>Add leading indicators with a real publication lead, such as import prices, producer prices, wage settlements and market rents.</li>
-          <li>Model the yield curve jointly (Nelson-Siegel factors) instead of one maturity at a time, and condition it on the inflation forecast.</li>
-          <li>Benchmark against professional forecasts (Survey of Professional Forecasters, Cleveland Fed nowcast) and score full forecast distributions (CRPS).</li>
-        </ul></div>
+      <section class="page" id="page-findings" data-title="The story">
+        <div class="story-top">
+          <span class="kicker">The story</span>
+          <h1 class="story-title">Why I built a forecast anyone can read</h1>
+          <p class="lede">What started as a question about rising prices became a forecasting site that updates itself. Here is why I made it, what I learned, how it works and what comes next.</p>
+          <nav class="ch-nav" aria-label="Chapters">
+            <button type="button" data-go="ch-why"><b>01</b>Why I built this</button>
+            <button type="button" data-go="ch-found"><b>02</b>What I found</button>
+            <button type="button" data-go="ch-how"><b>03</b>How it works</button>
+            <button type="button" data-go="ch-next"><b>04</b>What’s next</button>
+          </nav>
+        </div>
+
+        <section class="chap" id="ch-why">
+          <div class="chap-num">01</div>
+          <div class="chap-body">
+            <h2 class="chap-title">Why I built this</h2>
+            <p class="story-p">Between 2021 and 2022, prices in the U.S. rose faster than at any time in 40 years. At the peak, in <b>${storyPeak?fmtMonthLong(storyPeak.date):'mid-2022'}</b>, prices were <b>${storyPeak?pct(storyPeak.yoy):'9%'} higher</b> than a year before. Groceries, rent and gas all got noticeably more expensive.</p>
+            <p class="story-p">The news kept repeating one number: “inflation is high.” But that one number hid the questions I actually cared about:</p>
+            <div class="qcards">
+              <a class="qcard" href="#drivers"><span class="q">What is pushing prices up?</span><span class="a">See what’s driving it →</span></a>
+              <a class="qcard" href="#forecast"><span class="q">Where is inflation heading next?</span><span class="a">See the forecast →</span></a>
+              <a class="qcard" href="#track-record"><span class="q">Can we trust a forecast?</span><span class="a">See the track record →</span></a>
+            </div>
+            <p class="story-p">So I built this site to answer them with official government data, a forecasting model that is tested in public, and explanations anyone can follow. It updates itself every day.</p>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-found">
+          <div class="chap-num">02</div>
+          <div class="chap-body">
+            <h2 class="chap-title">What I found</h2>
+            <p class="story-p">I tested the model on years of past data it had never seen, as if I were forecasting live back then. Here is what happened, in plain English. Open “Details” for the numbers.</p>
+            <div class="findings-list" id="findingsBody"></div>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-how">
+          <div class="chap-num">03</div>
+          <div class="chap-body">
+            <h2 class="chap-title">How it works</h2>
+            <p class="story-p">Four steps run on their own every day. Nobody types the numbers in by hand.</p>
+            <div class="steps story-steps">
+              <div class="step-c"><b>Collect the data</b><span>Download the newest official numbers: prices from the Bureau of Labor Statistics and the Bureau of Economic Analysis, interest rates from the Federal Reserve.</span></div>
+              <div class="step-c"><b>Learn from the past</b><span>A statistical model studies decades of inflation to learn its patterns. For example, inflation tends to drift back toward its long-run average.</span></div>
+              <div class="step-c"><b>Test it honestly</b><span>I went back to past dates, let the model predict using only the data available then, and checked how wrong it was. Every live forecast is also saved and graded when the real number comes out.</span></div>
+              <div class="step-c"><b>Publish automatically</b><span>When new data arrives, an automated job re-runs everything and updates this website.</span></div>
+            </div>
+            <div class="limits"><b>What it can’t do.</b> The model only looks at past inflation. It doesn’t read the news, see oil prices or know what the Fed will say next, so sudden surprises catch it out. Interest rates are even harder, because markets react to news instantly.</div>
+            <details class="fold tech"><summary>For the technical reader: models, tests and data sources</summary><div class="fold-body">
+        <div class="grid-2 method">
+          <div class="card"><h3>CPI</h3><p>Monthly CPI for All Urban Consumers (CPI-U, all items, seasonally adjusted; FRED <code>CPIAUCSL</code>). Inflation is the 12-month percent change of the index.
+            BLS did not publish October 2025 CPI because of the federal government shutdown; that month is filled by linear interpolation so every year-over-year rate compares the same calendar month a year apart.</p></div>
+          <div class="card"><h3>CPI categories and weights</h3><p>About 160 categories of the CPI-U, U.S. city average, not seasonally adjusted, downloaded from the BLS time-series files (<code>download.bls.gov/pub/time.series/cu</code>).
+            Weights are BLS <a href="https://www.bls.gov/cpi/tables/relative-importance/" target="_blank" rel="noopener">relative importance</a> as of December 2025, the share of spending each category represents.
+            A category's contribution to inflation is approximated as its weight times its 12-month change; because relative importance drifts with prices, contributions do not add up exactly to the headline rate.</p></div>
+          <div class="card"><h3>PCE</h3><p>The PCE chain-type price index and 80+ categories from BEA's monthly NIPA tables 2.4.4U (prices) and 2.4.5U (spending).
+            PCE weights are each category's share of nominal spending in the latest month. PCE is broader than CPI (it includes spending on households' behalf, such as employer-paid health insurance)
+            and uses a chain-type formula, so it typically runs a few tenths below CPI. The Fed's 2% target is defined in terms of PCE.</p></div>
+          <div class="card"><h3>Interest rates</h3><p>Monthly averages of the effective federal funds rate and constant-maturity Treasury yields (3-month bill, 2, 5, 10 and 30 years) from the Federal Reserve via FRED.
+            The 30-year bond was not issued from February 2002 to January 2006, so its model uses only data after the gap.</p></div>
+          <div class="card"><h3>Models</h3><p>CPI: ${esc(modelLabel)} fit to year-over-year inflation, chosen from nine candidate orders by out-of-sample error and benchmarked against naive, ARIMAX and gradient-boosted trees.
+            PCE: ARIMA on year-over-year headline and core PCE inflation, order chosen by AIC.
+            Rates: ARIMA(p, 1, q) on the level of each rate since 1990, p and q chosen by AIC. All forecasts run 12 months ahead with 95% intervals.</p></div>
+          <div class="card"><h3>Evaluation</h3><ul>
+            <li>Rolling-origin backtests: the model is re-fit only on data available at each forecast origin.</li>
+            <li>Mean absolute error at 1 to 12 months ahead against a "no change" benchmark, plus 95%-interval coverage.</li>
+            <li>CPI models are compared with the Diebold-Mariano test (Harvey-Leybourne-Newbold correction).</li>
+            <li>Every live CPI forecast is archived and scored when the actual print arrives.</li></ul></div>
+          <div class="card"><h3>Pipeline</h3>
+            <p>A GitHub Actions job runs daily, downloads new data from FRED, BLS and BEA, re-runs the models when new data lands and redeploys this static site.</p>
+            <div class="pipeline"><span class="step">FRED · BLS · BEA</span><span class="arrow">→</span><span class="step">Python · pandas · statsmodels · scikit-learn</span><span class="arrow">→</span><span class="step">CSV</span><span class="arrow">→</span><span class="step">This site</span></div></div>
+          <div class="card"><h3>Limitations</h3><p>Univariate ARIMA models use only each series' own past. They do not see energy prices, wages, Fed communication or the economic outlook, and tend to lag turning points.
+            Interest rates are close to a random walk, so a "no change" forecast is very hard to beat; the value of the rate model lies mainly in its uncertainty bands.</p></div>
+        </div>
+        <h3 class="tech-h">Data sources</h3>
+        <div class="card" style="overflow-x:auto"><table>
+          <thead><tr><th>Series</th><th>ID</th><th>Source</th></tr></thead>
+          <tbody>
+            ${[['CPI, all items','CPIAUCSL','BLS'],['CPI less food & energy (core)','CPILFESL','BLS'],['CPI food, energy, shelter','CPIUFDSL, CPIENGSL, CUSR0000SAH1','BLS'],
+               ['Average hourly earnings, production & nonsupervisory','AHETPI','BLS'],['Effective federal funds rate','FEDFUNDS','Federal Reserve'],
+               ['Treasury yields: 3-month, 2, 5, 10, 30 years','TB3MS, GS2, GS5, GS10, GS30','Federal Reserve'],['10-year TIPS yield','DFII10','Federal Reserve'],['30-year mortgage rate','MORTGAGE30US','Freddie Mac'],
+               ['Expected inflation, next 12 months','MICH','University of Michigan'],['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis'],
+               ['PCE price index, headline and core','PCEPI, PCEPILFE','BEA']]
+              .map(r=>`<tr><td>${r[0]}</td><td>${r[1].split(', ').map(id=>`<a href="https://fred.stlouisfed.org/series/${id}" target="_blank" rel="noopener"><code>${id}</code></a>`).join(' ')}</td><td class="muted">${r[2]}</td></tr>`).join('')}
+            <tr><td>CPI categories (≈160) and average prices (24 items)</td><td><a href="https://download.bls.gov/pub/time.series/cu/" target="_blank" rel="noopener"><code>cu</code></a> <a href="https://download.bls.gov/pub/time.series/ap/" target="_blank" rel="noopener"><code>ap</code></a></td><td class="muted">BLS</td></tr>
+            <tr><td>CPI relative importance (weights), December 2025</td><td><a href="https://www.bls.gov/cpi/tables/relative-importance/2025.htm" target="_blank" rel="noopener"><code>data/cpi_weights.csv</code></a></td><td class="muted">BLS</td></tr>
+            <tr><td>PCE prices and spending by category</td><td><a href="https://apps.bea.gov/iTable/?reqid=19&amp;step=2&amp;isuri=1&amp;categories=survey" target="_blank" rel="noopener"><code>NIPA 2.4.4U, 2.4.5U</code></a></td><td class="muted">BEA</td></tr>
+          </tbody></table></div>
+
+            </div></details>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-next">
+          <div class="chap-num">04</div>
+          <div class="chap-body">
+            <h2 class="chap-title">What’s next</h2>
+            <p class="story-p">The model is deliberately simple today. These are the upgrades I want to try.</p>
+            <div class="next-grid">
+              <div class="next-c"><b>Forecast the big pieces separately</b><span>Give rent, food, energy, goods and services their own forecasts, then add them up using each one’s share of spending.</span></div>
+              <div class="next-c"><b>Add early-warning signals</b><span>Prices businesses pay, import prices, wages and new rents often move before consumer prices do.</span></div>
+              <div class="next-c"><b>Connect interest rates to inflation</b><span>Forecast all the interest rates together and let them react to the inflation forecast.</span></div>
+              <div class="next-c"><b>Compare with the professionals</b><span>Grade my forecasts against the Cleveland Fed and professional forecasters, not just a simple guess.</span></div>
+            </div>
+          </div>
+        </section>
         ${pageFoot()}
       </section>
 
@@ -2033,51 +2160,6 @@
         ${pageFoot()}
       </section>
 
-      <!-- ================= METHODOLOGY ================= -->
-      <section class="page" id="page-methodology" data-title="Methodology">
-        <h1 class="page-title">Methodology</h1>
-        <p class="lede">How the data is prepared, how the models are chosen and evaluated, and where they fall short.</p>
-        <div class="grid-2 method">
-          <div class="card"><h3>CPI</h3><p>Monthly CPI for All Urban Consumers (CPI-U, all items, seasonally adjusted; FRED <code>CPIAUCSL</code>). Inflation is the 12-month percent change of the index.
-            BLS did not publish October 2025 CPI because of the federal government shutdown; that month is filled by linear interpolation so every year-over-year rate compares the same calendar month a year apart.</p></div>
-          <div class="card"><h3>CPI categories and weights</h3><p>About 160 categories of the CPI-U, U.S. city average, not seasonally adjusted, downloaded from the BLS time-series files (<code>download.bls.gov/pub/time.series/cu</code>).
-            Weights are BLS <a href="https://www.bls.gov/cpi/tables/relative-importance/" target="_blank" rel="noopener">relative importance</a> as of December 2025, the share of spending each category represents.
-            A category's contribution to inflation is approximated as its weight times its 12-month change; because relative importance drifts with prices, contributions do not add up exactly to the headline rate.</p></div>
-          <div class="card"><h3>PCE</h3><p>The PCE chain-type price index and 80+ categories from BEA's monthly NIPA tables 2.4.4U (prices) and 2.4.5U (spending).
-            PCE weights are each category's share of nominal spending in the latest month. PCE is broader than CPI (it includes spending on households' behalf, such as employer-paid health insurance)
-            and uses a chain-type formula, so it typically runs a few tenths below CPI. The Fed's 2% target is defined in terms of PCE.</p></div>
-          <div class="card"><h3>Interest rates</h3><p>Monthly averages of the effective federal funds rate and constant-maturity Treasury yields (3-month bill, 2, 5, 10 and 30 years) from the Federal Reserve via FRED.
-            The 30-year bond was not issued from February 2002 to January 2006, so its model uses only data after the gap.</p></div>
-          <div class="card"><h3>Models</h3><p>CPI: ${esc(modelLabel)} fit to year-over-year inflation, chosen from nine candidate orders by out-of-sample error and benchmarked against naive, ARIMAX and gradient-boosted trees.
-            PCE: ARIMA on year-over-year headline and core PCE inflation, order chosen by AIC.
-            Rates: ARIMA(p, 1, q) on the level of each rate since 1990, p and q chosen by AIC. All forecasts run 12 months ahead with 95% intervals.</p></div>
-          <div class="card"><h3>Evaluation</h3><ul>
-            <li>Rolling-origin backtests: the model is re-fit only on data available at each forecast origin.</li>
-            <li>Mean absolute error at 1 to 12 months ahead against a "no change" benchmark, plus 95%-interval coverage.</li>
-            <li>CPI models are compared with the Diebold-Mariano test (Harvey-Leybourne-Newbold correction).</li>
-            <li>Every live CPI forecast is archived and scored when the actual print arrives.</li></ul></div>
-          <div class="card"><h3>Pipeline</h3>
-            <p>A GitHub Actions job runs daily, downloads new data from FRED, BLS and BEA, re-runs the models when new data lands and redeploys this static site.</p>
-            <div class="pipeline"><span class="step">FRED · BLS · BEA</span><span class="arrow">→</span><span class="step">Python · pandas · statsmodels · scikit-learn</span><span class="arrow">→</span><span class="step">CSV</span><span class="arrow">→</span><span class="step">This site</span></div></div>
-          <div class="card"><h3>Limitations</h3><p>Univariate ARIMA models use only each series' own past. They do not see energy prices, wages, Fed communication or the economic outlook, and tend to lag turning points.
-            Interest rates are close to a random walk, so a "no change" forecast is very hard to beat; the value of the rate model lies mainly in its uncertainty bands.</p></div>
-        </div>
-        <h2>Data sources</h2>
-        <div class="card" style="overflow-x:auto"><table>
-          <thead><tr><th>Series</th><th>ID</th><th>Source</th></tr></thead>
-          <tbody>
-            ${[['CPI, all items','CPIAUCSL','BLS'],['CPI less food & energy (core)','CPILFESL','BLS'],['CPI food, energy, shelter','CPIUFDSL, CPIENGSL, CUSR0000SAH1','BLS'],
-               ['Average hourly earnings, production & nonsupervisory','AHETPI','BLS'],['Effective federal funds rate','FEDFUNDS','Federal Reserve'],
-               ['Treasury yields: 3-month, 2, 5, 10, 30 years','TB3MS, GS2, GS5, GS10, GS30','Federal Reserve'],['10-year TIPS yield','DFII10','Federal Reserve'],['30-year mortgage rate','MORTGAGE30US','Freddie Mac'],
-               ['Expected inflation, next 12 months','MICH','University of Michigan'],['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis'],
-               ['PCE price index, headline and core','PCEPI, PCEPILFE','BEA']]
-              .map(r=>`<tr><td>${r[0]}</td><td>${r[1].split(', ').map(id=>`<a href="https://fred.stlouisfed.org/series/${id}" target="_blank" rel="noopener"><code>${id}</code></a>`).join(' ')}</td><td class="muted">${r[2]}</td></tr>`).join('')}
-            <tr><td>CPI categories (≈160) and average prices (24 items)</td><td><a href="https://download.bls.gov/pub/time.series/cu/" target="_blank" rel="noopener"><code>cu</code></a> <a href="https://download.bls.gov/pub/time.series/ap/" target="_blank" rel="noopener"><code>ap</code></a></td><td class="muted">BLS</td></tr>
-            <tr><td>CPI relative importance (weights), December 2025</td><td><a href="https://www.bls.gov/cpi/tables/relative-importance/2025.htm" target="_blank" rel="noopener"><code>data/cpi_weights.csv</code></a></td><td class="muted">BLS</td></tr>
-            <tr><td>PCE prices and spending by category</td><td><a href="https://apps.bea.gov/iTable/?reqid=19&amp;step=2&amp;isuri=1&amp;categories=survey" target="_blank" rel="noopener"><code>NIPA 2.4.4U, 2.4.5U</code></a></td><td class="muted">BEA</td></tr>
-          </tbody></table></div>
-        ${pageFoot()}
-      </section>
     `;
     // ---- overview chart ----
     let ovMonths = 36;
@@ -2164,7 +2246,7 @@
         const sigB = best.pA!=null && best.pA<0.05;
         const parts = challengers.map(m=>`${m.model==='arimax'?'adding last month\'s energy and core inflation (ARIMAX)':'gradient-boosted trees'} ${rel(m)<0?'cut':'raised'} ARIMA's average error by ${Math.abs(rel(m)).toFixed(1)}%`);
         items.push({title: beats && sigB ? `${esc(best.label)} beats the simple model` : beats ? `Machine learning did a bit better, not yet proven` : 'More data and machine learning didn\u2019t help',
-          short: beats ? `${esc(best.label)} missed ${Math.abs(rel(best)).toFixed(0)}% less than the current model${sigB ? '.' : ', but over ' + A.n + ' test months that could be luck.'}` : `Neither extra inputs nor gradient boosting beat the simple model.`,
+          short: beats ? `A machine-learning model made ${Math.abs(rel(best)).toFixed(0)}% smaller mistakes than my main model${sigB ? '.' : `. Promising, but ${A.n} months of testing isn’t enough to rule out luck.`}` : `Adding more data and machine learning did not beat the simple model.`,
           stat: challengers.map(m=>`${esc(m.label)}: ${spct(rel(m))} vs ARIMA (p = ${fmtP(m.pA)})`).join(' · '),
           text: `Over the same ${A.n} months, ${parts.join(', while ')}.
             ${best.pA!=null ? `For the best challenger the Diebold-Mariano test against ARIMA gives p = ${fmtP(best.pA)}: ${sigWord(best.pA)}.` : ''}
@@ -2176,13 +2258,13 @@
       if(hz.length){
         const f=hz[0], l=hz[hz.length-1], g = r => (1-r.m/r.nv)*100;
         items.push({title: g(l) > g(f) ? 'Most useful for long-range forecasts' : 'No extra edge further out',
-          short: `${l.h} months ahead it is ${g(l).toFixed(0)}% more accurate than the simple guess; one month ahead, ${g(f).toFixed(0)}%.`,
+          short: `Predicting a year ahead, it is ${g(l).toFixed(0)}% more accurate than simply assuming “inflation stays where it is today.” For next month it is only ${g(f).toFixed(0)}% better, because next month is easy to guess anyway.`,
           stat: `${f.h}-month: ${g(f).toFixed(0)}% better than naive · ${l.h}-month: ${g(l).toFixed(0)}% better`,
           text: `One month ahead, the model's edge over naive is ${g(f).toFixed(0)}%. Twelve months ahead it is ${g(l).toFixed(0)}% (${l.m.toFixed(2)} vs ${l.nv.toFixed(2)} points), because the model pulls forecasts back toward the long-run average while "no change" keeps extrapolating today's rate.`,
           link:'#track-record'});
         const avgCov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
         items.push({title: Math.abs(avgCov-95) <= 4 ? 'Its uncertainty ranges can be trusted' : avgCov < 95 ? 'Its uncertainty ranges are too narrow' : 'Its uncertainty ranges are too wide',
-          short: `Actual inflation landed inside the 95% range ${avgCov.toFixed(0)}% of the time.`,
+          short: `Each forecast comes with a range (“most likely between X and Y”). The real number landed inside that range ${avgCov.toFixed(0)}% of the time, close to the 95% it promises.`,
           stat: `${avgCov.toFixed(0)}% of outcomes inside the 95% interval`,
           text: `Across all horizons, the actual inflation rate landed inside the model's 95% interval ${avgCov.toFixed(0)}% of the time. A forecast that states its uncertainty correctly is often more useful than a slightly sharper point estimate.`,
           link:'#forecast'});
@@ -2196,7 +2278,7 @@
         const same = bmErrRaw.filter(r=>r.date===isoDate(worst.date) && r.model!=='arima').map(r=>`${(bmBy[r.model]||{label:r.model}).label} ${pp(num(r.error),2)}`);
         const others = same.length ? ` The other models missed that month too: ${esc(same.join(', '))}.` : '';
         items.push({title:'Sudden turns catch it out',
-          short:`Its worst miss was ${fmtMonthLong(worst.date)}${jump!=null ? ', when inflation '+(jump>0?'jumped ':'fell ')+Math.abs(jump).toFixed(1)+' points in one month' : ''}. It reacts a month late.`,
+          short:`Its biggest miss was ${fmtMonthLong(worst.date)}${jump!=null ? ', when inflation suddenly '+(jump>0?'jumped ':'fell ')+Math.abs(jump).toFixed(1)+' points in a single month' : ''}. It only sees past inflation, so it reacts to surprises a month late.`,
           stat:`Largest miss: ${pp(worst.err,2)} in ${fmtMonth(worst.date)}`,
           text:`The biggest error came in ${fmtMonthLong(worst.date)}, when inflation ${jump!=null ? (jump>0?'jumped':'fell')+' '+Math.abs(jump).toFixed(2)+' points in a single month' : 'moved sharply'}. A model that only sees past inflation cannot anticipate sudden shifts such as energy price swings; it reacts a month late.${others}`,
           link:'#track-record'});
@@ -2207,10 +2289,10 @@
       rawRows.forEach((r,i)=>{ if(i<12) return; const naiveYoY=(r.cpi/rawRows[i-12].cpi-1)*100; const d=cpiAt.get(r.date.getTime()); if(d && d.yoy!=null){ const diff=Math.abs(naiveYoY-d.yoy); if(diff>maxDiff){ maxDiff=diff; diffAt=r.date; } } });
       if(maxDiff > 0.05){
         items.push({title:'Caught a hidden gap in the data',
-          short:`October 2025 CPI was never published. A common shortcut would have overstated inflation by up to ${maxDiff.toFixed(2)} points.`,
+          short:`The government never published October 2025 prices because of the shutdown. A common shortcut would have shown inflation up to ${maxDiff.toFixed(2)} points too high; this site fills the gap properly.`,
           stat:`Up to ${maxDiff.toFixed(2)} points of error avoided`,
           text:`BLS never published October 2025 CPI because of the government shutdown. Computing year-over-year inflation by counting back twelve rows, a common shortcut, would silently compare against the wrong month for the following year, overstating inflation by as much as ${maxDiff.toFixed(2)} points (${fmtMonth(diffAt)}). The pipeline rebuilds a complete monthly calendar and interpolates the gap instead.`,
-          link:'#methodology'});
+          link:null});
       }
       // 7. CPI vs PCE
       if(pceSeries.length){
@@ -2220,7 +2302,7 @@
           const shelterCPI = (cpiNodes.find(n=>n.code==='SAH1')||{}).weight, housePCE = (pceNodes.find(n=>n.code==='DHSG')||{}).weight;
           const healthCPI = (cpiNodes.find(n=>n.code==='SAM')||{}).weight, healthPCE = (pceNodes.find(n=>n.code==='DHLC')||{}).weight;
           items.push({title: avg>0 ? 'CPI usually runs higher than PCE' : 'CPI and PCE tell a similar story',
-            short: `By ${Math.abs(avg).toFixed(2)} points on average since 2000${shelterCPI&&housePCE ? `, mostly because housing is ${shelterCPI.toFixed(0)}% of CPI but ${housePCE.toFixed(0)}% of PCE` : ''}.`,
+            short: `The two main inflation measures disagree: since 2000, CPI has been ${Math.abs(avg).toFixed(1)} points ${avg>0?'higher':'lower'} on average${shelterCPI&&housePCE ? `, mostly because rent and housing are ${shelterCPI.toFixed(0)}% of CPI but only ${housePCE.toFixed(0)}% of PCE` : ''}.`,
             stat:`CPI − PCE gap: ${pp(avg,2)} on average since 2000, ${pp(nowGap,2)} now`,
             text:`Since 2000, CPI inflation has averaged ${Math.abs(avg).toFixed(2)} points ${avg>0?'above':'below'} PCE inflation. ${shelterCPI&&housePCE?`Housing is ${shelterCPI.toFixed(0)}% of the CPI basket but only ${housePCE.toFixed(0)}% of PCE, `:''}${healthCPI&&healthPCE?`while health care is ${healthCPI.toFixed(0)}% of CPI against ${healthPCE.toFixed(0)}% of PCE, because PCE also counts care paid for by employers and government. `:''}PCE's chain-weighting also lets households' switching between products pull the index down. The Fed targets PCE, so a 2% PCE goal is roughly 2.3–2.5% in CPI terms.`,
             link:'#pce'});
@@ -2231,14 +2313,14 @@
       if(r10 && r10.hz.length){
         const h1 = r10.hz[0], h12 = r10.hz[r10.hz.length-1], g = r => (1-r.m/r.nv)*100;
         items.push({title: g(h12) <= 0 || Math.max(g(h1), g(h12)) < 5 ? 'Interest rates are hard to predict' : 'The rate model adds a little',
-          short: g(h12) <= 0 ? `A year out, the 10-year yield forecast is no better than assuming rates stay put.` : `A year out, the 10-year yield forecast is ${g(h12).toFixed(0)}% more accurate than assuming rates stay put.`,
+          short: g(h12) <= 0 ? `A year ahead, my 10-year interest rate forecast is no better than assuming rates stay where they are. Markets already price in the news.` : `A year ahead, my 10-year interest rate forecast is only ${g(h12).toFixed(0)}% better than assuming rates stay where they are.`,
           stat:`10-year yield: ${h12.h}-month error ${h12.m.toFixed(2)} vs ${h12.nv.toFixed(2)} points for "no change"`,
           text:`Over ${h1.n} monthly forecast origins, the 10-year yield model missed by ${h1.m.toFixed(2)} points one month ahead (no change: ${h1.nv.toFixed(2)}) and ${h12.m.toFixed(2)} points twelve months ahead (no change: ${h12.nv.toFixed(2)}).
             Bond prices already reflect public information, so today's yield is the best simple forecast of tomorrow's. The value of the model lies in its uncertainty band: ${h12.cov.toFixed(0)}% of outcomes fell inside its 95% interval at twelve months.`,
           link:'#rates'});
       }
       body.innerHTML = items.length ? items.map((it,i)=>`<div class="card finding"><span class="n">${i+1}</span><div><h3>${it.title}</h3><p class="short">${it.short}</p>
-          <div class="f-foot">${it.link?`<a class="link-more" href="${it.link}">See the data →</a>`:''}<details><summary>Details</summary><p>${it.text}</p><span class="stat">${it.stat}</span></details></div></div></div>`).join('') : pending('Findings');
+          <div class="f-foot">${it.link?`<a class="link-more" href="${it.link}">See the data →</a>`:''}<details><summary>Details for the curious</summary><p>${it.text}</p><span class="stat">${it.stat}</span></details></div></div></div>`).join('') : pending('Findings');
     })();
 
     // accuracy by horizon
@@ -2805,10 +2887,11 @@
     })();
 
     // =============== router ===============
-    const PAGES = ['overview','findings','forecast','track-record','drivers','history','pce','pce-categories','rates','fed','money','expectations','methodology'];
+    const PAGES = ['overview','findings','forecast','track-record','drivers','history','pce','pce-categories','rates','fed','money','expectations'];
     function show(){
       let id = (location.hash||'').slice(1);
-      if(id==='prices') id = 'drivers';   // old link: every CPI item now lives on the CPI tab
+      if(id==='prices') id = 'drivers';         // old link: every CPI item now lives on the CPI tab
+      if(id==='methodology') id = 'findings';   // old link: methodology is now chapter 3 of the story
       if(!PAGES.includes(id)) id = 'overview';
       document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
       document.querySelectorAll('.nav-link').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+groupOf(id) ? 'page' : 'false'));
@@ -2828,7 +2911,6 @@
       let n = startEl; while(n){ const nx = n.nextSibling; if(n.classList && n.classList.contains('page-foot')) break; body.appendChild(n); n = nx; }
     }
     const $ = sel => document.querySelector(sel), card = sel => { const e=$(sel); return e ? e.closest('.card') : null; };
-    fold('findings', $('#page-findings > h2'));
     fold('forecast', $('#page-forecast > .grid-2'));
     fold('track-record', card('#leaderboard'));
     fold('drivers', $('#cpiMoreH'));
@@ -2842,7 +2924,7 @@
       forecast: [['forecast','CPI'],['pce','PCE'],['expectations','vs. expectations'],['history','Since 1948']],
       drivers:  [['drivers','CPI'],['pce-categories','PCE']],
       rates:    [['rates','Treasury yields'],['fed','The Fed']],
-      findings: [['findings','Key findings'],['track-record','Track record'],['methodology','How it works']],
+      findings: [['findings','The story'],['track-record','Track record']],
     };
     Object.values(GROUPS).forEach(g=>g.forEach(([id])=>{
       const sec=document.getElementById('page-'+id); if(!sec) return;
@@ -2880,6 +2962,7 @@
     }
     const maybeCount = () => { if(document.getElementById('page-overview').classList.contains('active')) countUp(); };
     window.addEventListener('hashchange', maybeCount);
+    document.querySelectorAll('.ch-nav button').forEach(b=>b.addEventListener('click', ()=>{ const t=document.getElementById(b.dataset.go); if(t) t.scrollIntoView({behavior: reduceMotion?'auto':'smooth', block:'start'}); }));
 
     show();
     maybeCount();
