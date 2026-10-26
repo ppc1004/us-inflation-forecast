@@ -507,6 +507,11 @@
   /* ---------- what's driving it: contributions + explorer tools ---------- */
   .drill-h{font-size:clamp(20px,2vw,24px); letter-spacing:-.02em; margin:40px 0 4px;}
   .drill-sub{color:var(--ink-2); font-size:14px; margin:0 0 14px; max-width:760px;}
+  .howto{display:flex; flex-wrap:wrap; gap:6px 22px; font-size:13px; color:var(--ink-2); margin:0 0 12px; padding:10px 14px; border-radius:11px; background:var(--page); border:1px solid var(--border);}
+  .howto b{color:var(--ink); font-weight:600;} .howto span{display:inline;} .howto i{margin-right:7px; vertical-align:-1px;}
+  .hw-box{display:inline-block; width:16px; height:11px; border-radius:3px; border:1.5px solid var(--ink-2);}
+  .hw-col{display:inline-block; width:22px; height:11px; border-radius:3px; background:linear-gradient(90deg, var(--h1), var(--h3), var(--h5));}
+  .tm-meta b{font-weight:700;}
   .cnote{font-size:13px; color:var(--ink-2); margin:14px 0 0;} .cnote b{color:var(--ink);}
   .cbars{display:grid; gap:2px;}
   .cb-row{display:grid; grid-template-columns:minmax(120px,240px) 1fr 92px; align-items:center; gap:12px; width:100%; padding:7px 8px; margin:0 -8px; width:calc(100% + 16px);
@@ -970,7 +975,7 @@
   const HEAT_EDGES = [-2, 0, 1, 3, 5, 8];
   const HEAT_LABELS = ['below −2%', '−2 to 0%', '0 to 1%', '1 to 3%', '3 to 5%', '5 to 8%', '8% or more'];
   const heatBin = v => (v==null || !isFinite(v)) ? null : HEAT_EDGES.filter(e=>v>=e).length;
-  const heatLegend = () => `<div class="heat-legend"><span>12-month change:</span>` +
+  const heatLegend = () => `<div class="heat-legend"><span>Colour = price change vs. a year ago:</span>` +
     HEAT_LABELS.map((l,i)=>`<span><i class="sw" style="background:var(--h${i})"></i>${l}</span>`).join('') +
     `<span><i class="sw" style="background:repeating-linear-gradient(45deg,var(--axis),var(--axis) 2px,var(--surface) 2px,var(--surface) 4px)"></i>smaller items not listed</span></div>`;
 
@@ -1052,10 +1057,11 @@
             <button class="ex-live" id="${id}-live" type="button" hidden>Back to latest</button>
           </div>
         </div>
+        <div class="howto"><span><i class="hw-box"></i><b>Bigger box</b> = bigger share of what people spend</span><span><i class="hw-col"></i><b>Redder</b> = prices rising faster · <b>bluer</b> = prices falling</span><span><b>↑ 3.3%</b> = prices are 3.3% higher than a year ago</span></div>
         <div class="crumbs" id="${id}-crumbs"></div>
         <div class="tm" id="${id}-tm" role="group" aria-label="Treemap of category weights"></div>
         ${heatLegend()}
-        <p class="note">Tile size is the category's weight in the index, colour its price change over the past 12 months. Click a tile to see its history and open its sub-categories; use the path above to go back.</p>
+        <p class="cnote">Click a box to open the smaller categories inside it. Use the path above the boxes to go back up.</p>
       </div>
       <div class="grid-2" style="margin-top:12px; align-items:start">
         <div class="card" id="${id}-detail">
@@ -1070,7 +1076,7 @@
         </div>
         <div class="card">
           <p class="card-title" id="${id}-ttitle"></p>
-          <p class="card-sub">Largest weight first. Contribution = weight × 12-month change: the percentage points this item adds to the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate.</p>
+          <p class="card-sub">Biggest first. “Adds to inflation” = share of spending × price change: how many percentage points this item adds to the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate.</p>
           <div style="overflow-x:auto"><table class="xtable" id="${id}-table"></table></div>
         </div>
       </div>
@@ -1118,14 +1124,18 @@
       const rects = squarify(items.map(i=>({...i, v:i.v*sc})), {x:0, y:0, w:W, h:H});
       el.innerHTML = rects.map((r,k)=>{
         const st = `left:${(r.x+1).toFixed(1)}px;top:${(r.y+1).toFixed(1)}px;width:${Math.max(0,r.w-2).toFixed(1)}px;height:${Math.max(0,r.h-2).toFixed(1)}px;`;
-        if(r.other) return `<div class="tm-tile other" data-k="${k}" style="${st}">${r.w>80 && r.h>34 ? `<span class="tm-name">Other items</span><span class="tm-meta">${(r.v/sc).toFixed(2)}% weight</span>` : ''}</div>`;
+        if(r.other) return `<div class="tm-tile other" data-k="${k}" style="${st}">${r.w>80 && r.h>34 ? `<span class="tm-name">Other items</span><span class="tm-meta">${(r.v/sc).toFixed(2)}% of spending</span>` : ''}</div>`;
         const n = r.node, ny = yoyAt(n), b = heatBin(ny);
         const color = b==null ? 'background:var(--grid);color:var(--ink-2);' : `background:var(--h${b});color:var(--hi${b});`;
-        const big = r.w>220 && r.h>120, showName = r.w>=66 && r.h>=36, showMeta = r.w>=46 && r.h>=22;
-        const meta = `${n.weight.toFixed(n.weight>=10?1:2)}% · ${ny!=null?spct(ny):'n/a'}`;
-        return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: weight ${n.weight.toFixed(2)}%, 12-month change ${ny!=null?spct(ny):'not available'}">
-          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?`<span class="tm-meta">${showName?meta:(ny!=null?spct(ny):'')}</span>`:''}
-          ${n.kids.length && r.h>=78 && r.w>=90 ? `<span class="tm-kids">${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'} ›</span>` : ''}</button>`;
+        const big = r.w>220 && r.h>120, showName = r.w>=66 && r.h>=36, showMeta = r.w>=46 && r.h>=22, roomy = r.w>=200 && r.h>=84;
+        const wTxt = n.weight.toFixed(n.weight>=10?1:2)+'%', arrow = ny==null ? '' : ny>=0.05 ? '↑ ' : ny<=-0.05 ? '↓ ' : '';
+        const pTxt = ny==null ? 'no price data' : arrow + Math.abs(ny).toFixed(1) + '%';
+        const meta = roomy
+          ? `<span class="tm-meta"><b>${wTxt}</b> of all spending</span><span class="tm-meta">Prices <b>${pTxt}</b> vs. a year ago</span>`
+          : `<span class="tm-meta">${wTxt} of spending</span><span class="tm-meta">Prices ${pTxt}</span>`;
+        return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: ${n.weight.toFixed(2)}% of all spending, prices ${ny!=null?spct(ny):'not available'} versus a year ago">
+          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?(showName && r.h>=62 ? meta : `<span class="tm-meta">${ny!=null?pTxt:''}</span>`):''}
+          ${n.kids.length && r.h>=100 && r.w>=90 ? `<span class="tm-kids">${r.w>=210 ? `Click to open ${n.kids.length} smaller categor${n.kids.length>1?'ies':'y'}` : `${n.kids.length} inside`} ›</span>` : ''}</button>`;
       }).join('');
       el.appendChild(tip);
       el.querySelectorAll('.tm-tile').forEach(t=>{
@@ -1134,14 +1144,14 @@
           tip.textContent='';
           const add=(cls, txt)=>{ const d=document.createElement('div'); d.className=cls; d.textContent=txt; tip.appendChild(d); return d; };
           const row=(k,v)=>{ const d=document.createElement('div'); d.className='t-row'; const a=document.createElement('span'); a.className='t-key'; a.textContent=k; const b=document.createElement('b'); b.textContent=v; d.appendChild(a); d.appendChild(b); tip.appendChild(d); };
-          if(r.other){ add('t-date','Other items'); row('Weight', (r.v/sc).toFixed(2)+'%'); add('t-note','Smaller categories not listed separately'); }
+          if(r.other){ add('t-date','Other items'); row('Share of all spending', (r.v/sc).toFixed(2)+'%'); add('t-note','Smaller categories not listed separately'); }
           else {
             const n=r.node; add('t-date', n.name);
-            row('Weight', n.weight.toFixed(2)+'% of total');
-            row('12-month change', yoyAt(n)!=null?spct(yoyAt(n)):'n/a');
-            if(prevAt(n)!=null) row('A year earlier', spct(prevAt(n)));
-            if(contribAt(n)!=null) row('Contribution', pp(contribAt(n),2));
-            if(n.kids.length) add('t-note', `Click to open ${n.kids.length} sub-categor${n.kids.length>1?'ies':'y'}`);
+            row('Share of all spending', n.weight.toFixed(2)+'%');
+            row('Price change vs. a year ago', yoyAt(n)!=null?spct(yoyAt(n)):'n/a');
+            if(prevAt(n)!=null) row('Same measure a year earlier', spct(prevAt(n)));
+            if(contribAt(n)!=null) row('Adds to total inflation', pp(contribAt(n),2));
+            if(n.kids.length) add('t-note', `Click to open ${n.kids.length} smaller categor${n.kids.length>1?'ies':'y'}`);
           }
           tip.style.opacity=1;
           const box = el.getBoundingClientRect(), px=e.clientX-box.left, py=e.clientY-box.top;
@@ -1196,7 +1206,7 @@
       document.getElementById(id+'-ttitle').textContent = base===root ? `Major groups of ${(cfg.rootLower||cfg.rootLabel.toLowerCase())}` : `Inside ${base.name}`;
       const rows = base.kids;
       const maxW = Math.max(...rows.map(k=>k.weight), 0.0001);
-      document.getElementById(id+'-table').innerHTML = `<thead><tr><th>Category</th><th>Weight</th><th class="r">12-month</th><th class="r">Contribution</th></tr></thead><tbody>
+      document.getElementById(id+'-table').innerHTML = `<thead><tr><th>Category</th><th>Share of spending</th><th class="r">Prices vs. a year ago</th><th class="r">Adds to inflation</th></tr></thead><tbody>
         <tr class="click ${sel===base?'sel':''}" data-code="${base.code}"><td class="name"><b>${esc(base.name)}</b></td><td>${base.weight.toFixed(2)}%</td><td class="r">${yoyAt(base)!=null?spct(yoyAt(base)):'—'}</td><td class="r">${contribAt(base)!=null?pp(contribAt(base),2):'—'}</td></tr>
         ${rows.map(k=>`<tr class="click ${sel===k?'sel':''}" data-code="${k.code}"><td class="name">${esc(k.name)}${k.kids.length?'<span class="kid-mark">›</span>':''}</td>
           <td style="white-space:nowrap"><span class="wbar" style="width:${(k.weight/maxW*60).toFixed(1)}px"></span>${k.weight.toFixed(k.weight>=1?2:3)}%</td>
@@ -1218,11 +1228,11 @@
     };
     const FCOLS = [
       {k:'name', l:'Category', v:n=>n.name},
-      {k:'weight', l:'Weight', r:true, v:n=>n.weight},
-      {k:'yoy', l:'12-month', r:true, v:yoyAt},
-      {k:'prev', l:'Year earlier', r:true, v:prevAt, hide:true},
-      {k:'accel', l:'Change in pace', r:true, v:n=>{ const a=yoyAt(n), b=prevAt(n); return a!=null&&b!=null ? a-b : null; }},
-      {k:'contrib', l:'Contribution', r:true, v:contribAt},
+      {k:'weight', l:'Share of spending', r:true, v:n=>n.weight},
+      {k:'yoy', l:'Prices vs. a year ago', r:true, v:yoyAt},
+      {k:'prev', l:'Same, a year earlier', r:true, v:prevAt, hide:true},
+      {k:'accel', l:'Speeding up?', r:true, v:n=>{ const a=yoyAt(n), b=prevAt(n); return a!=null&&b!=null ? a-b : null; }},
+      {k:'contrib', l:'Adds to inflation', r:true, v:contribAt},
     ];
     function flatRows(){
       const q = fQuery.trim().toLowerCase();
@@ -1251,7 +1261,7 @@
           return `<tr class="click${sel===n?' sel':''}" data-code="${n.code}" tabindex="0"><td class="name"><span class="lvl lvl-${Math.min(depthOf(n),4)}"></span>${esc(n.name)}${n.kids.length?`<span class="kid-mark">${n.kids.length} sub</span>`:''}${par?`<div class="muted" style="font-size:11.5px">${esc(par.name)}</div>`:''}</td>
             ${FCOLS.slice(1).map(c=>`<td class="r${c.hide?' hide-sm':''}" style="white-space:nowrap">${fmt[c.k](n)}</td>`).join('')}<td class="hide-sm">${spark(n)}</td></tr>`; }).join('')
           : `<tr><td colspan="${FCOLS.length+1}"><div class="empty">No categories match. Try a different filter.</div></td></tr>`}</tbody>`;
-      document.getElementById(id+'-fsub').innerHTML = `${rows.length} of ${all.filter(n=>n.has).length} categories · as of ${fmtMonth(T.dates[ti])} · click a column to sort, a row to chart it. “Change in pace” compares the 12-month rate with a year earlier.`;
+      document.getElementById(id+'-fsub').innerHTML = `${rows.length} of ${all.filter(n=>n.has).length} categories · as of ${fmtMonth(T.dates[ti])} · click a column to sort, a row to chart it. “Speeding up?” ▲ means prices are rising faster than they were a year earlier.`;
       const more = document.getElementById(id+'-more');
       more.hidden = rows.length <= LIMIT; more.textContent = fAll ? 'Show fewer' : `Show all ${rows.length}`;
       tb.querySelectorAll('th.sortable button').forEach(b=>b.addEventListener('click', ()=>{ const k=b.parentElement.dataset.k; if(fSort===k) fDir=-fDir; else { fSort=k; fDir = k==='name'?1:-1; } flat(); }));
@@ -1335,9 +1345,9 @@
     const shown = byW.length>maxG ? byW.slice(0,maxG-1) : byW, rest = byW.length>maxG ? byW.slice(maxG-1) : [];
     const colorOf = new Map(shown.map((g,k)=>[g.code, COLORS[k%COLORS.length]]));
     const METRICS = {
-      contrib:{label:'Contribution', v:g=>g.weight*g.yoyS[li]/100, fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2), unit:'percentage points added to the total'},
-      yoy:{label:'12-month change', v:g=>g.yoyS[li], fmt:v=>spct(v), unit:'how fast each group’s own prices rose'},
-      weight:{label:'Weight', v:g=>g.weight, fmt:v=>v.toFixed(1)+'%', unit:'share of the basket'},
+      contrib:{label:'Adds to inflation', v:g=>g.weight*g.yoyS[li]/100, fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2), unit:'percentage points added to the total'},
+      yoy:{label:'Price change', v:g=>g.yoyS[li], fmt:v=>spct(v), unit:'how fast each group’s own prices rose'},
+      weight:{label:'Share of spending', v:g=>g.weight, fmt:v=>v.toFixed(1)+'%', unit:'share of what people spend'},
     };
     let metric = 'contrib', hover = null, range = 60;
     const top = majors.slice().sort((a,b)=>METRICS.contrib.v(b)-METRICS.contrib.v(a))[0];
@@ -1360,7 +1370,7 @@
       const M = METRICS[metric], rows = majors.map(g=>({g, v:M.v(g)})).sort((a,b)=>b.v-a.v);
       const lo = Math.min(0, ...rows.map(r=>r.v)), hi = Math.max(0, ...rows.map(r=>r.v)), span = (hi-lo)||1, zero = (0-lo)/span*100;
       document.getElementById(id+'-btitle').textContent = metric==='contrib' ? `How much each group adds to the ${pct(head)} ${cfg.rootLower} inflation rate` : metric==='yoy' ? `How fast prices are rising in each group` : `How big each group is in the ${cfg.rootLower} basket`;
-      document.getElementById(id+'-bsub').textContent = `${fmtMonthLong(T.dates[li])} · ${M.unit}.` + (metric==='contrib' ? ' Contribution = weight × 12-month change.' : '');
+      document.getElementById(id+'-bsub').textContent = `${fmtMonthLong(T.dates[li])} · ${M.unit}.` + (metric==='contrib' ? ' = share of spending × how much its prices rose.' : '');
       document.getElementById(id+'-bars').innerHTML = rows.map(r=>{
         const w = Math.abs(r.v)/span*100, left = r.v>=0 ? zero : zero-w, c = metric==='contrib' ? `var(${colorOf.get(r.g.code)||'--c-ref'})` : metric==='yoy' ? `var(--h${heatBin(r.v)})` : 'var(--c-actual)';
         const share = metric==='contrib' && head>0 ? `<span class="cshare">${Math.abs(r.v/head*100)<0.5?'0':(r.v/head*100).toFixed(0)}%</span>` : '';
