@@ -2154,17 +2154,6 @@
       const body = document.getElementById('findingsBody');
       const items = [];
       const A = bmBy.arima, N = bmBy.naive;
-      // 1. beating naive
-      if(A && N){
-        const better = A.mae < N.mae;
-        const sigA = A.p!=null && A.p<0.05;
-        items.push({title: better && sigA ? `Beats a simple guess, by a thin margin` : better ? `Barely better than a simple guess` : `A simple guess is hard to beat`,
-          short: `Next month\u2019s forecast misses by ${A.mae.toFixed(2)} points on average. Just repeating last month misses by ${N.mae.toFixed(2)}${better && !sigA ? ', too close to call' : ''}.`,
-          stat: `${esc(A.label)}: ${spct(A.vs)} error vs naive · p = ${fmtP(A.p)}`,
-          text: `Over the last ${A.n} months, ${esc(A.label)} missed actual inflation by ${A.mae.toFixed(2)} points on average, against ${N.mae.toFixed(2)} for simply repeating last month's rate.
-            The Diebold-Mariano test puts the difference at p = ${fmtP(A.p)}: ${sigWord(A.p)}. Month-to-month inflation is highly persistent, so most of the information is already in the latest print.`,
-          link:'#track-record'});
-      }
       // 2. more data / ML
       const X = bmBy.arimax, G = bmBy.gbm;
       if(A && (X || G)){
