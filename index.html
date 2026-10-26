@@ -580,6 +580,28 @@
   .limits{max-width:920px; font-size:15px; color:var(--ink-2); padding:16px 18px; border-radius:14px; border:1px dashed var(--axis);} .limits b{color:var(--ink);}
   details.tech{margin-top:18px;} details.tech .fold-body{margin-top:14px;}
   .tech-h{font-size:15px; margin:22px 0 10px;}
+  .vision-quote{font-size:clamp(24px,3vw,34px); font-weight:650; letter-spacing:-.025em; line-height:1.2; margin:0 0 14px; max-width:20em;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .pillars{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; max-width:920px;}
+  .pillar{padding:16px 18px; border-radius:14px; border:1px solid var(--border); background:var(--surface);}
+  .pillar b{display:block; font-size:16px; margin-bottom:4px;} .pillar span{font-size:14px; color:var(--ink-2);}
+  .value-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; max-width:920px;}
+  .value-c{display:flex; flex-direction:column; gap:6px; padding:18px 20px; border-radius:16px; border:1px solid var(--border); background:var(--surface); text-decoration:none; color:inherit; transition:transform .25s var(--ease), border-color .25s;}
+  .value-c:hover{transform:translateY(-3px); border-color:color-mix(in srgb, var(--glow) 45%, var(--border));}
+  .value-c .vn{font-size:12px; font-weight:700; letter-spacing:.06em; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .value-c b{font-size:16.5px; font-weight:600;} .value-c > span:not(.vn){font-size:14.5px; color:var(--ink-2);}
+  .value-c em{font-style:normal; font-size:13px; font-weight:500; color:var(--glow); margin-top:auto; padding-top:6px;}
+  .insights{display:grid; gap:12px; max-width:920px;}
+  .insight{display:grid; grid-template-columns:200px minmax(0,1fr); gap:20px; padding:20px; border-radius:18px; border:1px solid var(--border); background:var(--surface); text-decoration:none; color:inherit; transition:border-color .25s, transform .25s var(--ease);}
+  .insight:hover{border-color:color-mix(in srgb, var(--glow) 45%, var(--border)); transform:translateY(-2px);}
+  .ins-stat{display:flex; flex-direction:column; gap:4px; padding-right:18px; border-right:1px solid var(--border);}
+  .ins-tag{align-self:flex-start; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--glow); background:color-mix(in srgb, var(--glow) 13%, transparent); padding:3px 8px; border-radius:6px;}
+  .ins-stat b{font-size:34px; font-weight:700; letter-spacing:-.03em; line-height:1.1; margin-top:6px;}
+  .ins-stat span:last-child{font-size:13px; color:var(--ink-2); line-height:1.4;}
+  .ins-body h3{font-size:18px; font-weight:600; letter-spacing:-.01em; margin:2px 0 6px;}
+  .ins-body p{margin:0; font-size:14.5px; color:var(--ink-2);} .ins-body p b{color:var(--ink); font-weight:600;}
+  .ins-means{margin-top:10px !important; padding:10px 12px; border-radius:10px; background:var(--page); border:1px solid var(--border);}
+  @media (max-width: 800px){ .pillars, .value-grid{grid-template-columns:1fr;} .insight{grid-template-columns:1fr; gap:12px;} .ins-stat{border-right:0; padding-right:0; border-bottom:1px solid var(--border); padding-bottom:12px;} }
   .next-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; max-width:920px;}
   .next-c{padding:18px; border-radius:16px; border:1px solid var(--border); background:var(--surface);}
   .next-c b{display:block; font-size:16px; font-weight:600; margin-bottom:6px;} .next-c span{font-size:14.5px; color:var(--ink-2);}
@@ -622,7 +644,7 @@
       <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Overview</a>
       <a class="nav-link" href="#money"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><circle cx="8" cy="8" r="1.8"/></svg>Your money</a>
       <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>Forecast</a>
-      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What’s driving it</a>
+      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>Price breakdown</a>
       <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Interest rates</a>
       <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>The story</a>
     </nav>
@@ -1800,7 +1822,7 @@
           <p class="hero-sub">Inflation, interest rates and 12-month forecasts across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ price categories, rebuilt automatically every time new government data lands.</p>
           <div class="cta">
             <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
-            <a class="btn" href="#drivers">What’s driving it <span class="arr">→</span></a>
+            <a class="btn" href="#drivers">Price breakdown <span class="arr">→</span></a>
             <button class="btn" type="button" id="surpriseBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>Surprise me</button>
           </div>
           <div class="hero-stats">${heroStats.map(h=>`<a class="hs" href="${h.href}"><div class="l">${h.l}</div><div class="v"${h.c}>${h.v}</div><div class="s">${h.s}</div></a>`).join('')}</div>
@@ -1832,7 +1854,7 @@
     const topDriver = ovDrivers && ovDrivers.rows.length ? ovDrivers.rows[0].label : null;
     const xcards = [
       {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month ARIMA forecast for CPI and PCE inflation, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
-      {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving it', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
+      {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'Price breakdown', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
       {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive treemap.', sl:'Categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
       {href:'#money', icon:'wallet', ic:'var(--c-5)', t:'Your money', d:'What inflation does to your savings, your paycheck and everyday prices.', sl:'$100 a year ago', sv:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—'},
@@ -1877,12 +1899,15 @@
         <div class="story-top">
           <span class="kicker">The story</span>
           <h1 class="story-title">Why I built a forecast anyone can read</h1>
-          <p class="lede">What started as a question about rising prices became a forecasting site that updates itself. Here is why I made it, what I learned, how it works and what comes next.</p>
+          <p class="lede">What started as a question about rising prices became a forecasting site that updates itself. Here is why I made it, where it is going, what it is worth to a business, and how it works.</p>
           <nav class="ch-nav" aria-label="Chapters">
             <button type="button" data-go="ch-why"><b>01</b>Why I built this</button>
-            <button type="button" data-go="ch-found"><b>02</b>What I found</button>
-            <button type="button" data-go="ch-how"><b>03</b>How it works</button>
-            <button type="button" data-go="ch-next"><b>04</b>What’s next</button>
+            <button type="button" data-go="ch-vision"><b>02</b>Vision</button>
+            <button type="button" data-go="ch-value"><b>03</b>Business value</button>
+            <button type="button" data-go="ch-insights"><b>04</b>Business insights</button>
+            <button type="button" data-go="ch-found"><b>05</b>What I found</button>
+            <button type="button" data-go="ch-how"><b>06</b>How it works</button>
+            <button type="button" data-go="ch-next"><b>07</b>What’s next</button>
           </nav>
         </div>
 
@@ -1893,7 +1918,7 @@
             <p class="story-p">Between 2021 and 2022, prices in the U.S. rose faster than at any time in 40 years. At the peak, in <b>${storyPeak?fmtMonthLong(storyPeak.date):'mid-2022'}</b>, prices were <b>${storyPeak?pct(storyPeak.yoy):'9%'} higher</b> than a year before. Groceries, rent and gas all got noticeably more expensive.</p>
             <p class="story-p">The news kept repeating one number: “inflation is high.” But that one number hid the questions I actually cared about:</p>
             <div class="qcards">
-              <a class="qcard" href="#drivers"><span class="q">What is pushing prices up?</span><span class="a">See what’s driving it →</span></a>
+              <a class="qcard" href="#drivers"><span class="q">What is pushing prices up?</span><span class="a">See the price breakdown →</span></a>
               <a class="qcard" href="#forecast"><span class="q">Where is inflation heading next?</span><span class="a">See the forecast →</span></a>
               <a class="qcard" href="#track-record"><span class="q">Can we trust a forecast?</span><span class="a">See the track record →</span></a>
             </div>
@@ -1901,8 +1926,46 @@
           </div>
         </section>
 
-        <section class="chap" id="ch-found">
+        <section class="chap" id="ch-vision">
           <div class="chap-num">02</div>
+          <div class="chap-body">
+            <h2 class="chap-title">Vision</h2>
+            <p class="vision-quote">Make inflation as easy to read as a weather forecast.</p>
+            <p class="story-p">One place where anyone, from a shopper to a pricing manager, can see what prices are doing, why, and where they are heading next, with an honest range around every forecast.</p>
+            <div class="pillars">
+              <div class="pillar"><b>Clear</b><span>Plain English first. Every number says what it means.</span></div>
+              <div class="pillar"><b>Honest</b><span>Every forecast is tested in public and shows how wrong it might be.</span></div>
+              <div class="pillar"><b>Always current</b><span>Updates itself the day new government data comes out.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-value">
+          <div class="chap-num">03</div>
+          <div class="chap-body">
+            <h2 class="chap-title">Business value</h2>
+            <p class="story-p">For a <b>pricing team</b>, inflation is two problems at once: your own costs are rising, and so are your customers’ bills. This site turns official data into four everyday decisions.</p>
+            <div class="value-grid">
+              <a class="value-c" href="#drivers"><span class="vn">01</span><b>Set prices with evidence</b><span>See how fast prices are rising in your exact category, out of ${hasCats?cpiNodes.length-1:160} CPI and ${Math.max(0,pceNodes.length-1)} PCE categories, and compare it with overall inflation.</span><em>Price breakdown →</em></a>
+              <a class="value-c" href="#forecast"><span class="vn">02</span><b>Plan next year’s budget</b><span>Use the 12-month forecast and its likely range to build a base, best and worst case for cost growth.</span><em>Forecast →</em></a>
+              <a class="value-c" href="#drivers"><span class="vn">03</span><b>Negotiate with suppliers</b><span>When a supplier asks for an 8% increase, check what that category actually did in official data before you agree.</span><em>Search any category →</em></a>
+              <a class="value-c" href="#drivers"><span class="vn">04</span><b>Time price changes</b><span>The “Speeding up?” column and the time slider show whether a category is heating up or cooling down, so you can move before competitors do.</span><em>Price breakdown →</em></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-insights">
+          <div class="chap-num">04</div>
+          <div class="chap-body">
+            <h2 class="chap-title">Business insights</h2>
+            <p class="story-p">Five takeaways for pricing teams, recalculated from the latest data every time this site updates.</p>
+            <div class="insights" id="bizInsights">${hasCats?'':pending('Detailed CPI categories')}</div>
+            <p class="cnote">Estimates from public data to support your own judgement, not business or investment advice.</p>
+          </div>
+        </section>
+
+        <section class="chap" id="ch-found">
+          <div class="chap-num">05</div>
           <div class="chap-body">
             <h2 class="chap-title">What I found</h2>
             <p class="story-p">I tested the model on years of past data it had never seen, as if I were forecasting live back then. Here is what happened, in plain English. Open “Details” for the numbers.</p>
@@ -1911,7 +1974,7 @@
         </section>
 
         <section class="chap" id="ch-how">
-          <div class="chap-num">03</div>
+          <div class="chap-num">06</div>
           <div class="chap-body">
             <h2 class="chap-title">How it works</h2>
             <p class="story-p">Four steps run on their own every day. Nobody types the numbers in by hand.</p>
@@ -1968,7 +2031,7 @@
         </section>
 
         <section class="chap" id="ch-next">
-          <div class="chap-num">04</div>
+          <div class="chap-num">07</div>
           <div class="chap-body">
             <h2 class="chap-title">What’s next</h2>
             <p class="story-p">The model is deliberately simple today. These are the upgrades I want to try.</p>
@@ -2057,8 +2120,8 @@
       </section>
 
       <!-- ================= DRIVERS ================= -->
-      <section class="page" id="page-drivers" data-title="What's driving CPI">
-        <h1 class="page-title">What’s driving CPI inflation?</h1>
+      <section class="page" id="page-drivers" data-title="CPI price breakdown">
+        <h1 class="page-title">CPI price breakdown</h1>
         <p class="lede">The consumer price index (BLS) tracks what urban households pay. Start with the big groups, then drill into every one of its ${hasCats?cpiNodes.length-1:160} categories.</p>
         <div id="contribBody">${hasCats?'':pending('Detailed CPI categories')}</div>
         <h2 class="drill-h">Explore every CPI category</h2>
@@ -2105,8 +2168,8 @@
       </section>
 
       <!-- ================= PCE CATEGORIES ================= -->
-      <section class="page" id="page-pce-categories" data-title="What's driving PCE">
-        <h1 class="page-title">What’s driving PCE inflation?</h1>
+      <section class="page" id="page-pce-categories" data-title="PCE price breakdown">
+        <h1 class="page-title">PCE price breakdown</h1>
         <p class="lede">The PCE price index (BEA) covers everything Americans spend on, including what employers and insurers pay on their behalf. It is the measure the Fed targets at 2%.</p>
         <div id="pceContrib">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
         <h2 class="drill-h">Explore every PCE category</h2>
@@ -2690,6 +2753,53 @@
       cpiEx = explorer({el:document.getElementById('cpiExplorer'), id:'cx', nodes:cpiNodes, table:COMP, rootCode:'SA0', rootLabel:'All items',
         weightLabel:'BLS relative importance, December 2025', target:FED_TARGET, movers:document.getElementById('cpiMovers')});
       const pick = ex => code => { ex.select(code); ex.el.scrollIntoView({behavior:'smooth', block:'start'}); };
+      (function(){   // business insights for pricing teams, rebuilt from the data on every update
+        const el = document.getElementById('bizInsights'); if(!el || !cpiEx) return;
+        const root = cpiEx.root, okv = v => v!=null && isFinite(v);
+        const all = [...cpiEx.byCode.values()].filter(n=>n!==root && n.has && okv(n.yoy) && n.date.getTime()===root.date.getTime());
+        const leaves = all.filter(n=>!n.kids.length && n.weight>=0.1);
+        const accel = n => okv(n.yoyPrev) ? n.yoy - n.yoyPrev : null;
+        const out = [];
+        const nm = n => esc(n.name);
+        // 1. where customers' money is going
+        const majors = root.kids.filter(k=>k.has && okv(k.yoy) && k.weight>0).map(k=>({k, c:k.weight*k.yoy/100})).sort((a,b)=>b.c-a.c);
+        if(majors.length && root.yoy>0){
+          const t = majors[0], share = t.c/root.yoy*100;
+          out.push({tag:'Customers', stat:`${share.toFixed(0)}%`, statSub:`of inflation comes from ${nm(t.k)}`,
+            title:`${t.k.name} is squeezing customers’ budgets`,
+            body:`Overall prices are up ${pct(root.yoy)} in a year, and ${t.k.name.toLowerCase()} alone accounts for ${share.toFixed(0)}% of that.`,
+            means:`Households have less left over for everything else, so price-sensitive and discretionary products may face more resistance to increases.`, href:'#drivers'});
+        }
+        // 2. heating up
+        const hot = leaves.filter(n=>okv(accel(n)) && accel(n)>0).sort((a,b)=>accel(b)-accel(a)).slice(0,3);
+        if(hot.length) out.push({tag:'Costs', stat:`▲ ${hot[0].yoy.toFixed(1)}%`, statSub:`${nm(hot[0])}, up from ${pct(hot[0].yoyPrev)} a year earlier`,
+          title:'These costs are speeding up fastest',
+          body:`${hot.map(n=>`<b>${nm(n)}</b> (${spct(n.yoy)}, a year ago ${spct(n.yoyPrev)})`).join(', ')}.`,
+          means:`If any of these are inputs for you, expect supplier price requests and budget for them now rather than later.`, href:'#drivers'});
+        // 3. cooling down
+        const cool = leaves.filter(n=>okv(accel(n)) && accel(n)<0).sort((a,b)=>accel(a)-accel(b)).slice(0,3);
+        if(cool.length) out.push({tag:'Costs', stat:`▼ ${Math.abs(accel(cool[0])).toFixed(1)} pts`, statSub:`slower for ${nm(cool[0])} than a year ago`,
+          title:'These costs are cooling down',
+          body:`${cool.map(n=>`<b>${nm(n)}</b> (${spct(n.yoy)}, a year ago ${spct(n.yoyPrev)})`).join(', ')}.`,
+          means:`Good moments to push back on supplier increases. If you sell in these categories, competitors may start cutting prices.`, href:'#drivers'});
+        // 4. how broad is inflation
+        const wAll = leaves.reduce((a,n)=>a+n.weight,0), wHot = leaves.filter(n=>n.yoy>3).reduce((a,n)=>a+n.weight,0);
+        if(wAll>0){ const b = wHot/wAll*100;
+          out.push({tag:'Pricing power', stat:`${b.toFixed(0)}%`, statSub:`of spending is in items rising faster than 3%`,
+            title: b>=50 ? 'Price rises are widespread' : b>=25 ? 'Price rises are spreading' : 'Price rises are concentrated',
+            body:`Weighted by what people spend, ${b.toFixed(0)}% of the basket is getting more expensive faster than 3% a year. The Fed’s comfort zone is about 2%.`,
+            means: b>=40 ? `Customers are used to seeing higher prices almost everywhere, which makes a moderate, well-explained increase easier to land.` : `Increases still stand out to customers. Justify them clearly, or absorb small cost rises where you can.`, href:'#drivers'}); }
+        // 5. plan next year
+        if(last12 && okv(last12.mean)){
+          const lo = okv(last12.lo) ? Math.max(last12.lo,-5) : null, hi = okv(last12.hi) ? last12.hi : null;
+          out.push({tag:'Planning', stat:pct(last12.mean), statSub:`expected inflation by ${fmtMonth(last12.date)}`,
+            title:'Plan next year around this number',
+            body:`The model’s best guess for the next 12 months is ${pct(last12.mean)}${lo!=null&&hi!=null?`, most likely between ${pct(lo)} and ${pct(hi)}`:''}.`,
+            means:`Use ${pct(last12.mean)} as the base case for general cost growth and stress-test your margins at ${hi!=null?pct(hi):'a higher rate'}.`, href:'#forecast'});
+        }
+        el.innerHTML = out.map((o,i)=>`<a class="insight" href="${o.href}"><div class="ins-stat"><span class="ins-tag">${o.tag}</span><b class="num">${o.stat}</b><span>${o.statSub}</span></div>
+          <div class="ins-body"><h3>${esc(o.title)}</h3><p>${o.body}</p><p class="ins-means"><b>What it means for pricing:</b> ${o.means}</p></div></a>`).join('');
+      })();
       contribSection({el:document.getElementById('contribBody'), id:'cc', ex:cpiEx, table:COMP, rootLabel:'All items', rootLower:'CPI', weightNote:'December 2025', onPick:pick(cpiEx)});
     }
 
