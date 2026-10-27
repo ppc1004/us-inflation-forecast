@@ -1784,8 +1784,8 @@
       const cmpGoal = v => above(v)==='above' ? 'faster than' : above(v)==='below' ? 'slower than' : 'close to';
       const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ', and the model expects them to keep rising at about the same speed over the next year' : outlookUp>0 ? ', and the model expects them to rise a bit faster over the next year' : ', and the model expects them to rise more slowly over the next year';
       // 1. prices today
-      let now = `Prices are <b>${pct(latest.yoy)} higher</b> than a year ago (${fmtMonthLong(latest.date)}).`;
-      if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so prices are rising ${latest.yoy>prev.yoy?'<b>faster</b>':'<b>more slowly</b>'}.`;
+      let now = `Prices are <b>${pct(latest.yoy)}</b> higher than a year ago (${fmtMonthLong(latest.date)}).`;
+      if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so prices are rising ${latest.yoy>prev.yoy?'faster':'more slowly'}.`;
       rows.push({k:'Prices today', v:now});
       // 3. biggest cause
       const plain = {'Housing':'Housing (rent and home costs)','Food and beverages':'Food','Transportation':'Transportation (cars, gas, fares)','Medical care':'Health care','Education and communication':'Education and phone/internet'};
@@ -1811,8 +1811,8 @@
       if(hz.length){
         const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
         const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-        const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}% more accurate</b> than just repeating today\u2019s inflation rate` : edge<=-1 ? `just repeating today\u2019s inflation rate was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just repeating today\u2019s inflation rate`;
-        rows.push({k:'Can I trust it?', v:`Tested on past data, ${vs}. The real number landed inside the model\u2019s range <b>${cov.toFixed(0)}% of the time</b>.`});
+        const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}%</b> more accurate than just repeating today\u2019s inflation rate` : edge<=-1 ? `just repeating today\u2019s inflation rate was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just repeating today\u2019s inflation rate`;
+        rows.push({k:'Can I trust it?', v:`Tested on past data, ${vs}. The real number landed inside the model\u2019s range <b>${cov.toFixed(0)}%</b> of the time.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
           <div class="card-head"><div><p class="card-title" id="execTitle">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
