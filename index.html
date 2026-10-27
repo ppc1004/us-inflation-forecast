@@ -1791,7 +1791,7 @@
       const plain = {'Housing':'Housing (rent and home costs)','Food and beverages':'Food','Transportation':'Transportation (cars, gas, fares)','Medical care':'Health care','Education and communication':'Education and phone/internet'};
       if(ovDrivers && ovDrivers.rows.length && ok(ovDrivers.head) && ovDrivers.head>0){
         const top = ovDrivers.rows[0], share = top.value/ovDrivers.head*100;
-        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b> is the biggest cause. It makes up about ${share.toFixed(0)}% of the price rise.`});
+        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b> is the biggest cause. It accounts for about ${share.toFixed(0)}% of the price rise.`});
       }
       // 4. next year
       if(last12 && ok(last12.mean)){
