@@ -474,6 +474,16 @@
   .tk{display:inline-flex; align-items:baseline; gap:9px; font-size:14px; color:var(--ink-2); white-space:nowrap;}
   .tk b{font-weight:600; font-variant-numeric:tabular-nums;} .tk .up{color:var(--c-bad);} .tk .dn{color:var(--c-good);} .tk .nt{color:var(--ink);}
   .tk::after{content:""; width:4px; height:4px; border-radius:50%; background:var(--axis); margin-left:35px; align-self:center;}
+  .tk-h{font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .tk-h::after{display:none;}
+  .tk i{font-style:normal; font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .ticker.page-tk{margin:4px 0 22px calc(50% - 50vw); padding:12px 0;}
+  .ticker.slow .ticker-track{animation-duration:95s;}
+  .wall-band{position:relative; width:100vw; margin:44px 0 -8px calc(50% - 50vw); display:flex; flex-direction:column; gap:10px; overflow:hidden; pointer-events:none; opacity:.42;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); mask-image:linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);}
+  .wall-band .wall-row{--dur:160s;} .wall-band .wall-row:nth-child(2){--dur:210s;} .wall-band .wall-row:nth-child(3){--dur:185s;}
+  .wall-band .wtile{width:150px; height:58px; font-size:10.5px; box-shadow:none;} .wall-band .wtile b{font-size:16px;}
+  @media (max-width: 600px){ .wall-band{opacity:.3;} }
 
   /* ---------- overview sections ---------- */
   .sec-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin:64px 0 18px;}
@@ -1866,6 +1876,44 @@
     const tkCell = t => `<span class="tk">${esc(t.k)} <b class="${t.rate?'nt':t.v>FED_TARGET?'up':'dn'}">${t.rate?pct(t.v,2):spct(t.v)}</b></span>`;
     const tickerHTML = `<div class="ticker" aria-label="Latest readings"><div class="ticker-track">${tick.map(tkCell).join('')}<span aria-hidden="true" style="display:contents">${tick.map(tkCell).join('')}</span></div></div>`;
 
+    // reusable page tickers: items are already-built <span class="tk"> strings
+    const tickerOf = (cells, label, extra='') => cells.length ? `<div class="ticker page-tk ${extra}" aria-label="${esc(label)}"><div class="ticker-track">${cells.join('')}<span aria-hidden="true" style="display:contents">${cells.join('')}</span></div></div>` : '';
+    const tkHead = t => `<span class="tk tk-h">${esc(t)}</span>`;
+    const tkCls = v => v>FED_TARGET ? 'up' : 'dn';
+    // 1) price breakdown: fastest risers and fallers across every category
+    const moversTicker = (()=>{
+      if(!hasCats) return '';
+      const it = wallItems.filter(t=>okN(t.y)).slice().sort((a,b)=>b.y-a.y);
+      if(it.length<16) return '';
+      const cell = t => `<span class="tk">${esc(t.name)} <b class="${tkCls(t.y)}">${spct(t.y)}</b></span>`;
+      return tickerOf([tkHead('Rising fastest'), ...it.slice(0,12).map(cell), tkHead('Falling fastest'), ...it.slice(-12).reverse().map(cell)], 'Fastest rising and falling prices');
+    })();
+    // 2) rates: every yield, its move over the year, plus spreads
+    const ratesTicker = (()=>{
+      if(!RATES.length) return '';
+      const cells = RATES.map(r=>{
+        const ch = r.yearAgo && okN(r.yearAgo.v) ? r.last.v - r.yearAgo.v : null;
+        return `<span class="tk">${esc(r.label)} <b class="nt">${pct(r.last.v,2)}</b>${ch!=null?` <i>${ch>=0?'▲':'▼'} ${Math.abs(ch).toFixed(2)} pts vs a year ago</i>`:''}</span>`;
+      });
+      const two = rate('gs2'), ten = rate('gs10');
+      if(two && ten){ const sp = ten.last.v - two.last.v; cells.push(`<span class="tk">10y − 2y spread <b class="${sp<0?'up':'nt'}">${sp>=0?'+':'−'}${Math.abs(sp).toFixed(2)} pts</b>${sp<0?' <i>inverted</i>':''}</span>`); }
+      if(ten) cells.push(`<span class="tk">Real 10-year (minus CPI) <b class="nt">${spct(ten.last.v - latest.yoy,2)}</b></span>`);
+      return tickerOf([tkHead('Rates now'), ...cells], 'Latest interest rates');
+    })();
+    // 3) story: a faint, slow version of the hero wall
+    const storyBand = (()=>{
+      const cell = t => { const b = heatBin(t.y); return `<div class="wtile" style="--tc:var(--h${b});--tt:var(--hi${b})"><span>${esc(t.name)}</span><b>${spct(t.y)}</b></div>`; };
+      return `<div class="wall-band" aria-hidden="true">${[0,1,2].map(r=>{ const row = Array.from({length:16},(_,k)=>wallItems[(r*31 + k*11) % wallItems.length]); return `<div class="wall-row">${row.map(cell).join('')}${row.map(cell).join('')}</div>`; }).join('')}</div>`;
+    })();
+    // 4) your money: what $100 from past years is worth today
+    const moneyTicker = (()=>{
+      const yrs = {}; data.forEach(d=>{ const y=d.date.getUTCFullYear(); (yrs[y]=yrs[y]||[]).push(d.cpi); });
+      const ly = latest.date.getUTCFullYear();
+      const pick = [1950,1960,1970,1980,1990,2000,2008,2015,2020,2021,2022,ly-1].filter((y,i,a)=>a.indexOf(y)===i && y<ly && yrs[y] && yrs[y].length===12);
+      const cells = pick.map(y=>{ const lvl = yrs[y].reduce((a,b)=>a+b,0)/12; return `<span class="tk">$100 in ${y} <b class="nt">= ${usd(100*latest.cpi/lvl,0)}</b> <i>today</i></span>`; });
+      return tickerOf([tkHead('$100 then, today'), ...cells], 'What $100 from past years is worth today', 'slow');
+    })();
+
     // explore cards
     const ICONS = {
       trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
@@ -1980,6 +2028,7 @@
           </div>
         </section>
 
+        ${storyBand}
         <section class="chap" id="ch-value">
           <div class="chap-num">03</div>
           <div class="chap-body">
@@ -2163,6 +2212,7 @@
       <section class="page" id="page-drivers" data-title="CPI price breakdown">
         <h1 class="page-title">CPI price breakdown</h1>
         <p class="lede">The consumer price index (BLS) tracks what urban households pay. Start with the big groups, then drill into every one of its ${hasCats?cpiNodes.length-1:160} categories.</p>
+        ${moversTicker}
         <div id="contribBody">${hasCats?'':pending('Detailed CPI categories')}</div>
         <h2 class="drill-h">Explore every CPI category</h2>
         <p class="drill-sub">Search, click tiles to drill down, or drag the slider (or press play) to see how the basket looked in any month.</p>
@@ -2237,6 +2287,7 @@
       <section class="page" id="page-money" data-title="Your money">
         <h1 class="page-title">What inflation does to your money</h1>
         <p class="lede">Convert dollars between any two years, and check whether paychecks have kept up with prices.</p>
+        ${moneyTicker}
         <div class="card">
           <p class="card-title">Purchasing power calculator</p>
           <p class="card-sub">Uses the annual average CPI for past years and the latest month for the current year.</p>
@@ -2990,6 +3041,7 @@
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Monthly averages through ${fmtMonthLong((r10||RATES[0]).last.date)}</span><span>Federal Reserve H.15 via FRED</span></div>
         <h1>${ttl}</h1>
         <p class="lede">Current rates and where the model expects them in a year.</p>
+        ${ratesTicker}
         <div class="grid-4">${RATES.map(r=>{ const f=fc12(r), ch = r.yearAgo ? r.last.v-r.yearAgo.v : null;
           return `<div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(${COLOR_VAR[r.cls]})"></span>${r.label}</div><div class="kpi-value num">${pct(r.last.v,2)}</div>
             <div class="kpi-sub">${f?`Projected next year: ${pct(f.mean,2)}`:''}</div></div>`; }).join('')}</div>
