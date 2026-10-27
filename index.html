@@ -437,7 +437,9 @@
       radial-gradient(ellipse 58% 52% at 50% 50%, color-mix(in srgb, var(--page) 94%, transparent) 0%, color-mix(in srgb, var(--page) 70%, transparent) 50%, transparent 82%),
       linear-gradient(to bottom, color-mix(in srgb, var(--page) 55%, transparent) 0%, transparent 22%, transparent 68%, var(--page) 100%);}
   @keyframes drift{to{transform:translateX(-50%);}}
-  .hero-inner{display:flex; flex-direction:column; align-items:center; max-width:1000px; width:100%;}
+  .hero-inner{display:flex; flex-direction:column; align-items:center; max-width:1000px; width:100%; position:relative;}
+  .hero-inner::before{content:""; position:absolute; z-index:-1; left:50%; top:46%; width:min(920px,100%); height:70%; translate:-50% -50%; pointer-events:none;
+    background:radial-gradient(ellipse at center, color-mix(in srgb, var(--page) 78%, transparent) 0%, color-mix(in srgb, var(--page) 55%, transparent) 45%, transparent 72%); filter:blur(8px);}
   .live-pill{display:inline-flex; align-items:center; gap:9px; padding:6px 14px; border-radius:999px; border:1px solid var(--border);
     background:var(--glass); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); font-size:13px; color:var(--ink-2); font-weight:500;}
   .live-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--c-good); color:var(--c-good); animation:pulse 2.2s ease-out infinite;}
@@ -1656,7 +1658,7 @@
     const nextRelease = schRaw.map(r=>({ref:parseDate(r.reference_month), date:parseDate(r.release_date)}))
       .filter(r=>r.ref>latest.date && r.date.getTime()>=todayUTC).sort((a,b)=>a.date-b.date)[0];
     const fmtDay = d => MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate();
-    const nextText = nextRelease ? (nextRelease.date.getTime()===todayUTC ? 'today, 8:30 a.m. ET' : fmtDay(nextRelease.date)+', '+nextRelease.date.getUTCFullYear()) : null;
+    const nextText = nextRelease ? (nextRelease.date.getTime()===todayUTC ? 'today, 8:30 a.m. ET' : fmtDay(nextRelease.date)) : null;
 
     // ---------- CPI forecast & backtest ----------
     const forecast = fcRaw.map(r=>({date:parseDate(r.date), mean:num(r.mean), lo:num(r.mean_ci_lower), hi:num(r.mean_ci_upper)})).filter(r=>r.mean!=null).sort((a,b)=>a.date-b.date);
@@ -1842,18 +1844,18 @@
     const countAttr = (v, d, suf='%', pre='', from=0) => okN(v) ? ` data-count="${v.toFixed(d)}" data-dec="${d}" data-suf="${suf}" data-pre="${pre}" data-from="${from}"` : '';
     const ffR = rate('fed_funds'), tenR = rate('gs10');
     const heroStats = [
-      {l:'Inflation now', v:pct(latest.yoy), c:countAttr(latest.yoy,1), s: prev && okN(prev.yoy) ? `${pct(prev.yoy)} the month before` : fmtMonthLong(latest.date), href:'#forecast'},
+      {l:'Inflation now', v:pct(latest.yoy), c:countAttr(latest.yoy,1), s: prev && okN(prev.yoy) ? (Math.abs(latest.yoy-prev.yoy)<0.05 ? `Same as last month (${pct(prev.yoy)})` : `${latest.yoy>prev.yoy?'Up':'Down'} from ${pct(prev.yoy)} last month`) : fmtMonthLong(latest.date), href:'#forecast'},
       {l:'Projected next year', v:last12?pct(last12.mean):'—', c:last12?countAttr(last12.mean,1):'', s:last12?`Forecast for ${fmtMonth(last12.date)}`:'Pending', href:'#forecast'},
-      {l:'Fed funds rate', v:ffR?pct(ffR.last.v,2):'—', c:ffR?countAttr(ffR.last.v,2):'', s:'Set by the Federal Reserve', href:'#fed'},
+      {l:'Fed interest rate', v:ffR?pct(ffR.last.v,2):'—', c:ffR?countAttr(ffR.last.v,2):'', s:'Set by the Federal Reserve', href:'#fed'},
       {l:'$100 a year ago', v:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—', c:okN(latest.yoy)?countAttr(100*(1+latest.yoy/100),2,'','$',100):'', s:'is what it costs today', href:'#money'},
     ];
     const heroHTML = `
       <div class="ov-hero">
         <div class="wall" aria-hidden="true">${wallHTML}</div>
         <div class="hero-inner">
-          <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next CPI ${nextText}</span>`:''}</span>
+          <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next update ${nextText}</span>`:''}</span>
           <h1 class="hero-title">U.S. Economic<span class="l2">Forecast</span></h1>
-          <p class="hero-sub">Inflation, interest rates and 12-month forecasts across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ price categories, rebuilt automatically every time new government data lands.</p>
+          <p class="hero-sub">Where U.S. prices are heading over the next 12 months, across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ categories. Updated automatically whenever new government data comes out.</p>
           <div class="cta">
             <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
             <a class="btn" href="#drivers">What’s driving inflation <span class="arr">→</span></a>
