@@ -1803,8 +1803,8 @@
       const ff = rate('fed_funds');
       if(ff && ff.last && ok(ff.last.v) && fc12(ff) && ok(fc12(ff).mean)){
         const d = fc12(ff).mean - ff.last.v;
-        const move = Math.abs(d)<0.1 ? 'stay about the same, so borrowing costs shouldn\u2019t change much' : d>0 ? 'rise a little, so loans and credit cards may cost a bit more' : 'fall a little, so loans and credit cards may cost a bit less';
-        rows.push({k:'Interest rates', v:`The Fed\u2019s interest rate is <b>${pct(ff.last.v,2)}</b>. The model expects it to ${move}.`});
+        const move = Math.abs(d)<0.1 ? 'borrowing costs shouldn\u2019t change much' : d>0 ? 'loans and credit cards may cost a bit more' : 'loans and credit cards may cost a bit less';
+        rows.push({k:'Interest rates', v:`The Fed\u2019s interest rate is <b>${pct(ff.last.v,2)}</b>. The model expects it to ${Math.abs(d)<0.1?'stay about the same':`${d>0?'reach':'fall to'} about <b>${pct(fc12(ff).mean,1)}</b> by ${fmtMonthLong(fc12(ff).date)}`}, so ${move}.`});
       }
       // 6. how reliable
       const hz = hzRaw.map(r=>({h:+r.horizon, m:num(r.model_mae), nv:num(r.naive_mae), cov:num(r.coverage_95), n:+r.n})).filter(r=>ok(r.m)&&ok(r.nv)&&r.nv>0&&ok(r.cov)&&r.n>0).sort((a,b)=>a.h-b.h);
@@ -1812,7 +1812,7 @@
         const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
         const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
         const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}%</b> more accurate than just repeating today\u2019s inflation rate` : edge<=-1 ? `just repeating today\u2019s inflation rate was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just repeating today\u2019s inflation rate`;
-        rows.push({k:'Can I trust it?', v:`Tested on past data, ${vs}. The real number landed inside the model\u2019s range <b>${cov.toFixed(0)}%</b> of the time.`});
+        rows.push({k:'How accurate is it?', v:`Tested on past data, ${vs}. The real number landed inside the likely range <b>${cov.toFixed(0)}%</b> of the time.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
           <div class="card-head"><div><p class="card-title" id="execTitle">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
