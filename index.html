@@ -1841,13 +1841,13 @@
       const cell = t => { const b = heatBin(t.y); return `<div class="wtile" style="--tc:var(--h${b});--tt:var(--hi${b})"><span>${esc(t.name)}</span><b>${spct(t.y)}</b></div>`; };
       return `<div class="wall-row" style="--dur:${70 + (r*17)%60}s">${row.map(cell).join('')}${row.map(cell).join('')}</div>`;
     }).join('');
-    const countAttr = (v, d, suf='%') => okN(v) ? ` data-count="${v.toFixed(d)}" data-dec="${d}" data-suf="${suf}"` : '';
+    const countAttr = (v, d, suf='%', pre='', from=0) => okN(v) ? ` data-count="${v.toFixed(d)}" data-dec="${d}" data-suf="${suf}" data-pre="${pre}" data-from="${from}"` : '';
     const ffR = rate('fed_funds'), tenR = rate('gs10');
     const heroStats = [
       {l:'Inflation now', v:pct(latest.yoy), c:countAttr(latest.yoy,1), s: prev && okN(prev.yoy) ? `${pct(prev.yoy)} the month before` : fmtMonthLong(latest.date), href:'#forecast'},
       {l:'Projected next year', v:last12?pct(last12.mean):'—', c:last12?countAttr(last12.mean,1):'', s:last12?`Forecast for ${fmtMonth(last12.date)}`:'Pending', href:'#forecast'},
       {l:'Fed funds rate', v:ffR?pct(ffR.last.v,2):'—', c:ffR?countAttr(ffR.last.v,2):'', s:'Set by the Federal Reserve', href:'#fed'},
-      {l:'10-year Treasury', v:tenR?pct(tenR.last.v,2):'—', c:tenR?countAttr(tenR.last.v,2):'', s:'Drives mortgage rates', href:'#rates'},
+      {l:'$100 a year ago', v:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—', c:okN(latest.yoy)?countAttr(100*(1+latest.yoy/100),2,'','$',100):'', s:'is what it costs today', href:'#money'},
     ];
     const heroHTML = `
       <div class="ov-hero">
@@ -3191,9 +3191,9 @@
     function countUp(){
       if(counted || reduceMotion) return; counted = true;
       document.querySelectorAll('[data-count]').forEach(el=>{
-        const end = +el.dataset.count, d = +el.dataset.dec || 0, suf = el.dataset.suf || '', final = el.textContent, t0 = performance.now(), dur = 1500;
+        const end = +el.dataset.count, d = +el.dataset.dec || 0, suf = el.dataset.suf || '', pre = el.dataset.pre || '', from = +el.dataset.from || 0, final = el.textContent, t0 = performance.now(), dur = 1500;
         const step = t => { const k = Math.min(1, (t-t0)/dur), e = 1 - Math.pow(1-k, 4);
-          el.textContent = k<1 ? (end*e).toFixed(d) + suf : final; if(k<1) requestAnimationFrame(step); };
+          el.textContent = k<1 ? pre + (from + (end-from)*e).toFixed(d) + suf : final; if(k<1) requestAnimationFrame(step); };
         requestAnimationFrame(step);
       });
     }
