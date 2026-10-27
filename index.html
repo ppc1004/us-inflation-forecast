@@ -680,7 +680,7 @@
       <a class="nav-link" href="#overview"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Overview</a>
       <a class="nav-link" href="#money"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><circle cx="8" cy="8" r="1.8"/></svg>Your money</a>
       <a class="nav-link" href="#forecast"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 8 L9 10 L14 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg>Forecast</a>
-      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>Price breakdown</a>
+      <a class="nav-link" href="#drivers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13V8M8 13V3M13 13V6" stroke-linecap="round"/></svg>What’s driving inflation</a>
       <a class="nav-link" href="#rates"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 10c2-4 4-4 6.5 0s4.5 4 6.5 0" stroke-linecap="round"/><path d="M1.5 5.5h13" stroke-linecap="round" opacity=".5"/></svg>Interest rates</a>
       <a class="nav-link" href="#findings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.8a4.2 4.2 0 0 0-2.6 7.5c.5.4.8 1 .8 1.6v.6h3.6v-.6c0-.6.3-1.2.8-1.6A4.2 4.2 0 0 0 8 1.8z" stroke-linejoin="round"/><path d="M6.3 13.5h3.4" stroke-linecap="round"/></svg>The story</a>
     </nav>
@@ -1858,7 +1858,7 @@
           <p class="hero-sub">Inflation, interest rates and 12-month forecasts across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ price categories, rebuilt automatically every time new government data lands.</p>
           <div class="cta">
             <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
-            <a class="btn" href="#drivers">Price breakdown <span class="arr">→</span></a>
+            <a class="btn" href="#drivers">What’s driving inflation <span class="arr">→</span></a>
             <button class="btn" type="button" id="surpriseBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>Surprise me</button>
           </div>
           <div class="hero-stats">${heroStats.map(h=>`<a class="hs" href="${h.href}"><div class="l">${h.l}</div><div class="v"${h.c}>${h.v}</div><div class="s">${h.s}</div></a>`).join('')}</div>
@@ -1929,7 +1929,7 @@
     const xcards = [
       {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month ARIMA forecast for CPI and PCE inflation, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
       {href:'#money', icon:'wallet', ic:'var(--c-5)', t:'Your money', d:'What inflation does to your savings, your paycheck and everyday prices.', sl:'$100 a year ago', sv:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—'},
-      {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'Price breakdown', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
+      {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving inflation', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
       {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive treemap.', sl:'Categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
       {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'1-month error vs. naive', sv:okN(maeGain)?(maeGain>=0?'−':'+')+Math.abs(maeGain).toFixed(0)+'%':'—'},
@@ -2008,7 +2008,7 @@
             <p class="story-p">Between 2021 and 2022, prices in the U.S. rose faster than at any time in 40 years. At the peak, in <b>${storyPeak?fmtMonthLong(storyPeak.date):'mid-2022'}</b>, prices were <b>${storyPeak?pct(storyPeak.yoy):'9%'} higher</b> than a year before. Groceries, rent and gas all got noticeably more expensive.</p>
             <p class="story-p">The news kept repeating one number: “inflation is high.” But that one number hid the questions I actually cared about:</p>
             <div class="qcards">
-              <a class="qcard" href="#drivers"><span class="q">What is pushing prices up?</span><span class="a">See the price breakdown →</span></a>
+              <a class="qcard" href="#drivers"><span class="q">What is pushing prices up?</span><span class="a">See what’s driving inflation →</span></a>
               <a class="qcard" href="#forecast"><span class="q">Where is inflation heading next?</span><span class="a">See the forecast →</span></a>
               <a class="qcard" href="#track-record"><span class="q">Can we trust a forecast?</span><span class="a">See the track record →</span></a>
             </div>
