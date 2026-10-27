@@ -1782,7 +1782,7 @@
       const tone = latest.yoy - FED_TARGET > 1 ? 'hot' : latest.yoy - FED_TARGET > 0.25 ? 'warm' : latest.yoy - FED_TARGET < -0.25 ? 'cool' : 'ok';
       // plain wording for how a rate compares with the Fed's goal
       const cmpGoal = v => above(v)==='above' ? 'faster than' : above(v)==='below' ? 'slower than' : 'close to';
-      const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ', and the model expects the pace to stay about the same over the next year' : outlookUp>0 ? ', and the model expects the pace to pick up a little over the next year' : ', and the model expects the pace to ease over the next year';
+      const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ', and the model expects them to keep rising at about the same speed over the next year' : outlookUp>0 ? ', and the model expects them to rise a bit faster over the next year' : ', and the model expects them to rise more slowly over the next year';
       // 1. prices today
       let now = `Prices are <b>${pct(latest.yoy)} higher</b> than a year ago (${fmtMonthLong(latest.date)}).`;
       if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so prices are rising ${latest.yoy>prev.yoy?'<b>faster</b>':'<b>more slowly</b>'}.`;
