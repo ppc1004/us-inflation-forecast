@@ -1795,8 +1795,8 @@
       }
       // 4. next year
       if(last12 && ok(last12.mean)){
-        let t = `The model\u2019s best guess: in ${fmtMonthLong(last12.date)}, prices will be about <b>${pct(last12.mean)}</b> higher than a year before, ${cmpGoal(last12.mean)} the Fed\u2019s 2% goal.`;
-        if(ok(last12.lo) && ok(last12.hi)) t += ` It\u2019s only a guess. The real number will probably land between ${pct(Math.max(last12.lo,-5))} and ${pct(last12.hi)}.`;
+        let t = `In ${fmtMonthLong(last12.date)}, the model expects prices to be about <b>${pct(last12.mean)}</b> higher than a year before, ${cmpGoal(last12.mean)} the Fed\u2019s 2% goal.`;
+        if(ok(last12.lo) && ok(last12.hi)) t += ` The likely range is ${pct(Math.max(last12.lo,-5))} to ${pct(last12.hi)}.`;
         rows.push({k:'Projected next year', v:t});
       }
       // 5. interest rates
