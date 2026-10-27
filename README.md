@@ -21,7 +21,7 @@ A self-updating dashboard of U.S. prices and interest rates. It tracks **CPI** a
 | **History** | CPI inflation since 1948 with major episodes annotated |
 | **PCE forecast / PCE categories** | PCE and core PCE with 12-month forecasts and backtest, CPI vs PCE since 1980, why their weights differ; treemap of 80+ PCE categories weighted by spending share |
 | **Treasury yields / Fed policy** | Fed funds, 2-, 10- and 30-year forecasts with backtests vs "no change", yield curve, 10y–2y spread, mortgage rates, real (TIPS) yields; Fed funds vs inflation |
-| **Your money / Expectations** | Purchasing-power calculator, wages vs inflation; model vs consumer survey vs market breakeven inflation |
+| **Your money / Expectations** | Purchasing-power calculator, wages vs inflation; model vs market breakeven inflation |
 
 ## How it works
 
@@ -125,7 +125,7 @@ Conclusions are recomputed with every data update and published on the [Key find
 
 ## Data sources
 
-Headline series come from [FRED](https://fred.stlouisfed.org/) (Federal Reserve Bank of St. Louis): CPI and earnings from the U.S. Bureau of Labor Statistics; the federal funds rate and Treasury yields from the Federal Reserve; mortgage rates from Freddie Mac; expected inflation from the University of Michigan Surveys of Consumers; breakeven inflation from Treasury yields. Detailed CPI categories, weights and average prices come directly from the [BLS](https://www.bls.gov/cpi/); PCE prices and spending from the [BEA](https://www.bea.gov/).
+Headline series come from [FRED](https://fred.stlouisfed.org/) (Federal Reserve Bank of St. Louis): CPI and earnings from the U.S. Bureau of Labor Statistics; the federal funds rate and Treasury yields from the Federal Reserve; mortgage rates from Freddie Mac; breakeven inflation from Treasury yields. Detailed CPI categories, weights and average prices come directly from the [BLS](https://www.bls.gov/cpi/); PCE prices and spending from the [BEA](https://www.bea.gov/).
 
 ---
 

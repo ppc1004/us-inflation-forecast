@@ -1032,7 +1032,7 @@
     const btns = document.querySelectorAll(`#${id} button`);
     btns.forEach(b=>b.addEventListener('click', ()=>{ btns.forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); onChange(b.dataset.v); }));
   }
-  const pageFoot = () => `<div class="page-foot"><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve, U.S. Treasury &amp; University of Michigan via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
+  const pageFoot = () => `<div class="page-foot"><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve &amp; U.S. Treasury via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
   const pending = what => `<div class="empty">${esc(what)} will appear after the next automatic data update.</div>`;
 
   // chart height grows with width on large screens so wide charts don't look flat
@@ -2104,7 +2104,7 @@
             ${[['CPI, all items','CPIAUCSL','BLS'],['CPI less food & energy (core)','CPILFESL','BLS'],['CPI food, energy, shelter','CPIUFDSL, CPIENGSL, CUSR0000SAH1','BLS'],
                ['Average hourly earnings, production & nonsupervisory','AHETPI','BLS'],['Effective federal funds rate','FEDFUNDS','Federal Reserve'],
                ['Treasury yields: 3-month, 2, 5, 10, 30 years','TB3MS, GS2, GS5, GS10, GS30','Federal Reserve'],['10-year TIPS yield','DFII10','Federal Reserve'],['30-year mortgage rate','MORTGAGE30US','Freddie Mac'],
-               ['Expected inflation, next 12 months','MICH','University of Michigan'],['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis'],
+               ['10-year breakeven inflation rate','T10YIE','Federal Reserve Bank of St. Louis'],
                ['PCE price index, headline and core','PCEPI, PCEPILFE','BEA']]
               .map(r=>`<tr><td>${r[0]}</td><td>${r[1].split(', ').map(id=>`<a href="https://fred.stlouisfed.org/series/${id}" target="_blank" rel="noopener"><code>${id}</code></a>`).join(' ')}</td><td class="muted">${r[2]}</td></tr>`).join('')}
             <tr><td>CPI categories (≈160) and average prices (24 items)</td><td><a href="https://download.bls.gov/pub/time.series/cu/" target="_blank" rel="noopener"><code>cu</code></a> <a href="https://download.bls.gov/pub/time.series/ap/" target="_blank" rel="noopener"><code>ap</code></a></td><td class="muted">BLS</td></tr>
@@ -2165,7 +2165,7 @@
               ${(last12.hi-last12.lo).toFixed(1)} points (${pct(last12.lo)} to ${pct(last12.hi)}): the model is honest that it cannot see a year ahead precisely.</p>
             </div>
             <div class="card">
-              <div class="card-head"><p class="card-title">The model vs shoppers vs Wall Street</p><a class="link-more" href="#expectations">Compare →</a></div>
+              <div class="card-head"><p class="card-title">The model vs Wall Street</p><a class="link-more" href="#expectations">Compare →</a></div>
               <p class="card-sub" style="margin-bottom:0" id="fcExpect"></p>
             </div>
             <div class="card">
@@ -2315,8 +2315,8 @@
 
       <!-- ================= EXPECTATIONS ================= -->
       <section class="page" id="page-expectations" data-title="Expectations">
-        <h1 class="page-title">The model vs shoppers vs Wall Street</h1>
-        <p class="lede">Three different guesses about where prices are going: this model, regular people, and the bond market.</p>
+        <h1 class="page-title">The model vs Wall Street</h1>
+        <p class="lede">Two different guesses about where prices are going: this model and the bond market.</p>
         <div id="expBody"></div>
         ${pageFoot()}
       </section>
@@ -2759,27 +2759,25 @@
     // ---- expectations ----
     (function(){
       const body = document.getElementById('expBody'), fcExp = document.getElementById('fcExpect');
-      const mich = seriesFrom('exp_consumers_1y'), be = seriesFrom('exp_market_10y');
-      if(!mich && !be){ body.innerHTML = pending('Expectations data'); fcExp.textContent = 'Survey and market expectations will appear after the next data update.'; return; }
-      const lm = mich && mich[mich.length-1], lb = be && be[be.length-1];
-      fcExp.innerHTML = `Model, 12 months ahead: <b style="color:var(--ink)">${pct(last12.mean)}</b>` + (lm?` · Shoppers, next 12 months: <b style="color:var(--ink)">${pct(lm.v)}</b>`:'') + (lb?` · Wall Street, next 10 years: <b style="color:var(--ink)">${pct(lb.v,2)}</b>`:'');
+      const be = seriesFrom('exp_market_10y');
+      if(!be){ body.innerHTML = pending('Expectations data'); fcExp.textContent = 'Market expectations will appear after the next data update.'; return; }
+      const lb = be[be.length-1];
+      fcExp.innerHTML = `Model, 12 months ahead: <b style="color:var(--ink)">${pct(last12.mean)}</b>` + (lb?` · Wall Street, next 10 years: <b style="color:var(--ink)">${pct(lb.v,2)}</b>`:'');
       body.innerHTML = `
-        <div class="grid-3">
+        <div class="grid-2">
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-model)"></span>Model, ${fmtMonth(last12.date)}</div><div class="kpi-value num">${pct(last12.mean)}</div><div class="kpi-sub">12 months ahead</div></div>
-          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-3)"></span>Shoppers, next 12 months</div><div class="kpi-value num">${lm?pct(lm.v):'—'}</div><div class="kpi-sub">${lm?'From a University of Michigan survey, '+fmtMonth(lm.date):'Not yet available'}</div></div>
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-4)"></span>Wall Street, next 10 years</div><div class="kpi-value num">${lb?pct(lb.v,2):'—'}</div><div class="kpi-sub">${lb?'Read from bond prices, '+fmtMonth(lb.date)+' average':'Not yet available'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head"><div><p class="card-title">Actual inflation and expectations</p><p class="card-sub">Each guess is drawn on the date it was made, not the date it’s about.</p></div>
             ${segControl('expRange', [{v:'120',label:'10Y'},{v:'240',label:'20Y'},{v:'0',label:'Since 1978'}], '120')}</div>
-          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Model forecast</span><span><i class="key-line" style="background:var(--c-3)"></i>Shoppers (next year)</span><span><i class="key-line" style="background:var(--c-4)"></i>Wall Street (next 10 years)</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
+          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Model forecast</span><span><i class="key-line" style="background:var(--c-4)"></i>Wall Street (next 10 years)</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
           <div class="chart" id="expChart"></div>
         </div>
         <div class="card" style="margin-top:12px"><p class="card-title">Why they differ</p>
-          <p class="card-sub" style="margin-bottom:0">Households tend to anchor on prices they see often, like gasoline and groceries, so survey expectations run above measured inflation after energy shocks.
-          The breakeven rate is the gap between regular and inflation-protected Treasury yields; it covers ten years and also reflects risk and liquidity premia.
+          <p class="card-sub" style="margin-bottom:0">The breakeven rate is the gap between regular and inflation-protected Treasury yields; it covers ten years and also reflects risk and liquidity premia.
           The model knows only past CPI, so it drifts back toward the long-run average.</p></div>`;
-      const michMap = new Map((mich||[]).map(p=>[p.date.getTime(), p.v])), beMap = new Map((be||[]).map(p=>[p.date.getTime(), p.v]));
+      const beMap = new Map((be||[]).map(p=>[p.date.getTime(), p.v]));
       let months = 120;
       const el = document.getElementById('expChart');
       mount(el, el=>{
@@ -2789,7 +2787,6 @@
         lineChart({aria:'Inflation expectations', height:H(340,260), dates,
           series:[
             {label:'Wall Street (next 10 years)', cls:'c4', values:dates.map(d=>beMap.has(d.getTime())?beMap.get(d.getTime()):null)},
-            {label:'Shoppers (next year)', cls:'c3', values:dates.map(d=>michMap.has(d.getTime())?michMap.get(d.getTime()):null)},
             {label:'Actual', cls:'actual', values:hist.map(d=>d.yoy).concat(padN(nF)), endMarker:true},
             {label:'Model forecast', cls:'model', dashed:true, values:padN(nH-1).concat([hist[nH-1].yoy], forecast.map(f=>f.mean)), skipTipAt:i=>i===nH-1},
           ], refs:[{value:FED_TARGET, label:''}], yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})(el);
