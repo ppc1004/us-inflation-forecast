@@ -1666,6 +1666,8 @@
     const model = bt.find(r=>r.model===MODEL_NAME) || bt.filter(r=>!/naive/i.test(r.model)).sort((a,b)=>a.rmse-b.rmse)[0];
     const modelLabel = (model ? model.model : MODEL_NAME).replace(/\s/g,'');
     const maeGain = (model && naive) ? (1 - model.mae/naive.mae)*100 : null;
+    // 12-months-ahead accuracy vs a no-change guess; used on the overview so every mention shows the same number
+    const hzEdge = (()=>{ const h = (hzRaw||[]).map(r=>({h:+r.horizon, m:num(r.model_mae), nv:num(r.naive_mae)})).filter(r=>r.m!=null&&r.nv!=null&&r.nv>0).sort((a,b)=>a.h-b.h); const l = h[h.length-1]; return l ? (1-l.m/l.nv)*100 : null; })();
     const errs = errRaw.map(r=>({date:parseDate(r.date), model:cleanModel(r.model), actual:num(r.actual), forecast:num(r.forecast), error:num(r.error), abs:num(r.abs_error)}));
     const errModel = model ? errs.filter(e=>e.model===model.model).sort((a,b)=>a.date-b.date) : [];
     const errNaive = errs.filter(e=>/naive/i.test(e.model)).sort((a,b)=>a.date-b.date);
@@ -1759,7 +1761,6 @@
     ];
     // page title says what the site is; the numbers live in the executive summary below it
     const headline = 'U.S. Economic Forecast';
-    const hlVsTarget = `Tracking U.S. inflation and interest rates, with 12-month forecasts. Data through ${fmtMonthLong(latest.date)}, updated automatically.`;
 
     const ovDrivers = (()=>{
       if(!hasCats || !COMP.cols.SA0) return null;
@@ -1777,14 +1778,11 @@
       // bottom line, coloured by how far inflation is from the Fed's 2% goal
       const outlookUp = last12 && ok(last12.mean) ? last12.mean - latest.yoy : null;
       const tone = latest.yoy - FED_TARGET > 1 ? 'hot' : latest.yoy - FED_TARGET > 0.25 ? 'warm' : latest.yoy - FED_TARGET < -0.25 ? 'cool' : 'ok';
-      const verdict = {hot:'Inflation is high', warm:'Inflation is a little high', ok:'Inflation is on target', cool:'Inflation is low'}[tone];
       const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ' and is expected to stay about the same over the next year' : outlookUp>0 ? ' and is expected to rise a little over the next year' : ' and is expected to ease over the next year';
       // 1. prices today
       let now = `As of ${fmtMonthLong(latest.date)}, prices are <b>${pct(latest.yoy)} higher</b> than a year ago.`;
       if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so inflation ${latest.yoy>prev.yoy?'<b>sped up</b>':'<b>slowed down</b>'}.`;
       rows.push({k:'Prices today', v:now});
-      // 2. in dollars
-      rows.push({k:'In dollars', v:`Something that cost <b>$100</b> a year ago now costs about <b>$${(100*(1+latest.yoy/100)).toFixed(2)}</b>.`});
       // 3. biggest cause
       const plain = {'Housing':'Housing (rent and home costs)','Food and beverages':'Food','Transportation':'Transportation (cars, gas, fares)','Medical care':'Health care','Education and communication':'Education and phone/internet'};
       if(ovDrivers && ovDrivers.rows.length && ok(ovDrivers.head) && ovDrivers.head>0){
@@ -1793,7 +1791,7 @@
       }
       // 4. next year
       if(last12 && ok(last12.mean)){
-        let t = `Our best guess is about <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}, ${above(last12.mean)} the Fed\u2019s 2% goal.`;
+        let t = `The model\u2019s best guess is about <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}, ${above(last12.mean)} the Fed\u2019s 2% goal.`;
         if(ok(last12.lo) && ok(last12.hi)) t += ` It\u2019s a guess, not a promise: it will most likely land somewhere between ${pct(Math.max(last12.lo,-5))} and ${pct(last12.hi)}.`;
         rows.push({k:'Projected next year', v:t});
       }
@@ -1802,19 +1800,19 @@
       if(ff && ff.last && ok(ff.last.v) && fc12(ff) && ok(fc12(ff).mean)){
         const d = fc12(ff).mean - ff.last.v;
         const move = Math.abs(d)<0.1 ? 'stay about the same, so borrowing costs shouldn\u2019t change much' : d>0 ? 'go up a little, so loans and credit cards may get a bit more expensive' : 'come down a little, so loans and credit cards may get a bit cheaper';
-        rows.push({k:'Interest rates', v:`The Fed\u2019s interest rate is <b>${pct(ff.last.v,2)}</b>. We expect it to ${move}.`});
+        rows.push({k:'Interest rates', v:`The Fed\u2019s interest rate is <b>${pct(ff.last.v,2)}</b>. The model expects it to ${move}.`});
       }
       // 6. how reliable
       const hz = hzRaw.map(r=>({h:+r.horizon, m:num(r.model_mae), nv:num(r.naive_mae), cov:num(r.coverage_95), n:+r.n})).filter(r=>ok(r.m)&&ok(r.nv)&&r.nv>0&&ok(r.cov)&&r.n>0).sort((a,b)=>a.h-b.h);
       if(hz.length){
         const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
         const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-        const vs = edge>=1 ? `our forecasts were <b>${edge.toFixed(0)}% more accurate</b> than simply assuming nothing changes` : edge<=-1 ? `simply assuming nothing changes was ${Math.abs(edge).toFixed(0)}% more accurate than our forecasts` : `our forecasts were about as accurate as assuming nothing changes`;
-        rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside our expected range <b>${cov.toFixed(0)}% of the time</b>.`});
+        const vs = edge>=1 ? `the model\u2019s forecasts were <b>${edge.toFixed(0)}% more accurate</b> than simply assuming nothing changes` : edge<=-1 ? `simply assuming nothing changes was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as assuming nothing changes`;
+        rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside its expected range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
-          <div class="card-head"><div><p class="card-title" id="execTitle">The short version</p><p class="card-sub">Six things to know, in plain English.</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
-          <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>${verdict}.</b> It\u2019s ${above(latest.yoy)} the Fed\u2019s 2% goal${nextBit}.</span></p>
+          <div class="card-head"><div><p class="card-title" id="execTitle">The short version</p><p class="card-sub">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know, in plain English.</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
+          <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>Inflation is ${above(latest.yoy)} the Fed\u2019s 2% goal</b>${nextBit}.</span></p>
           <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
           <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed (America\u2019s central bank) aims for 2% a year.</p>
         </div>`;
@@ -1927,12 +1925,12 @@
     };
     const topDriver = ovDrivers && ovDrivers.rows.length ? ovDrivers.rows[0].label : null;
     const xcards = [
-      {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month ARIMA forecast for CPI and PCE inflation, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
+      {href:'#forecast', icon:'trend', ic:'var(--c-model)', t:'The forecast', d:'A 12-month inflation forecast, with a likely range around it.', sl:'Next year', sv:last12?pct(last12.mean):'—'},
       {href:'#money', icon:'wallet', ic:'var(--c-5)', t:'Your money', d:'What inflation does to your savings, your paycheck and everyday prices.', sl:'$100 a year ago', sv:okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'—'},
       {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving inflation', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
-      {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive treemap.', sl:'Categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
+      {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive map.', sl:'CPI + PCE categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
-      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'1-month error vs. naive', sv:okN(maeGain)?(maeGain>=0?'−':'+')+Math.abs(maeGain).toFixed(0)+'%':'—'},
+      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'More accurate than a no-change guess', sv:okN(hzEdge)?hzEdge.toFixed(0)+'%':'—'},
     ];
     const exploreHTML = `<div class="explore">${xcards.map((c,i)=>`<a class="xcard reveal" href="${c.href}" style="--ic:${c.ic};transition-delay:${(i%3)*70}ms">
         <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[c.icon]}</svg></span>
@@ -1970,7 +1968,7 @@
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
         ${heroHTML}
-        <div class="sec-head first"><div><span class="kicker">Quick summary</span><h2 class="sec-title">Where the economy stands today</h2><p class="sec-lede">${hlVsTarget}</p></div></div>
+        <div class="sec-head first"><div><span class="kicker">Quick summary</span><h2 class="sec-title">Where the economy stands today</h2></div></div>
         ${execSummary}
         ${whyHTML}
         ${tickerHTML}
