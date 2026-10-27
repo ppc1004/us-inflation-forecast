@@ -624,6 +624,12 @@
   .next-c{padding:18px; border-radius:16px; border:1px solid var(--border); background:var(--surface);}
   .next-c b{display:block; font-size:16px; font-weight:600; margin-bottom:6px;} .next-c span{font-size:14.5px; color:var(--ink-2);}
   @media (max-width: 800px){ .chap{grid-template-columns:1fr; padding-top:36px;} .chap-num{font-size:34px;} .qcards, .next-grid{grid-template-columns:1fr;} }
+  /* story: fluid widths — cards fill the column, text grows with the window but stays readable */
+  .story-top{max-width:min(100%, max(860px, 80%));}
+  .story-top .lede{max-width:min(100%, max(740px, 82%));}
+  .story-p{max-width:min(100%, max(720px, 78%));}
+  .pillars, .value-grid, .insights, .next-grid, .findings-list, .limits{max-width:none;}
+  @media (min-width: 1400px){ .story-p{font-size:17.5px;} .pillar span, .value-c > span:not(.vn), .ins-body p, .next-c span{font-size:15px;} }
 
   /* scroll reveal */
   .reveal{opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
