@@ -41,7 +41,6 @@ SERIES = {
     "gs30": "GS30",  # 30-year Treasury, constant maturity (not published Feb 2002 - Jan 2006)
     "tips_10y": "DFII10",  # 10-year TIPS (real) yield, daily -> monthly average
     "mortgage_30y": "MORTGAGE30US",  # 30-year fixed mortgage rate, weekly -> monthly average
-    "exp_consumers_1y": "MICH",  # U. Michigan expected inflation, next 12 months, %
     "exp_market_10y": "T10YIE",  # 10-year breakeven inflation rate, %
 }
 
