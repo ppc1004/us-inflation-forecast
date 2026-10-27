@@ -1780,28 +1780,30 @@
       // bottom line, coloured by how far inflation is from the Fed's 2% goal
       const outlookUp = last12 && ok(last12.mean) ? last12.mean - latest.yoy : null;
       const tone = latest.yoy - FED_TARGET > 1 ? 'hot' : latest.yoy - FED_TARGET > 0.25 ? 'warm' : latest.yoy - FED_TARGET < -0.25 ? 'cool' : 'ok';
-      const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ' and is expected to stay about the same over the next year' : outlookUp>0 ? ' and is expected to rise a little over the next year' : ' and is expected to ease over the next year';
+      // plain wording for how a rate compares with the Fed's goal
+      const cmpGoal = v => above(v)==='above' ? 'faster than' : above(v)==='below' ? 'slower than' : 'close to';
+      const nextBit = outlookUp==null ? '' : Math.abs(outlookUp)<0.15 ? ', and the model expects the pace to stay about the same over the next year' : outlookUp>0 ? ', and the model expects the pace to pick up a little over the next year' : ', and the model expects the pace to ease over the next year';
       // 1. prices today
-      let now = `As of ${fmtMonthLong(latest.date)}, prices are <b>${pct(latest.yoy)} higher</b> than a year ago.`;
-      if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so inflation ${latest.yoy>prev.yoy?'<b>sped up</b>':'<b>slowed down</b>'}.`;
+      let now = `Prices are <b>${pct(latest.yoy)} higher</b> than a year ago (${fmtMonthLong(latest.date)}).`;
+      if(prev && ok(prev.yoy)) now += Math.abs(latest.yoy-prev.yoy)<0.05 ? ` That\u2019s the same pace as last month.` : ` Last month it was ${pct(prev.yoy)}, so prices are rising ${latest.yoy>prev.yoy?'<b>faster</b>':'<b>more slowly</b>'}.`;
       rows.push({k:'Prices today', v:now});
       // 3. biggest cause
       const plain = {'Housing':'Housing (rent and home costs)','Food and beverages':'Food','Transportation':'Transportation (cars, gas, fares)','Medical care':'Health care','Education and communication':'Education and phone/internet'};
       if(ovDrivers && ovDrivers.rows.length && ok(ovDrivers.head) && ovDrivers.head>0){
         const top = ovDrivers.rows[0], share = top.value/ovDrivers.head*100;
-        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b>: about ${share.toFixed(0)}% of the overall price increase comes from it.`});
+        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b> is the biggest cause. It makes up about ${share.toFixed(0)}% of the price rise.`});
       }
       // 4. next year
       if(last12 && ok(last12.mean)){
-        let t = `The model\u2019s best guess is about <b>${pct(last12.mean)}</b> by ${fmtMonthLong(last12.date)}, ${above(last12.mean)} the Fed\u2019s 2% goal.`;
-        if(ok(last12.lo) && ok(last12.hi)) t += ` It\u2019s a guess, not a promise: it will most likely land somewhere between ${pct(Math.max(last12.lo,-5))} and ${pct(last12.hi)}.`;
+        let t = `The model\u2019s best guess: in ${fmtMonthLong(last12.date)}, prices will be about <b>${pct(last12.mean)}</b> higher than a year before, ${cmpGoal(last12.mean)} the Fed\u2019s 2% goal.`;
+        if(ok(last12.lo) && ok(last12.hi)) t += ` It\u2019s only a guess. The real number will probably land between ${pct(Math.max(last12.lo,-5))} and ${pct(last12.hi)}.`;
         rows.push({k:'Projected next year', v:t});
       }
       // 5. interest rates
       const ff = rate('fed_funds');
       if(ff && ff.last && ok(ff.last.v) && fc12(ff) && ok(fc12(ff).mean)){
         const d = fc12(ff).mean - ff.last.v;
-        const move = Math.abs(d)<0.1 ? 'stay about the same, so borrowing costs shouldn\u2019t change much' : d>0 ? 'go up a little, so loans and credit cards may get a bit more expensive' : 'come down a little, so loans and credit cards may get a bit cheaper';
+        const move = Math.abs(d)<0.1 ? 'stay about the same, so borrowing costs shouldn\u2019t change much' : d>0 ? 'rise a little, so loans and credit cards may cost a bit more' : 'fall a little, so loans and credit cards may cost a bit less';
         rows.push({k:'Interest rates', v:`The Fed\u2019s interest rate is <b>${pct(ff.last.v,2)}</b>. The model expects it to ${move}.`});
       }
       // 6. how reliable
@@ -1809,14 +1811,14 @@
       if(hz.length){
         const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
         const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-        const vs = edge>=1 ? `the model\u2019s forecasts were <b>${edge.toFixed(0)}% more accurate</b> than simply assuming nothing changes` : edge<=-1 ? `simply assuming nothing changes was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as assuming nothing changes`;
-        rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside its expected range <b>${cov.toFixed(0)}% of the time</b>.`});
+        const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}% more accurate</b> than just guessing \u201cno change\u201d` : edge<=-1 ? `just guessing \u201cno change\u201d was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just guessing \u201cno change\u201d`;
+        rows.push({k:'Can I trust it?', v:`Tested on past data, ${vs}. The real number landed inside the model\u2019s range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
           <div class="card-head"><div><p class="card-title" id="execTitle">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
-          <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>Bottom line:</b> inflation is ${above(latest.yoy)} the Fed\u2019s 2% goal${nextBit}.</span></p>
+          <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>In short:</b> prices are rising ${cmpGoal(latest.yoy)} the Fed\u2019s 2% goal${nextBit}.</span></p>
           <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
-          <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed (America\u2019s central bank) aims for 2% a year.</p>
+          <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed is America\u2019s central bank. It aims for prices to rise about 2% a year.</p>
         </div>`;
     })();
 
