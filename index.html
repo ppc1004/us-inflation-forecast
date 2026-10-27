@@ -1600,7 +1600,7 @@
     if(!pick.length) return '';
     const maxV = Math.max(...pick.map(r=>Math.max(r.m, r.nv)));
     return `<div class="legend"><span><i class="key-area" style="background:var(--c-model)"></i>${esc(opts.model)}</span><span><i class="key-area" style="background:var(--c-ref)"></i>${esc(opts.naive||'No change')}</span></div>
-      <div class="hz-row hz-head"><span>Horizon</span><span>Mean absolute error (${opts.unit||'pp'})</span><span class="hz-cov">In 95% interval</span></div>
+      <div class="hz-row hz-head"><span>Months ahead</span><span>Average miss (${opts.unit==='pp'||!opts.unit?'points':opts.unit})</span><span class="hz-cov">Inside likely range</span></div>
       ${pick.map(r=>`<div class="hz-row"><span>${r.h} month${r.h>1?'s':''}</span><span class="hz-bars">
         <span class="hz-bar"><span class="b model" style="width:${(r.m/maxV*85).toFixed(1)}%"></span><span class="v">${r.m.toFixed(2)}</span></span>
         <span class="hz-bar"><span class="b naive" style="width:${(r.nv/maxV*85).toFixed(1)}%"></span><span class="v">${r.nv.toFixed(2)}</span></span></span>
@@ -2083,7 +2083,7 @@
             and uses a chain-type formula, so it typically runs a few tenths below CPI. The Fed's 2% target is defined in terms of PCE.</p></div>
           <div class="card"><h3>Interest rates</h3><p>Monthly averages of the effective federal funds rate and constant-maturity Treasury yields (3-month bill, 2, 5, 10 and 30 years) from the Federal Reserve via FRED.
             The 30-year bond was not issued from February 2002 to January 2006, so its model uses only data after the gap.</p></div>
-          <div class="card"><h3>Models</h3><p>CPI: ${esc(modelLabel)} fit to year-over-year inflation, chosen from nine candidate orders by out-of-sample error and benchmarked against naive, ARIMAX and gradient-boosted trees.
+          <div class="card"><h3>Models</h3><p>CPI: ${esc(modelLabel)} fit to year-over-year inflation, chosen from nine candidate orders by out-of-sample error and benchmarked against a no-change guess, ARIMAX and gradient-boosted trees.
             PCE: ARIMA on year-over-year headline and core PCE inflation, order chosen by AIC.
             Rates: ARIMA(p, 1, q) on the level of each rate since 1990, p and q chosen by AIC. All forecasts run 12 months ahead with 95% intervals.</p></div>
           <div class="card"><h3>Evaluation</h3><ul>
@@ -2180,28 +2180,30 @@
       <!-- ================= TRACK RECORD ================= -->
       <section class="page" id="page-track-record" data-title="Track record">
         <h1 class="page-title">Track record</h1>
-        <p class="lede">Every month, the model guessed next month’s inflation using only what it knew back then. Then the real number came out. Here’s how close it got.</p>
+        <p class="lede">For ${errModel.length?`each of the last ${errModel.length} months`:'each recent month'}, the model forecast the next month’s inflation using only what it knew at the time. Then the real number came out. Here’s how close it got.</p>
         <div class="grid-3" id="callouts"></div>
         <div class="card" style="margin-top:12px" ${hasErrors?'':'hidden'}>
-          <p class="card-title">Forecast error over time</p>
-          <p class="card-sub">How far off each guess was. Above zero means it guessed too low, below zero means too high.</p>
-          <div class="legend"><span><i class="key-line" style="background:var(--c-model)"></i>This model</span><span><i class="key-line" style="background:var(--c-ref)"></i>Lazy guess (“no change”)</span></div>
+          <p class="card-title">How far off each forecast was</p>
+          <p class="card-sub">Above zero means the forecast was too low, below zero means too high. The closer to zero, the better.</p>
+          <div class="legend"><span><i class="key-line" style="background:var(--c-model)"></i>This model</span><span><i class="key-line" style="background:var(--c-ref)"></i>No-change guess</span></div>
           <div class="chart" id="errChart"></div>
         </div>
-        <div class="card" style="margin-top:12px">
-          <p class="card-title">Model comparison</p>
-          <p class="card-sub">Mean absolute error (MAE) of one-month-ahead forecasts, lower is better. RMSE penalises large misses more heavily.</p>
-          <div id="leaderboard"></div>
-        </div>
-        <h2>Model competition</h2>
-        <p class="sec-sub">Four models forecast the same months, one month ahead, each re-fit only on data available at the time. The Diebold-Mariano test asks whether each model's advantage over the naive benchmark is larger than chance.</p>
-        <div class="card" id="benchCard"></div>
-        <h2>Accuracy by forecast horizon</h2>
-        <p class="sec-sub">The same test, repeated for forecasts 1 to 12 months ahead, plus a calibration check: how often the actual value landed inside the model's 95% interval.</p>
+        <h2>How accurate is it further ahead?</h2>
+        <p class="sec-sub">The same test for forecasts 1 to 12 months ahead, plus a check on the likely range: how often the real number landed inside it.</p>
         <div class="card" id="horizonCard"></div>
-        <h2>Live forecast archive</h2>
-        <p class="sec-sub">Backtests re-create the past. The archive records each forecast when it is published, then scores it once the actual CPI print arrives: a true out-of-sample record.</p>
+        <h2>Live scorecard</h2>
+        <p class="sec-sub">A backtest replays the past. The scorecard is different: each forecast is saved on the day it is published, then graded when the real CPI number comes out.</p>
         <div class="card" id="archiveCard"></div>
+        <details class="fold tech"><summary>For the technical reader: model comparison and statistical tests</summary><div class="fold-body">
+          <div class="card">
+            <p class="card-title">Which version of the model works best</p>
+            <p class="card-sub">Average miss of one-month-ahead forecasts over the last ${errModel.length||24} months, in percentage points. Lower is better. RMSE (root mean squared error) is a second score that penalises big misses more heavily.</p>
+            <div id="leaderboard"></div>
+          </div>
+          <h2>Model competition</h2>
+          <p class="sec-sub">Four models forecast the same months, one month ahead, each using only the data available at the time. The last column checks whether a model’s edge over a no-change guess is real or could be luck (a Diebold-Mariano test).</p>
+          <div class="card" id="benchCard"></div>
+        </div></details>
         ${pageFoot()}
       </section>
 
@@ -2351,25 +2353,25 @@
       let wins=0; errModel.forEach((e,i)=>{ if(e.abs < errNaive[i].abs) wins++; });
       const worst = errModel.reduce((a,b)=>b.abs>a.abs?b:a);
       callouts.innerHTML = `
-        <div class="kpi"><div class="kpi-label">Average miss</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">Just guessing “no change”: ${naive.mae.toFixed(2)} points</div></div>
-        <div class="kpi"><div class="kpi-label">Beat the lazy guess</div><div class="kpi-value num">${wins} <small>of ${errModel.length} months</small></div><div class="kpi-sub">Months it was closer than just guessing “no change”</div></div>
-        <div class="kpi"><div class="kpi-label">Largest miss</div><div class="kpi-value num">${worst.error>=0?"+":"−"}${Math.abs(worst.error).toFixed(2)} <small>points</small></div><div class="kpi-sub">${fmtMonthLong(worst.date)}: forecast ${pct(worst.forecast,2)}, actual ${pct(worst.actual,2)}</div></div>`;
+        <div class="kpi"><div class="kpi-label">Average miss, last ${errModel.length||24} months</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">Guessing “no change”: ${naive.mae.toFixed(2)} points</div></div>
+        <div class="kpi"><div class="kpi-label">Beat a no-change guess</div><div class="kpi-value num">${wins} <small>of ${errModel.length} months</small></div><div class="kpi-sub">Months the model was closer than a “no change” guess</div></div>
+        <div class="kpi"><div class="kpi-label">Biggest miss</div><div class="kpi-value num">${worst.error>=0?"+":"−"}${Math.abs(worst.error).toFixed(2)} <small>points</small></div><div class="kpi-sub">${fmtMonthLong(worst.date)}: forecast ${pct(worst.forecast,2)}, actual ${pct(worst.actual,2)}</div></div>`;
       mount(document.getElementById('errChart'), lineChart({
         aria:'Monthly forecast error', height:260, dates: errModel.map(e=>e.date),
-        series:[{label:'Lazy guess (“no change”)', cls:'ref', values: errNaive.map(e=>e.error)}, {label:'This model', cls:'model', values: errModel.map(e=>e.error)}],
+        series:[{label:'No-change guess', cls:'ref', values: errNaive.map(e=>e.error)}, {label:'This model', cls:'model', values: errModel.map(e=>e.error)}],
         zeroLine:true, yFmt:(v,d)=>(v>0?'+':'')+v.toFixed(d), tipFmt:v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2)+' pp',
       }));
     } else if(model && naive){
       callouts.innerHTML = `
-        <div class="kpi"><div class="kpi-label">Average miss</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">${esc(modelLabel)}</div></div>
-        <div class="kpi"><div class="kpi-label">Naive benchmark MAE</div><div class="kpi-value num">${naive.mae.toFixed(2)} <small>pp</small></div><div class="kpi-sub">"Next month = this month"</div></div>
+        <div class="kpi"><div class="kpi-label">Average miss, last ${errModel.length||24} months</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">${esc(modelLabel)}</div></div>
+        <div class="kpi"><div class="kpi-label">No-change guess</div><div class="kpi-value num">${naive.mae.toFixed(2)} <small>pp</small></div><div class="kpi-sub">Assumes next month = this month</div></div>
         <div class="kpi"><div class="kpi-label">Improvement</div><div class="kpi-value num">${maeGain.toFixed(0)}%</div><div class="kpi-sub">Lower average error</div></div>`;
     }
     const sorted = bt.slice().sort((a,b)=>a.mae-b.mae), maxMae = Math.max(...sorted.map(r=>r.mae));
-    document.getElementById('leaderboard').innerHTML = `<div class="hbars"><div class="hb-row wide hb-head"><span>Model</span><span></span><span class="hb-v">MAE</span><span class="hb-v hb-rmse">RMSE</span></div>` +
+    document.getElementById('leaderboard').innerHTML = `<div class="hbars"><div class="hb-row wide hb-head"><span>Model</span><span></span><span class="hb-v">Avg miss</span><span class="hb-v hb-rmse">RMSE</span></div>` +
       sorted.map(r=>{
         const isM = model && r.model===model.model, isN = /naive/i.test(r.model);
-        return `<div class="hb-row wide ${isM?'em':''}"><span class="hb-name">${esc(isN?'Naive benchmark':r.model.replace(/\s/g,''))}${isM?'<span class="tag">in use</span>':''}</span>
+        return `<div class="hb-row wide ${isM?'em':''}"><span class="hb-name">${esc(isN?'No-change guess':r.model.replace(/\s/g,''))}${isM?'<span class="tag">in use</span>':''}</span>
           <span class="hb-track"><span class="hb-bar pos ${isM?'c-model':isN?'c-ref':''}" style="left:0;width:${(r.mae/maxMae*100).toFixed(1)}%"></span></span>
           <span class="hb-v">${r.mae.toFixed(3)}</span><span class="hb-v hb-rmse">${r.rmse.toFixed(3)}</span></div>`;
       }).join('') + `</div>`;
@@ -2385,9 +2387,9 @@
       const maxM = Math.max(...bm.map(r=>r.mae));
       const rows = bm.slice().sort((a,b)=>a.mae-b.mae);
       card.innerHTML = `<p class="card-title">One-month-ahead accuracy, last ${bm[0].n} months</p>
-        <p class="card-sub">Lower is better. p-values below 0.05 mean the difference from naive is unlikely to be luck.</p>
-        <div style="overflow-x:auto"><table class="bm-table"><thead><tr><th>Model</th><th>MAE (pp)</th><th class="r">RMSE</th><th class="r">vs naive</th><th class="r">p-value</th></tr></thead><tbody>
-        ${rows.map(r=>`<tr class="${r.model==='arima'?'em':''}"><td class="model">${esc(r.label)}${r.model==='arima'?'<span class="tag">in use</span>':''}</td>
+        <p class="card-sub">Lower is better. A p-value below 0.05 means a model’s edge over a no-change guess is unlikely to be luck.</p>
+        <div style="overflow-x:auto"><table class="bm-table"><thead><tr><th>Model</th><th>Avg miss (pp)</th><th class="r">RMSE</th><th class="r">vs no change</th><th class="r">p-value</th></tr></thead><tbody>
+        ${rows.map(r=>`<tr class="${r.model==='arima'?'em':''}"><td class="model">${esc(r.model==='naive'?'No-change guess':r.label)}${r.model==='arima'?'<span class="tag">in use</span>':''}</td>
           <td><span class="bm-bar ${r.model==='arima'?'c-model':r.model==='naive'?'c-ref':''}" style="width:${(r.mae/maxM*110).toFixed(0)}px"></span>${r.mae.toFixed(3)}</td>
           <td class="r">${r.rmse.toFixed(3)}</td><td class="r">${r.model==='naive'?'—':spct(r.vs)}</td><td class="r">${r.model==='naive'?'—':fmtP(r.p)}</td></tr>`).join('')}
         </tbody></table></div>`;
@@ -2420,8 +2422,8 @@
         const f=hz[0], l=hz[hz.length-1], g = r => (1-r.m/r.nv)*100;
         items.push({title: g(l) > g(f) ? 'Most useful for long-range forecasts' : 'No extra edge further out',
           short: `Predicting a year ahead, it is ${g(l).toFixed(0)}% more accurate than simply assuming “inflation stays where it is today.” For next month it is only ${g(f).toFixed(0)}% better, because next month is easy to guess anyway.`,
-          stat: `${f.h}-month: ${g(f).toFixed(0)}% better than naive · ${l.h}-month: ${g(l).toFixed(0)}% better`,
-          text: `One month ahead, the model's edge over naive is ${g(f).toFixed(0)}%. Twelve months ahead it is ${g(l).toFixed(0)}% (${l.m.toFixed(2)} vs ${l.nv.toFixed(2)} points), because the model pulls forecasts back toward the long-run average while "no change" keeps extrapolating today's rate.`,
+          stat: `${f.h}-month: ${g(f).toFixed(0)}% more accurate than a no-change guess · ${l.h}-month: ${g(l).toFixed(0)}% more accurate`,
+          text: `One month ahead, the model's edge over a no-change guess is ${g(f).toFixed(0)}%. Twelve months ahead it is ${g(l).toFixed(0)}% (${l.m.toFixed(2)} vs ${l.nv.toFixed(2)} points), because the model pulls forecasts back toward the long-run average while "no change" keeps extrapolating today's rate.`,
           link:'#track-record'});
         const avgCov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
         items.push({title: Math.abs(avgCov-95) <= 4 ? 'Its uncertainty ranges can be trusted' : avgCov < 95 ? 'Its uncertainty ranges are too narrow' : 'Its uncertainty ranges are too wide',
@@ -2436,11 +2438,11 @@
         const worst = eA.reduce((a,b)=>Math.abs(b.err)>Math.abs(a.err)?b:a);
         const prevD = cpiAt.get(addMonths(worst.date,-1).getTime());
         const jump = prevD ? worst.actual - prevD.yoy : null;
-        const same = bmErrRaw.filter(r=>r.date===isoDate(worst.date) && r.model!=='arima').map(r=>`${(bmBy[r.model]||{label:r.model}).label} ${pp(num(r.error),2)}`);
+        const same = bmErrRaw.filter(r=>r.date===isoDate(worst.date) && r.model!=='arima').map(r=>`${r.model==='naive'?'No-change guess':(bmBy[r.model]||{label:r.model}).label} ${pp(num(r.error),2)}`);
         const others = same.length ? ` The other models missed that month too: ${esc(same.join(', '))}.` : '';
         items.push({title:'Sudden turns catch it out',
-          short:`Its biggest miss was ${fmtMonthLong(worst.date)}${jump!=null ? ', when inflation suddenly '+(jump>0?'jumped ':'fell ')+Math.abs(jump).toFixed(1)+' points in a single month' : ''}. It only sees past inflation, so it reacts to surprises a month late.`,
-          stat:`Largest miss: ${pp(worst.err,2)} in ${fmtMonth(worst.date)}`,
+          short:`Over the last ${eA.length} months of testing, its biggest miss was ${fmtMonthLong(worst.date)}${jump!=null ? ', when inflation suddenly '+(jump>0?'jumped ':'fell ')+Math.abs(jump).toFixed(1)+' points in a single month' : ''}. It only sees past inflation, so it reacts to surprises a month late.`,
+          stat:`Biggest miss in the last ${eA.length} months: ${pp(worst.err,2)} in ${fmtMonth(worst.date)}`,
           text:`The biggest error came in ${fmtMonthLong(worst.date)}, when inflation ${jump!=null ? (jump>0?'jumped':'fell')+' '+Math.abs(jump).toFixed(2)+' points in a single month' : 'moved sharply'}. A model that only sees past inflation cannot anticipate sudden shifts such as energy price swings; it reacts a month late.${others}`,
           link:'#track-record'});
       }
@@ -2493,14 +2495,14 @@
       const maxV = Math.max(...hz.map(r=>Math.max(r.m, r.nv)));
       const h1 = hz[0], hL = hz[hz.length-1];
       const avgCov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-      const calib = avgCov < 88 ? 'too narrow: actual values fall outside more often than the model claims' : avgCov > 98.5 ? 'conservative: wider than they need to be' : 'close to their stated 95% level';
+      const calib = avgCov < 88 ? 'too narrow: the real number falls outside more often than the model claims' : avgCov > 98.5 ? 'conservative: wider than it needs to be' : 'close to the 95% it promises';
       card.innerHTML = `
-        <p class="card-title">Average miss by horizon</p>
-        <p class="card-sub">${h1.h}-month ahead: ${h1.m.toFixed(2)} pp vs ${h1.nv.toFixed(2)} pp naive. ${hL.h}-month ahead: ${hL.m.toFixed(2)} pp vs ${hL.nv.toFixed(2)} pp naive.
-          Across all horizons the 95% intervals contained the actual value ${avgCov.toFixed(0)}% of the time, so they are ${calib}.
-          This test uses ${hz[0].n} forecast origins, a longer window than the 24-month backtest above, so its 1-month figure differs.</p>
-        <div class="legend"><span><i class="key-area" style="background:var(--c-model)"></i>${esc(modelLabel)}</span><span><i class="key-area" style="background:var(--c-ref)"></i>Naive benchmark</span></div>
-        <div class="hz-row hz-head"><span>Horizon</span><span>Mean absolute error (pp)</span><span class="hz-cov">In 95% interval</span></div>
+        <p class="card-title">Average miss, by how far ahead</p>
+        <p class="card-sub">${h1.h} month ahead: ${h1.m.toFixed(2)} points off, versus ${h1.nv.toFixed(2)} for a no-change guess. ${hL.h} months ahead: ${hL.m.toFixed(2)} versus ${hL.nv.toFixed(2)}.
+          Across all horizons the real number landed inside the model’s likely range ${avgCov.toFixed(0)}% of the time, so the range is ${calib}.
+          This test covers the last ${hz[0].n} months, a longer window than the ${errModel.length||24} months at the top of the page, so its 1-month figure differs.</p>
+        <div class="legend"><span><i class="key-area" style="background:var(--c-model)"></i>${esc(modelLabel)}</span><span><i class="key-area" style="background:var(--c-ref)"></i>No-change guess</span></div>
+        <div class="hz-row hz-head"><span>Months ahead</span><span>Average miss (points)</span><span class="hz-cov">Inside likely range</span></div>
         ${pick.map(r=>`<div class="hz-row"><span>${r.h} month${r.h>1?'s':''}</span>
           <span class="hz-bars">
             <span class="hz-bar"><span class="b model" style="width:${(r.m/maxV*85).toFixed(1)}%"></span><span class="v">${r.m.toFixed(2)}</span></span>
@@ -2517,15 +2519,15 @@
       const vintages = [...new Set(ar.map(r=>r.vintage.getTime()))].sort();
       const scored = ar.filter(r=>r.h===1).map(r=>{ const a=cpiAt.get(r.target.getTime()); return a && a.yoy!=null && !a.interpolated ? {...r, actual:a.yoy, err:a.yoy-r.f} : null; }).filter(Boolean);
       const first = new Date(vintages[0]);
-      let html = `<div class="card-head"><div><p class="card-title">${vintages.length} forecast${vintages.length>1?'s':''} archived since ${fmtMonth(addMonths(first,1))}</p>
-        <p class="card-sub">One-month-ahead forecasts compared with the published CPI print.</p></div></div>`;
+      let html = `<div class="card-head"><div><p class="card-title">${vintages.length} forecast${vintages.length>1?'s':''} saved since ${fmtMonth(addMonths(first,1))}</p>
+        <p class="card-sub">One-month-ahead forecasts compared with the real number.</p></div></div>`;
       if(!scored.length){
-        html += `<div class="empty">The first archived forecast targets ${fmtMonthLong(addMonths(first,1))}. It will be scored automatically when BLS publishes that month's CPI.</div>`;
+        html += `<div class="empty">The first archived forecast targets ${fmtMonthLong(addMonths(first,1))}. It will be graded automatically when the real number for that month comes out.</div>`;
       } else {
         const mae = scored.reduce((s,r)=>s+Math.abs(r.err),0)/scored.length;
         const inside = scored.filter(r=>r.actual>=r.lo && r.actual<=r.hi).length;
-        html += `<p class="card-sub"><b style="color:var(--ink)">Live MAE ${mae.toFixed(2)} pp</b> across ${scored.length} month${scored.length>1?'s':''} · ${inside} of ${scored.length} inside the 95% interval.</p>
-          <table><thead><tr><th>Target month</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Error</th></tr></thead><tbody>
+        html += `<p class="card-sub"><b style="color:var(--ink)">Live average miss: ${mae.toFixed(2)} points</b> across ${scored.length} month${scored.length>1?'s':''} · ${inside} of ${scored.length} inside the likely range.</p>
+          <table><thead><tr><th>Month</th><th class="r">Forecast</th><th class="r">Actual</th><th class="r">Miss</th></tr></thead><tbody>
           ${scored.slice().reverse().map(r=>`<tr><td>${fmtMonth(r.target)}</td><td class="r">${pct(r.f,2)}</td><td class="r">${pct(r.actual,2)}</td><td class="r">${pp(r.err,2)}</td></tr>`).join('')}</tbody></table>`;
       }
       card.innerHTML = html;
@@ -3149,7 +3151,6 @@
     }
     const $ = sel => document.querySelector(sel), card = sel => { const e=$(sel); return e ? e.closest('.card') : null; };
     fold('forecast', $('#page-forecast > .grid-2'));
-    fold('track-record', card('#leaderboard'));
     fold('drivers', $('#cpiMoreH'));
     fold('history', card('#momChart'));
     fold('pce', $('#pceBody > .grid-2'));
