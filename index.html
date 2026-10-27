@@ -281,6 +281,7 @@
   .method h3{font-size:14.5px; margin:0 0 6px; font-weight:600;}
   .method p, .method li{font-size:14px; color:var(--ink-2); margin:0;}
   .method ul{padding-left:18px; margin:0; display:grid; gap:4px;}
+  .method code{overflow-wrap:anywhere; word-break:break-word;}
   code{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.88em; background:var(--border); padding:1px 5px; border-radius:5px;}
   .pipeline{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12.5px; margin-top:10px;}
   .pipeline .step{background:var(--page); border:1px solid var(--border); border-radius:8px; padding:4px 9px; color:var(--ink);}
@@ -634,7 +635,7 @@
   .next-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; max-width:920px;}
   .next-c{padding:18px; border-radius:16px; border:1px solid var(--border); background:var(--surface);}
   .next-c b{display:block; font-size:16px; font-weight:600; margin-bottom:6px;} .next-c span{font-size:14.5px; color:var(--ink-2);}
-  @media (max-width: 800px){ .chap{grid-template-columns:1fr; padding-top:36px;} .chap-num{font-size:34px;} .qcards, .next-grid{grid-template-columns:1fr;} }
+  @media (max-width: 800px){ .chap{grid-template-columns:minmax(0,1fr); padding-top:36px;} .chap-num{font-size:34px;} .qcards, .next-grid{grid-template-columns:1fr;} }
   /* story: fluid widths — cards fill the column, text grows with the window but stays readable */
   .story-top{max-width:min(100%, max(860px, 80%));}
   .story-top .lede{max-width:min(100%, max(740px, 82%));}
