@@ -1811,7 +1811,7 @@
       if(hz.length){
         const l = hz[hz.length-1], edge = (1-l.m/l.nv)*100;
         const cov = hz.reduce((s,r)=>s+r.cov*r.n,0)/hz.reduce((s,r)=>s+r.n,0);
-        const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}% more accurate</b> than just guessing \u201cno change\u201d` : edge<=-1 ? `just guessing \u201cno change\u201d was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just guessing \u201cno change\u201d`;
+        const vs = edge>=1 ? `the model was <b>${edge.toFixed(0)}% more accurate</b> than just repeating today\u2019s inflation rate` : edge<=-1 ? `just repeating today\u2019s inflation rate was ${Math.abs(edge).toFixed(0)}% more accurate than the model` : `the model was about as accurate as just repeating today\u2019s inflation rate`;
         rows.push({k:'Can I trust it?', v:`Tested on past data, ${vs}. The real number landed inside the model\u2019s range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
@@ -1934,7 +1934,7 @@
       {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving inflation', d:'Which parts of the household budget are pushing prices up the most.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
       {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search, sort and time-travel through every CPI and PCE category on an interactive map.', sl:'CPI + PCE categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
-      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'More accurate than a no-change guess', sv:okN(hzEdge)?hzEdge.toFixed(0)+'%':'—'},
+      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'More accurate than repeating today\u2019s rate', sv:okN(hzEdge)?hzEdge.toFixed(0)+'%':'—'},
     ];
     const exploreHTML = `<div class="explore">${xcards.map((c,i)=>`<a class="xcard reveal" href="${c.href}" style="--ic:${c.ic};transition-delay:${(i%3)*70}ms">
         <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[c.icon]}</svg></span>
