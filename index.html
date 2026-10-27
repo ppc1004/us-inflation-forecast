@@ -1813,7 +1813,7 @@
         rows.push({k:'Can I trust it?', v:`Tested on past years, ${vs}, and the real number fell inside its expected range <b>${cov.toFixed(0)}% of the time</b>.`});
       }
       return `<div class="card exec" aria-labelledby="execTitle">
-          <div class="card-head"><div><p class="card-title" id="execTitle">The short version</p><p class="card-sub">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know, in plain English.</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
+          <div class="card-head"><div><p class="card-title" id="execTitle">The short version</p><p class="card-sub">${['','One thing','Two things','Three things','Four things','Five things','Six things','Seven things'][rows.length]||rows.length+' things'} to know</p></div><a class="link-more" href="#findings">Read the story \u2192</a></div>
           <p class="exec-verdict ${tone}"><span class="dot"></span><span><b>Inflation is ${above(latest.yoy)} the Fed\u2019s 2% goal</b>${nextBit}.</span></p>
           <dl class="exec-list">${rows.map(r=>`<div class="exec-row"><dt>${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>
           <p class="exec-note">Inflation = how much prices rose over the past 12 months. The Fed (America\u2019s central bank) aims for 2% a year.</p>
