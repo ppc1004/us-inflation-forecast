@@ -484,6 +484,7 @@
   .wall-band .wall-row{--dur:160s;} .wall-band .wall-row:nth-child(2){--dur:210s;} .wall-band .wall-row:nth-child(3){--dur:185s;}
   .wall-band .wtile{width:150px; height:58px; font-size:10.5px; box-shadow:none;} .wall-band .wtile b{font-size:16px;}
   @media (max-width: 600px){ .wall-band{opacity:.3;} }
+  .wall-label{margin:44px 0 -30px; text-align:center; font-size:13px; color:var(--muted, inherit); opacity:.8;}
 
   /* ---------- overview sections ---------- */
   .sec-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin:64px 0 18px;}
@@ -1903,7 +1904,7 @@
     // 3) story: a faint, slow version of the hero wall
     const storyBand = (()=>{
       const cell = t => { const b = heatBin(t.y); return `<div class="wtile" style="--tc:var(--h${b});--tt:var(--hi${b})"><span>${esc(t.name)}</span><b>${spct(t.y)}</b></div>`; };
-      return `<div class="wall-band" aria-hidden="true">${[0,1,2].map(r=>{ const row = Array.from({length:16},(_,k)=>wallItems[(r*31 + k*11) % wallItems.length]); return `<div class="wall-row">${row.map(cell).join('')}${row.map(cell).join('')}</div>`; }).join('')}</div>`;
+      return `<p class="wall-label">What got pricier (or cheaper) over the past year</p><div class="wall-band" aria-hidden="true">${[0,1,2].map(r=>{ const row = Array.from({length:16},(_,k)=>wallItems[(r*31 + k*11) % wallItems.length]); return `<div class="wall-row">${row.map(cell).join('')}${row.map(cell).join('')}</div>`; }).join('')}</div>`;
     })();
     // 4) your money: what $100 from past years is worth today
     const moneyTicker = (()=>{
@@ -2035,7 +2036,7 @@
             <h2 class="chap-title">Business value</h2>
             <p class="story-p">For a <b>pricing team</b>, inflation is two problems at once: your own costs are rising, and so are your customers’ bills. This site turns official data into four everyday decisions.</p>
             <div class="value-grid">
-              <a class="value-c" href="#drivers"><span class="vn">01</span><b>Set prices with evidence</b><span>See how fast prices are rising in your exact category, out of ${hasCats?cpiNodes.length-1:160} CPI and ${Math.max(0,pceNodes.length-1)} PCE categories, and compare it with overall inflation.</span><em>Price breakdown →</em></a>
+              <a class="value-c" href="#drivers"><span class="vn">01</span><b>Set prices with evidence</b><span>See how fast prices are rising in your exact category, out of ${hasCats?cpiNodes.length-1:160} CPI and ${Math.max(0,pceNodes.length-1)} PCE categories (CPI and PCE are the government’s two ways of measuring prices), and compare it with overall inflation.</span><em>Price breakdown →</em></a>
               <a class="value-c" href="#forecast"><span class="vn">02</span><b>Plan next year’s budget</b><span>Use the 12-month forecast and its likely range to build a base, best and worst case for cost growth.</span><em>Forecast →</em></a>
               <a class="value-c" href="#drivers"><span class="vn">03</span><b>Negotiate with suppliers</b><span>When a supplier asks for an 8% increase, check what that category actually did in official data before you agree.</span><em>Search any category →</em></a>
               <a class="value-c" href="#drivers"><span class="vn">04</span><b>Time price changes</b><span>The “Speeding up?” column and the time slider show whether a category is heating up or cooling down, so you can move before competitors do.</span><em>Price breakdown →</em></a>
@@ -2466,7 +2467,7 @@
           const shelterCPI = (cpiNodes.find(n=>n.code==='SAH1')||{}).weight, housePCE = (pceNodes.find(n=>n.code==='DHSG')||{}).weight;
           const healthCPI = (cpiNodes.find(n=>n.code==='SAM')||{}).weight, healthPCE = (pceNodes.find(n=>n.code==='DHLC')||{}).weight;
           items.push({title: avg>0 ? 'CPI usually runs higher than PCE' : 'CPI and PCE tell a similar story',
-            short: `The two main inflation measures disagree: since 2000, CPI has been ${Math.abs(avg).toFixed(1)} points ${avg>0?'higher':'lower'} on average${shelterCPI&&housePCE ? `, mostly because rent and housing are ${shelterCPI.toFixed(0)}% of CPI but only ${housePCE.toFixed(0)}% of PCE` : ''}.`,
+            short: `The government measures prices two ways, CPI and PCE, and they don’t quite agree. Since 2000, CPI has come out about ${Math.abs(avg).toFixed(1)} ${avg>0?'higher':'lower'} on average (think ${(3+avg).toFixed(1)}% instead of 3.0%)${shelterCPI&&housePCE ? `, mostly because rent and housing are ${shelterCPI.toFixed(0)}% of CPI but only ${housePCE.toFixed(0)}% of PCE` : ''}.`,
             stat:`CPI − PCE gap: ${pp(avg,2)} on average since 2000, ${pp(nowGap,2)} now`,
             text:`Since 2000, CPI inflation has averaged ${Math.abs(avg).toFixed(2)} points ${avg>0?'above':'below'} PCE inflation. ${shelterCPI&&housePCE?`Housing is ${shelterCPI.toFixed(0)}% of the CPI basket but only ${housePCE.toFixed(0)}% of PCE, `:''}${healthCPI&&healthPCE?`while health care is ${healthCPI.toFixed(0)}% of CPI against ${healthPCE.toFixed(0)}% of PCE, because PCE also counts care paid for by employers and government. `:''}PCE's chain-weighting also lets households' switching between products pull the index down. The Fed targets PCE, so a 2% PCE goal is roughly 2.3–2.5% in CPI terms.`,
             link:'#pce'});
@@ -2910,7 +2911,7 @@
           means:`If any of these are inputs for you, expect supplier price requests and budget for them now rather than later.`, href:'#drivers'});
         // 3. cooling down
         const cool = leaves.filter(n=>okv(accel(n)) && accel(n)<0).sort((a,b)=>accel(a)-accel(b)).slice(0,3);
-        if(cool.length) out.push({tag:'Costs', stat:`▼ ${Math.abs(accel(cool[0])).toFixed(1)} pts`, statSub:`slower for ${nm(cool[0])} than a year ago`,
+        if(cool.length) out.push({tag:'Costs', stat:`${spct(cool[0].yoy)}`, statSub:`${nm(cool[0])}, down from ${spct(cool[0].yoyPrev)} a year earlier`,
           title:'These costs are cooling down',
           body:`${cool.map(n=>`<b>${nm(n)}</b> (${spct(n.yoy)}, a year ago ${spct(n.yoyPrev)})`).join(', ')}.`,
           means:`Good moments to push back on supplier increases. If you sell in these categories, competitors may start cutting prices.`, href:'#drivers'});
@@ -2926,7 +2927,7 @@
           const lo = okv(last12.lo) ? Math.max(last12.lo,-5) : null, hi = okv(last12.hi) ? last12.hi : null;
           out.push({tag:'Planning', stat:pct(last12.mean), statSub:`expected inflation by ${fmtMonth(last12.date)}`,
             title:'Plan next year around this number',
-            body:`The model’s best guess for the next 12 months is ${pct(last12.mean)}${lo!=null&&hi!=null?`, most likely between ${pct(lo)} and ${pct(hi)}`:''}.`,
+            body:`The model’s best guess for the next 12 months is ${pct(last12.mean)}${lo!=null&&hi!=null?`, most likely between ${pct(lo)} and ${pct(hi)}`:''}. The range is wide because a year is a long time and surprises happen, like a weather forecast for next month versus tomorrow.`,
             means:`Use ${pct(last12.mean)} as the base case for general cost growth and stress-test your margins at ${hi!=null?pct(hi):'a higher rate'}.`, href:'#forecast'});
         }
         el.innerHTML = out.map((o,i)=>`<a class="insight" href="${o.href}"><div class="ins-stat"><span class="ins-tag">${o.tag}</span><b class="num">${o.stat}</b><span>${o.statSub}</span></div>
