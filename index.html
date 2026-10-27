@@ -1162,7 +1162,7 @@
         </div>
         <div class="card">
           <p class="card-title" id="${id}-ttitle"></p>
-          <p class="card-sub">Biggest first. “Adds to inflation” = share of spending × price change: how many percentage points this item adds to the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate.</p>
+          <p class="card-sub">Biggest first. “Adds to inflation” = share of spending × price change: how much of the ${esc((cfg.rootLower||cfg.rootLabel.toLowerCase()))} inflation rate comes from this item. pp = percentage points.</p>
           <div style="overflow-x:auto"><table class="xtable" id="${id}-table"></table></div>
         </div>
       </div>
@@ -1347,7 +1347,7 @@
           return `<tr class="click${sel===n?' sel':''}" data-code="${n.code}" tabindex="0"><td class="name"><span class="lvl lvl-${Math.min(depthOf(n),4)}"></span>${esc(n.name)}${n.kids.length?`<span class="kid-mark">${n.kids.length} sub</span>`:''}${par?`<div class="muted" style="font-size:11.5px">${esc(par.name)}</div>`:''}</td>
             ${FCOLS.slice(1).map(c=>`<td class="r${c.hide?' hide-sm':''}" style="white-space:nowrap">${fmt[c.k](n)}</td>`).join('')}<td class="hide-sm">${spark(n)}</td></tr>`; }).join('')
           : `<tr><td colspan="${FCOLS.length+1}"><div class="empty">No categories match. Try a different filter.</div></td></tr>`}</tbody>`;
-      document.getElementById(id+'-fsub').innerHTML = `${rows.length} of ${all.filter(n=>n.has).length} categories · as of ${fmtMonth(T.dates[ti])} · click a column to sort, a row to chart it. “Speeding up?” ▲ means prices are rising faster than they were a year earlier.`;
+      document.getElementById(id+'-fsub').innerHTML = `${rows.length} of ${all.filter(n=>n.has).length} categories · as of ${fmtMonth(T.dates[ti])} · click a column to sort, a row to chart it. “Speeding up?” ▲ means prices are rising faster than a year earlier. pp = percentage points.`;
       const more = document.getElementById(id+'-more');
       more.hidden = rows.length <= LIMIT; more.textContent = fAll ? 'Show fewer' : `Show all ${rows.length}`;
       tb.querySelectorAll('th.sortable button').forEach(b=>b.addEventListener('click', ()=>{ const k=b.parentElement.dataset.k; if(fSort===k) fDir=-fDir; else { fSort=k; fDir = k==='name'?1:-1; } flat(); }));
@@ -1408,9 +1408,9 @@
     if(cfg.movers){
       const leaves = [...byCode.values()].filter(n=>!n.kids.length && n.has && n.yoy!=null && n.weight>=0.03 && n.date.getTime()===root.date.getTime());
       const up = leaves.slice().sort((a,b)=>b.yoy-a.yoy).slice(0,8), down = leaves.slice().sort((a,b)=>a.yoy-b.yoy).slice(0,8);
-      const list = (arr, title) => `<div class="card"><p class="card-title">${title}</p><p class="card-sub">12-month change, ${fmtMonth(root.date)} · detailed items with weight ≥ 0.03%.</p>
-        <table class="xtable"><tbody>${arr.map(n=>`<tr class="click" data-code="${n.code}"><td class="name">${esc(n.name)}<div class="muted" style="font-size:12px">${esc(byCode.get(n.parent)?byCode.get(n.parent).name:'')} · weight ${n.weight.toFixed(2)}%</div></td><td class="r"><span class="chip">${spct(n.yoy)}</span></td></tr>`).join('')}</tbody></table></div>`;
-      cfg.movers.innerHTML = leaves.length ? `<div class="movers">${list(up,'Fastest-rising prices')}${list(down,'Slowest-rising or falling prices')}</div>` : '';
+      const list = (arr, title) => `<div class="card"><p class="card-title">${title}</p><p class="card-sub">12-month change, ${fmtMonth(root.date)} · tiny items left out.</p>
+        <table class="xtable"><tbody>${arr.map(n=>`<tr class="click" data-code="${n.code}"><td class="name">${esc(n.name)}<div class="muted" style="font-size:12px">${esc(byCode.get(n.parent)?byCode.get(n.parent).name:'')} · ${n.weight.toFixed(2)}% of spending</div></td><td class="r"><span class="chip">${spct(n.yoy)}</span></td></tr>`).join('')}</tbody></table></div>`;
+      cfg.movers.innerHTML = leaves.length ? `<div class="movers">${list(up,'Fastest-rising prices')}${list(down,'Falling or barely rising')}</div>` : '';
       cfg.movers.querySelectorAll('tr.click').forEach(tr=>tr.addEventListener('click', ()=>{ select(tr.dataset.code); cfg.el.scrollIntoView({behavior:'smooth', block:'start'}); }));
     }
     if(cfg.initial && byCode.has(cfg.initial)) select(cfg.initial); else render();
@@ -1447,7 +1447,7 @@
       </div>
       <div class="card" style="margin-top:12px">
         <div class="card-head"><div><p class="card-title">Contributions over time</p>
-          <p class="card-sub">Each bar splits the 12-month inflation rate into its spending groups (approximate, using ${esc(cfg.weightNote)} weights). The line is ${esc(cfg.rootLower)} inflation. Hover a legend item to highlight it.</p></div>
+          <p class="card-sub">Each bar shows which groups made up that month’s inflation, like slices of a stacked cake. The line is the total. Hover a color in the legend to spotlight it. (Rough split, using ${esc(cfg.weightNote)} spending shares.)</p></div>
           ${segControl(id+'-r', [{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'240',label:'20Y'}], '60')}</div>
         <div class="legend clegend" id="${id}-legend">${shown.map(g=>`<button type="button" data-code="${g.code}"><i class="key-area" style="background:var(${colorOf.get(g.code)})"></i>${esc(g.name)}</button>`).join('')}${rest.length?`<button type="button" data-code="_rest"><i class="key-area" style="background:var(--c-ref)"></i>${rest.length} other groups</button>`:''}<span><i class="key-line" style="background:var(--ink)"></i>${esc(cfg.rootLabel)}</span></div>
         <div class="chart" id="${id}-chart"></div>
@@ -1897,8 +1897,8 @@
         return `<span class="tk">${esc(r.label)} <b class="nt">${pct(r.last.v,2)}</b>${ch!=null?` <i>${ch>=0?'▲':'▼'} ${Math.abs(ch).toFixed(2)} pts vs a year ago</i>`:''}</span>`;
       });
       const two = rate('gs2'), ten = rate('gs10');
-      if(two && ten){ const sp = ten.last.v - two.last.v; cells.push(`<span class="tk">10y − 2y spread <b class="${sp<0?'up':'nt'}">${sp>=0?'+':'−'}${Math.abs(sp).toFixed(2)} pts</b>${sp<0?' <i>inverted</i>':''}</span>`); }
-      if(ten) cells.push(`<span class="tk">Real 10-year (minus CPI) <b class="nt">${spct(ten.last.v - latest.yoy,2)}</b></span>`);
+      if(two && ten){ const sp = ten.last.v - two.last.v; cells.push(`<span class="tk">10-year minus 2-year <b class="${sp<0?'up':'nt'}">${sp>=0?'+':'−'}${Math.abs(sp).toFixed(2)} pts</b>${sp<0?' <i>inverted, often a recession warning</i>':''}</span>`); }
+      if(ten) cells.push(`<span class="tk">10-year after inflation <b class="nt">${spct(ten.last.v - latest.yoy,2)}</b></span>`);
       return tickerOf([tkHead('Rates now'), ...cells], 'Latest interest rates');
     })();
     // 3) story: a faint, slow version of the hero wall
@@ -1954,13 +1954,13 @@
 
     const buildHTML = `<div class="build reveal">
         <span class="kicker">How it’s built</span>
-        <h2 class="sec-title">A forecasting pipeline that runs itself</h2>
-        <p class="sec-lede">No one updates this page by hand. A scheduled job pulls fresh data every day and re-runs the models whenever a new CPI report lands.</p>
+        <h2 class="sec-title">A website that runs itself</h2>
+        <p class="sec-lede">Nobody updates this page by hand. Every day a robot checks for new government numbers, and when they show up, it redoes everything.</p>
         <div class="steps">
-          <div class="step-c"><b>Collect</b><span>BLS, BEA, Treasury and Fed series via FRED and official flat files.</span></div>
-          <div class="step-c"><b>Model</b><span>${esc(modelLabel)} forecasts with 95% ranges, benchmarked against simpler models.</span></div>
-          <div class="step-c"><b>Backtest</b><span>Rolling out-of-sample tests at every horizon, published in full.</span></div>
-          <div class="step-c"><b>Publish</b><span>GitHub Actions commits the new numbers and this site redraws itself.</span></div>
+          <div class="step-c"><b>Collect</b><span>Grab the newest official numbers on prices and interest rates.</span></div>
+          <div class="step-c"><b>Guess</b><span>Make a forecast, plus a range for how wrong it might be.</span></div>
+          <div class="step-c"><b>Check</b><span>Test it on past years it never saw, and post the score card.</span></div>
+          <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site. Done.</span></div>
         </div>
         <div class="cta"><a class="btn primary" href="#findings">Read the story <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
       </div>`;
@@ -1969,7 +1969,7 @@
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
         ${heroHTML}
-        <div class="sec-head first"><div><span class="kicker">Executive summary</span><h2 class="sec-title">Where the economy stands today</h2><p class="sec-lede">${hlVsTarget}</p></div></div>
+        <div class="sec-head first"><div><span class="kicker">Quick summary</span><h2 class="sec-title">Where the economy stands today</h2><p class="sec-lede">${hlVsTarget}</p></div></div>
         ${execSummary}
         ${whyHTML}
         ${tickerHTML}
@@ -2094,7 +2094,7 @@
             <li>Rolling-origin backtests: the model is re-fit only on data available at each forecast origin.</li>
             <li>Mean absolute error at 1 to 12 months ahead against a "no change" benchmark, plus 95%-interval coverage.</li>
             <li>CPI models are compared with the Diebold-Mariano test (Harvey-Leybourne-Newbold correction).</li>
-            <li>Every live CPI forecast is archived and scored when the actual print arrives.</li></ul></div>
+            <li>Every live CPI forecast is archived and graded when the real number comes out.</li></ul></div>
           <div class="card"><h3>Pipeline</h3>
             <p>A GitHub Actions job runs daily, downloads new data from FRED, BLS and BEA, re-runs the models when new data lands and redeploys this static site.</p>
             <div class="pipeline"><span class="step">FRED · BLS · BEA</span><span class="arrow">→</span><span class="step">Python · pandas · statsmodels · scikit-learn</span><span class="arrow">→</span><span class="step">CSV</span><span class="arrow">→</span><span class="step">This site</span></div></div>
@@ -2139,8 +2139,8 @@
       <!-- ================= CPI FORECAST ================= -->
       <section class="page" id="page-forecast" data-title="CPI forecast">
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(latest.date)}</span>${nextText?`<span class="pill">Next CPI release: ${nextText}</span>`:''}<span>CPI-U, all items, seasonally adjusted</span></div>
-        <h1>Inflation outlook: ${pct(last12.mean)} annual rate projected</h1>
-        <p class="lede">Prices are rising ${pct(latest.yoy)} a year today. By ${fmtMonthLong(last12.date)}, the model projects ${pct(last12.mean)}. The shaded band on the chart is the likely range.</p>
+        <h1>Next year, prices should rise about ${pct(last12.mean)}</h1>
+        <p class="lede">Prices are rising ${pct(latest.yoy)} a year today. By ${fmtMonthLong(last12.date)}, the model projects ${pct(last12.mean)}. The shaded area on the chart shows where it will probably land.</p>
         <div class="grid-3">
           <div class="kpi"><div class="kpi-label">Inflation today</div><div class="kpi-value num">${pct(latest.yoy)}</div><div class="kpi-sub">${fmtMonth(latest.date)}</div></div>
           <div class="kpi"><div class="kpi-label">Projected next month</div><div class="kpi-value num">${pct(next.mean)}</div><div class="kpi-sub">${fmtMonth(next.date)}</div></div>
@@ -2148,7 +2148,7 @@
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-head">
-            <div><p class="card-title">Inflation and forecast</p><p class="card-sub">The band widens because the further out, the less certain.</p></div>
+            <div><p class="card-title">Inflation and forecast</p><p class="card-sub">The shaded area gets wider over time, because guessing next year is harder than guessing next month.</p></div>
             ${segControl('ovRange', [{v:'36',label:'3Y'},{v:'60',label:'5Y'},{v:'120',label:'10Y'},{v:'0',label:'All'}], '36')}
           </div>
           ${forecastLegend}
@@ -2169,7 +2169,7 @@
               ${(last12.hi-last12.lo).toFixed(1)} points (${pct(last12.lo)} to ${pct(last12.hi)}): the model is honest that it cannot see a year ahead precisely.</p>
             </div>
             <div class="card">
-              <div class="card-head"><p class="card-title">Model vs consumers vs markets</p><a class="link-more" href="#expectations">Compare →</a></div>
+              <div class="card-head"><p class="card-title">The model vs shoppers vs Wall Street</p><a class="link-more" href="#expectations">Compare →</a></div>
               <p class="card-sub" style="margin-bottom:0" id="fcExpect"></p>
             </div>
             <div class="card">
@@ -2184,12 +2184,12 @@
       <!-- ================= TRACK RECORD ================= -->
       <section class="page" id="page-track-record" data-title="Track record">
         <h1 class="page-title">Track record</h1>
-        <p class="lede">Each month the model forecast the next month using only data it had at the time. Here is how close it got.</p>
+        <p class="lede">Every month, the model guessed next month’s inflation using only what it knew back then. Then the real number came out. Here’s how close it got.</p>
         <div class="grid-3" id="callouts"></div>
         <div class="card" style="margin-top:12px" ${hasErrors?'':'hidden'}>
           <p class="card-title">Forecast error over time</p>
-          <p class="card-sub">Actual minus forecast, in percentage points. Above zero means the forecast was too low.</p>
-          <div class="legend"><span><i class="key-line" style="background:var(--c-model)"></i>${esc(modelLabel)}</span><span><i class="key-line" style="background:var(--c-ref)"></i>Naive benchmark</span></div>
+          <p class="card-sub">How far off each guess was. Above zero means it guessed too low, below zero means too high.</p>
+          <div class="legend"><span><i class="key-line" style="background:var(--c-model)"></i>This model</span><span><i class="key-line" style="background:var(--c-ref)"></i>Lazy guess (“no change”)</span></div>
           <div class="chart" id="errChart"></div>
         </div>
         <div class="card" style="margin-top:12px">
@@ -2212,7 +2212,7 @@
       <!-- ================= DRIVERS ================= -->
       <section class="page" id="page-drivers" data-title="CPI price breakdown">
         <h1 class="page-title">CPI price breakdown</h1>
-        <p class="lede">The consumer price index (BLS) tracks what urban households pay. Start with the big groups, then drill into every one of its ${hasCats?cpiNodes.length-1:160} categories.</p>
+        <p class="lede">CPI is the government’s giant price tag tracker. It follows what city households pay for basically everything. Start with the big groups, then dig into all ${hasCats?cpiNodes.length-1:160} categories.</p>
         ${moversTicker}
         <div id="contribBody">${hasCats?'':pending('Detailed CPI categories')}</div>
         <h2 class="drill-h">Explore every CPI category</h2>
@@ -2291,7 +2291,7 @@
         ${moneyTicker}
         <div class="card">
           <p class="card-title">Purchasing power calculator</p>
-          <p class="card-sub">Uses the annual average CPI for past years and the latest month for the current year.</p>
+          <p class="card-sub">Pick two years and see what your money was worth. Past years use that year’s average prices.</p>
           <div class="calc-inputs">
             <label class="field">Amount ($)<input id="calcAmt" type="number" min="0" step="1" value="100" inputmode="decimal"></label>
             <label class="field">From<select id="calcFrom"></select></label>
@@ -2319,8 +2319,8 @@
 
       <!-- ================= EXPECTATIONS ================= -->
       <section class="page" id="page-expectations" data-title="Expectations">
-        <h1 class="page-title">Model vs consumers vs markets</h1>
-        <p class="lede">Where this model, households and bond markets expect inflation to go.</p>
+        <h1 class="page-title">The model vs shoppers vs Wall Street</h1>
+        <p class="lede">Three different guesses about where prices are going: this model, regular people, and the bond market.</p>
         <div id="expBody"></div>
         ${pageFoot()}
       </section>
@@ -2355,17 +2355,17 @@
       let wins=0; errModel.forEach((e,i)=>{ if(e.abs < errNaive[i].abs) wins++; });
       const worst = errModel.reduce((a,b)=>b.abs>a.abs?b:a);
       callouts.innerHTML = `
-        <div class="kpi"><div class="kpi-label">Average miss (MAE)</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>pp</small></div><div class="kpi-sub">Naive benchmark: ${naive.mae.toFixed(2)} pp</div></div>
-        <div class="kpi"><div class="kpi-label">Beat the benchmark</div><div class="kpi-value num">${wins} <small>of ${errModel.length} months</small></div><div class="kpi-sub">Closer to the actual print than "no change"</div></div>
-        <div class="kpi"><div class="kpi-label">Largest miss</div><div class="kpi-value num">${pp(worst.error,2)}</div><div class="kpi-sub">${fmtMonthLong(worst.date)}: forecast ${pct(worst.forecast,2)}, actual ${pct(worst.actual,2)}</div></div>`;
+        <div class="kpi"><div class="kpi-label">Average miss</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">Just guessing “no change”: ${naive.mae.toFixed(2)} points</div></div>
+        <div class="kpi"><div class="kpi-label">Beat the lazy guess</div><div class="kpi-value num">${wins} <small>of ${errModel.length} months</small></div><div class="kpi-sub">Months it was closer than just guessing “no change”</div></div>
+        <div class="kpi"><div class="kpi-label">Largest miss</div><div class="kpi-value num">${worst.error>=0?"+":"−"}${Math.abs(worst.error).toFixed(2)} <small>points</small></div><div class="kpi-sub">${fmtMonthLong(worst.date)}: forecast ${pct(worst.forecast,2)}, actual ${pct(worst.actual,2)}</div></div>`;
       mount(document.getElementById('errChart'), lineChart({
         aria:'Monthly forecast error', height:260, dates: errModel.map(e=>e.date),
-        series:[{label:'Naive benchmark', cls:'ref', values: errNaive.map(e=>e.error)}, {label:modelLabel, cls:'model', values: errModel.map(e=>e.error)}],
+        series:[{label:'Lazy guess (“no change”)', cls:'ref', values: errNaive.map(e=>e.error)}, {label:'This model', cls:'model', values: errModel.map(e=>e.error)}],
         zeroLine:true, yFmt:(v,d)=>(v>0?'+':'')+v.toFixed(d), tipFmt:v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2)+' pp',
       }));
     } else if(model && naive){
       callouts.innerHTML = `
-        <div class="kpi"><div class="kpi-label">Average miss (MAE)</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>pp</small></div><div class="kpi-sub">${esc(modelLabel)}</div></div>
+        <div class="kpi"><div class="kpi-label">Average miss</div><div class="kpi-value num">${model.mae.toFixed(2)} <small>points</small></div><div class="kpi-sub">${esc(modelLabel)}</div></div>
         <div class="kpi"><div class="kpi-label">Naive benchmark MAE</div><div class="kpi-value num">${naive.mae.toFixed(2)} <small>pp</small></div><div class="kpi-sub">"Next month = this month"</div></div>
         <div class="kpi"><div class="kpi-label">Improvement</div><div class="kpi-value num">${maeGain.toFixed(0)}%</div><div class="kpi-sub">Lower average error</div></div>`;
     }
@@ -2766,17 +2766,17 @@
       const mich = seriesFrom('exp_consumers_1y'), be = seriesFrom('exp_market_10y');
       if(!mich && !be){ body.innerHTML = pending('Expectations data'); fcExp.textContent = 'Survey and market expectations will appear after the next data update.'; return; }
       const lm = mich && mich[mich.length-1], lb = be && be[be.length-1];
-      fcExp.innerHTML = `Model, 12 months ahead: <b style="color:var(--ink)">${pct(last12.mean)}</b>` + (lm?` · Consumers, next 12 months: <b style="color:var(--ink)">${pct(lm.v)}</b>`:'') + (lb?` · Markets, next 10 years: <b style="color:var(--ink)">${pct(lb.v,2)}</b>`:'');
+      fcExp.innerHTML = `Model, 12 months ahead: <b style="color:var(--ink)">${pct(last12.mean)}</b>` + (lm?` · Shoppers, next 12 months: <b style="color:var(--ink)">${pct(lm.v)}</b>`:'') + (lb?` · Wall Street, next 10 years: <b style="color:var(--ink)">${pct(lb.v,2)}</b>`:'');
       body.innerHTML = `
         <div class="grid-3">
           <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-model)"></span>Model, ${fmtMonth(last12.date)}</div><div class="kpi-value num">${pct(last12.mean)}</div><div class="kpi-sub">12 months ahead</div></div>
-          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-3)"></span>Consumers, next 12 months</div><div class="kpi-value num">${lm?pct(lm.v):'—'}</div><div class="kpi-sub">${lm?'U. Michigan survey, '+fmtMonth(lm.date):'Not yet available'}</div></div>
-          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-4)"></span>Markets, next 10 years</div><div class="kpi-value num">${lb?pct(lb.v,2):'—'}</div><div class="kpi-sub">${lb?'10-year breakeven, '+fmtMonth(lb.date)+' average':'Not yet available'}</div></div>
+          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-3)"></span>Shoppers, next 12 months</div><div class="kpi-value num">${lm?pct(lm.v):'—'}</div><div class="kpi-sub">${lm?'From a University of Michigan survey, '+fmtMonth(lm.date):'Not yet available'}</div></div>
+          <div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(--c-4)"></span>Wall Street, next 10 years</div><div class="kpi-value num">${lb?pct(lb.v,2):'—'}</div><div class="kpi-sub">${lb?'Read from bond prices, '+fmtMonth(lb.date)+' average':'Not yet available'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
-          <div class="card-head"><div><p class="card-title">Actual inflation and expectations</p><p class="card-sub">Expectations are plotted on the date they were measured, not the period they refer to.</p></div>
+          <div class="card-head"><div><p class="card-title">Actual inflation and expectations</p><p class="card-sub">Each guess is drawn on the date it was made, not the date it’s about.</p></div>
             ${segControl('expRange', [{v:'120',label:'10Y'},{v:'240',label:'20Y'},{v:'0',label:'Since 1978'}], '120')}</div>
-          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Model forecast</span><span><i class="key-line" style="background:var(--c-3)"></i>Consumers (1-yr)</span><span><i class="key-line" style="background:var(--c-4)"></i>Markets (10-yr)</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
+          <div class="legend"><span><i class="key-line" style="background:var(--c-actual)"></i>Actual</span><span><i class="key-dash" style="border-color:var(--c-model)"></i>Model forecast</span><span><i class="key-line" style="background:var(--c-3)"></i>Shoppers (next year)</span><span><i class="key-line" style="background:var(--c-4)"></i>Wall Street (next 10 years)</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
           <div class="chart" id="expChart"></div>
         </div>
         <div class="card" style="margin-top:12px"><p class="card-title">Why they differ</p>
@@ -2792,8 +2792,8 @@
         const dates = hist.map(d=>d.date).concat(forecast.map(f=>f.date));
         lineChart({aria:'Inflation expectations', height:H(340,260), dates,
           series:[
-            {label:'Markets (10-yr)', cls:'c4', values:dates.map(d=>beMap.has(d.getTime())?beMap.get(d.getTime()):null)},
-            {label:'Consumers (1-yr)', cls:'c3', values:dates.map(d=>michMap.has(d.getTime())?michMap.get(d.getTime()):null)},
+            {label:'Wall Street (next 10 years)', cls:'c4', values:dates.map(d=>beMap.has(d.getTime())?beMap.get(d.getTime()):null)},
+            {label:'Shoppers (next year)', cls:'c3', values:dates.map(d=>michMap.has(d.getTime())?michMap.get(d.getTime()):null)},
             {label:'Actual', cls:'actual', values:hist.map(d=>d.yoy).concat(padN(nF)), endMarker:true},
             {label:'Model forecast', cls:'model', dashed:true, values:padN(nH-1).concat([hist[nH-1].yoy], forecast.map(f=>f.mean)), skipTipAt:i=>i===nH-1},
           ], refs:[{value:FED_TARGET, label:''}], yFmt:(v,d)=>v.toFixed(d)+'%', tipFmt:v=>v.toFixed(2)+'%'})(el);
@@ -2884,7 +2884,7 @@
     let cpiEx = null;
     if(hasCats){
       cpiEx = explorer({el:document.getElementById('cpiExplorer'), id:'cx', nodes:cpiNodes, table:COMP, rootCode:'SA0', rootLabel:'All items',
-        weightLabel:'BLS relative importance, December 2025', target:FED_TARGET, movers:document.getElementById('cpiMovers')});
+        weightLabel:'Spending shares from December 2025', target:FED_TARGET, movers:document.getElementById('cpiMovers')});
       const pick = ex => code => { ex.select(code); ex.el.scrollIntoView({behavior:'smooth', block:'start'}); };
       (function(){   // business insights for pricing teams, rebuilt from the data on every update
         const el = document.getElementById('bizInsights'); if(!el || !cpiEx) return;
@@ -2948,15 +2948,15 @@
       body.innerHTML = `
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Data through ${fmtMonthLong(l.date)}</span><span>PCE chain-type price index, seasonally adjusted (BEA)</span></div>
         <h1>PCE inflation is ${pct(l.v)}.</h1>
-        <p class="lede">This is the measure the Fed targets at 2%.</p>
+        <p class="lede">PCE is the price measure the Fed actually watches. Its goal is 2%.</p>
         <div class="grid-3">
           <div class="kpi hero"><div class="kpi-label">PCE inflation</div><div class="kpi-value num">${pct(l.v)}</div><div class="kpi-sub">${fmtMonth(l.date)}</div></div>
-          <div class="kpi"><div class="kpi-label">Core PCE</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Excluding food and energy</div></div>
+          <div class="kpi"><div class="kpi-label">Core PCE</div><div class="kpi-value num">${pct(l.core)}</div><div class="kpi-sub">Leaves out food and gas, which bounce around a lot</div></div>
           <div class="kpi"><div class="kpi-label">Projected next year</div><div class="kpi-value num">${fcH.length?pct(fcH[fcH.length-1].mean):'—'}</div><div class="kpi-sub">${fcH.length?fmtMonth(fcH[fcH.length-1].date):'Pending'}</div></div>
         </div>
         <div class="card" style="margin-top:12px">
-          <div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The band widens because the further out, the less certain.</p></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('pceWhich', [{v:'pce',label:'Headline'},{v:'core_pce',label:'Core'}], 'pce')}${segControl('pceRange', [{v:'36',label:'3Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '36')}</div></div>
+          <div class="card-head"><div><p class="card-title">PCE inflation and forecast</p><p class="card-sub">The shaded area gets wider over time, because guessing next year is harder than guessing next month.</p></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">${segControl('pceWhich', [{v:'pce',label:'Everything'},{v:'core_pce',label:'Core (no food or gas)'}], 'pce')}${segControl('pceRange', [{v:'36',label:'3Y'},{v:'120',label:'10Y'},{v:'0',label:'Since 1980'}], '36')}</div></div>
           ${forecastLegend}<div class="chart" id="pceChart"></div>
         </div>
         <div class="grid-2" style="margin-top:12px">
@@ -2971,7 +2971,7 @@
         <p class="sec-sub">Both measure consumer prices, but they weigh things differently and PCE covers more spending.</p>
         <div class="card">
           <div class="card-head"><div class="legend" style="margin:0"><span><i class="key-line" style="background:var(--c-actual)"></i>CPI</span><span><i class="key-line" style="background:var(--c-3)"></i>PCE</span><span><i class="key-dash" style="border-color:var(--c-ref)"></i>Fed 2% target</span></div>
-            ${segControl('cvpWhich', [{v:'head',label:'Headline'},{v:'core',label:'Core'}], 'head')}</div>
+            ${segControl('cvpWhich', [{v:'head',label:'Everything'},{v:'core',label:'Core (no food or gas)'}], 'head')}</div>
           <div class="chart" id="cvpChart" style="margin-top:8px"></div>
         </div>
         <div class="card" style="margin-top:12px" id="wcmpCard"></div>`;
@@ -3041,7 +3041,7 @@
       body.innerHTML = `
         <div class="eyebrow"><span class="pill"><span class="dot"></span>Monthly averages through ${fmtMonthLong((r10||RATES[0]).last.date)}</span><span>Federal Reserve H.15 via FRED</span></div>
         <h1>${ttl}</h1>
-        <p class="lede">Current rates and where the model expects them in a year.</p>
+        <p class="lede">Where interest rates are now, and where the model thinks they’ll be a year from now.</p>
         ${ratesTicker}
         <div class="grid-4">${RATES.map(r=>{ const f=fc12(r), ch = r.yearAgo ? r.last.v-r.yearAgo.v : null;
           return `<div class="kpi"><div class="kpi-label"><span class="key-swatch" style="background:var(${COLOR_VAR[r.cls]})"></span>${r.label}</div><div class="kpi-value num">${pct(r.last.v,2)}</div>
