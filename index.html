@@ -575,6 +575,8 @@
   .why-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;}
   .why-c{padding:20px; border-radius:18px; border:1px solid var(--border); background:var(--surface);}
   .why-n{display:block; font-size:28px; font-weight:700; letter-spacing:-.03em; line-height:1.15; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:8px;}
+  .why-t{display:block; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;}
+  .aud-line{margin:18px 0 0; font-size:15px; color:var(--ink-2); max-width:760px;} .aud-line b{color:var(--ink); font-weight:600;}
   .why-c h3{font-size:16.5px; font-weight:600; margin:0 0 4px;} .why-c p{margin:0; font-size:14.5px; color:var(--ink-2);}
   .aud{display:grid; grid-template-columns:auto 1.3fr 1fr; gap:12px; align-items:stretch; margin-top:12px;}
   .aud-l{align-self:center; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding-right:6px;}
@@ -1945,15 +1947,11 @@
     const whyHTML = `
       <div class="sec-head reveal"><div><span class="kicker">Why this matters</span><h2 class="sec-title">Inflation decides what your money is worth</h2></div></div>
       <div class="why-grid reveal">
-        <div class="why-c"><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Cash loses buying power</h3><p>At today’s ${pct(latest.yoy)} inflation, $100 kept in cash loses about ${cashLoss!=null?usd(cashLoss):'a few dollars'} of buying power in one year.</p></div>
-        <div class="why-c"><b class="why-n num">${ffR?pct(ffR.last.v,2):'—'}</b><h3>It sets borrowing costs</h3><p>When inflation runs above the Fed’s 2% goal, the Fed keeps interest rates high, so loans, mortgages and credit cards cost more.</p></div>
-        <div class="why-c"><b class="why-n num">${topDriver?esc(topDriver):'—'}</b><h3>It moves business costs</h3><p>Suppliers, rent and wages all reprice with inflation. Today the biggest push comes from ${topDriver?esc(topDriver.toLowerCase()):'a few categories'}.</p></div>
+        <div class="why-c"><span class="why-t">Lost in one year</span><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Cash loses buying power</h3><p>At today’s ${pct(latest.yoy)} inflation, $100 kept in cash loses about ${cashLoss!=null?usd(cashLoss):'a few dollars'} of buying power in one year.</p></div>
+        <div class="why-c"><span class="why-t">Fed interest rate today</span><b class="why-n num">${ffR?pct(ffR.last.v,2):'—'}</b><h3>It sets borrowing costs</h3><p>When inflation runs above the Fed’s 2% goal, the Fed keeps interest rates high, so loans, mortgages and credit cards cost more.</p></div>
+        <div class="why-c"><span class="why-t">Biggest cause today</span><b class="why-n num">${topDriver?esc(topDriver):'—'}</b><h3>It moves business costs</h3><p>Suppliers, rent and wages all rise with prices. Right now the biggest push comes from ${topDriver?esc(topDriver.toLowerCase()):'a few categories'}.</p></div>
       </div>
-      <div class="aud reveal">
-        <span class="aud-l">Who it’s for</span>
-        <div class="aud-c primary"><span class="aud-tag">Main audience</span><b>Pricing and business planning teams</b><span>Set prices, plan next year’s costs and check supplier increases against official data.</span></div>
-        <div class="aud-c"><span class="aud-tag">Also useful for</span><b>Everyday households</b><span>Understand why bills are rising and what your savings will be worth next year.</span></div>
-      </div>`;
+      <p class="aud-line reveal"><b>Built for pricing and business planning teams.</b> Also useful if you want to know why bills are rising and what your savings will be worth next year.</p>`;
 
     const buildHTML = `<div class="build reveal">
         <span class="kicker">How it’s built</span>
