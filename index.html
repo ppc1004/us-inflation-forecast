@@ -1947,9 +1947,9 @@
     const whyHTML = `
       <div class="sec-head reveal"><div><span class="kicker">Why this matters</span><h2 class="sec-title">Inflation decides what your money is worth</h2></div></div>
       <div class="why-grid reveal">
-        <div class="why-c"><span class="why-t">Lost in one year</span><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Cash loses buying power</h3><p>At today’s ${pct(latest.yoy)} inflation, $100 kept in cash loses about ${cashLoss!=null?usd(cashLoss):'a few dollars'} of buying power in one year.</p></div>
-        <div class="why-c"><span class="why-t">Fed interest rate today</span><b class="why-n num">${ffR?pct(ffR.last.v,2):'—'}</b><h3>It sets borrowing costs</h3><p>When inflation runs above the Fed’s 2% goal, the Fed keeps interest rates high, so loans, mortgages and credit cards cost more.</p></div>
-        <div class="why-c"><span class="why-t">Biggest cause today</span><b class="why-n num">${topDriver?esc(topDriver):'—'}</b><h3>It moves business costs</h3><p>Suppliers, rent and wages all rise with prices. Right now the biggest push comes from ${topDriver?esc(topDriver.toLowerCase()):'a few categories'}.</p></div>
+        <div class="why-c"><span class="why-t">$100 in cash loses</span><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Your savings buy less</h3><p>If prices keep rising ${pct(latest.yoy)} a year, what costs $100 today will cost about ${okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'more'} next year. So $100 in cash buys about ${cashLoss!=null?usd(cashLoss):'a few dollars'} less.</p></div>
+        <div class="why-c"><span class="why-t">Fed interest rate today</span><b class="why-n num">${ffR?pct(ffR.last.v,2):'—'}</b><h3>Borrowing stays expensive</h3><p>The Fed aims for 2% inflation. When prices rise faster than that, it keeps rates up, so mortgages, car loans and credit cards cost more.</p></div>
+        <div class="why-c"><span class="why-t">Biggest price push today</span><b class="why-n num">${topDriver?esc(topDriver):'—'}</b><h3>Adds the most to rising prices</h3><p>${topDriver?esc(topDriver):'One category'} is the largest part of today’s price increases. When a big cost like this goes up, businesses pay more and often raise their own prices.</p></div>
       </div>
       <p class="aud-line reveal"><b>Built for pricing and business planning teams.</b><br>Also useful if you want to know why bills are rising and what your savings will be worth next year.</p>`;
 
