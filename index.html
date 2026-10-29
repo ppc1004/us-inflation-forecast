@@ -515,7 +515,9 @@
   .steps{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:26px; counter-reset:st;}
   .step-c{padding:16px; border-radius:14px; background:color-mix(in srgb, var(--page) 60%, transparent); border:1px solid var(--border); counter-increment:st;}
   .step-c::before{content:"0" counter(st); display:block; font-size:12px; font-weight:700; letter-spacing:.08em; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:8px;}
-  .step-c b{display:block; font-size:14.5px; font-weight:600; margin-bottom:4px;} .step-c span{font-size:13px; color:var(--ink-2);}
+  .step-c{display:flex; flex-direction:column;} .step-c b{display:block; font-size:17px; font-weight:600; margin-bottom:6px;} .step-c span{font-size:15px; line-height:1.55; color:var(--ink-2); flex:1;}
+.step-s{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid var(--border); font-size:13px; color:var(--ink-2);} .step-s strong{font-size:22px; font-weight:700; color:var(--ink); white-space:nowrap;}
+.build .sec-lede{max-width:720px;}
   .build .cta{justify-content:flex-start; margin-top:24px;}
 
   /* ---------- what's driving it: contributions + explorer tools ---------- */
@@ -1958,10 +1960,10 @@
         <h2 class="sec-title">A website that runs itself</h2>
         <p class="sec-lede">Nobody updates this page by hand. Every day an automated script checks for new government numbers, and when they show up, it redoes everything.</p>
         <div class="steps">
-          <div class="step-c"><b>Collect</b><span>Grab the newest official numbers on prices and interest rates.</span></div>
-          <div class="step-c"><b>Forecast</b><span>Predict the next 12 months, plus a range for how far off it might be.</span></div>
-          <div class="step-c"><b>Check</b><span>Test the model on past years it never saw, and post the scorecard.</span></div>
-          <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site. Done.</span></div>
+          <div class="step-c"><b>Collect</b><span>Grab the newest official numbers on prices and interest rates from BLS, BEA and FRED.</span><div class="step-s">Price categories<strong>${hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'}</strong></div></div>
+          <div class="step-c"><b>Forecast</b><span>Predict the next 12 months, plus a range for how far off it might be.</span><div class="step-s">Months ahead<strong>12</strong></div></div>
+          <div class="step-c"><b>Check</b><span>Test the model on past years it never saw, and post the scorecard.</span><div class="step-s">Past months tested<strong>${(()=>{const n=Math.max(...(hzRaw||[]).map(r=>+r.n).filter(isFinite)); return isFinite(n)?String(n):'—';})()}</strong></div></div>
+          <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site. Done.</span><div class="step-s">Checks for new data<strong>Daily</strong></div></div>
         </div>
         <div class="cta"><a class="btn primary" href="#findings">Read the story <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
       </div>`;
