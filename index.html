@@ -5,7 +5,7 @@
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>U.S. Economic Forecast</title>
-<meta name="description" content="U.S. Economic Forecast: where U.S. prices are heading over the next 12 months, across 240+ categories, with interest rates and a public track record. Updated automatically.">
+<meta name="description" content="U.S. Economic Forecast: where U.S. prices are heading over the next 12 months, with interest rates, 240+ price categories to explore and a public track record. Updated automatically.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="U.S. Economic Forecast">
 <meta property="og:description" content="Where U.S. prices are heading over the next 12 months, with a public track record. Updated automatically.">
@@ -1042,7 +1042,7 @@
     const btns = document.querySelectorAll(`#${id} button`);
     btns.forEach(b=>b.addEventListener('click', ()=>{ btns.forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); onChange(b.dataset.v); }));
   }
-  const pageFoot = () => `<div class="page-foot"><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve &amp; U.S. Treasury via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
+  const pageFoot = () => `<div class="page-foot"><span>Built by <a href="https://github.com/ppc1004" target="_blank" rel="noopener">Pay-Chern Liu</a></span><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve &amp; U.S. Treasury via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
   const pending = what => `<div class="empty">${esc(what)} will appear after the next automatic data update.</div>`;
 
   // chart height grows with width on large screens so wide charts don't look flat
@@ -1700,7 +1700,7 @@
 
     // ---------- CPI categories (BLS) ----------
     const COMP = wideTable(compRaw);
-    const cpiNodes = wRaw.map(r=>({code:r.code, name:r.name, parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null);
+    const cpiNodes = wRaw.map(r=>({code:r.code, name:(r.name==='Care of invalids and elderly at home'?'Home care for elderly and disabled':r.name), parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null);
     const cpiMajor = cpiNodes.filter(n=>n.parent==='SA0').map(n=>{
       const v = COMP && COMP.cols[n.code]; if(!v || lastIdx(v)<0) return {...n, yoy:null};
       const y = yoyOf(v), li = lastIdx(v); return {...n, yoy:y[li], yoyS:y, date:COMP.dates[li]};
@@ -1802,12 +1802,12 @@
       const plain = {'Housing':'Housing (rent and home costs)','Food and beverages':'Food','Transportation':'Transportation (cars, gas, fares)','Medical care':'Health care','Education and communication':'Education and phone/internet'};
       if(ovDrivers && ovDrivers.rows.length && ok(ovDrivers.head) && ovDrivers.head>0){
         const top = ovDrivers.rows[0], share = top.value/ovDrivers.head*100;
-        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b> is the biggest cause. It accounts for about ${share.toFixed(0)}% of the price rise.`});
+        if(ok(share) && share>0 && share<=100) rows.push({k:'Biggest cause', v:`<b>${esc(plain[top.label]||top.label)}</b> is the biggest cause. It accounts for about ${share.toFixed(0)}% of the price rise, because it is the largest part of household spending.`});
       }
       // 4. next year
       if(last12 && ok(last12.mean)){
         let t = `In ${fmtMonthLong(last12.date)}, the model expects prices to be about <b>${pct(last12.mean)}</b> higher than a year before, ${cmpGoal(last12.mean)} the Fed\u2019s 2% goal.`;
-        if(ok(last12.lo) && ok(last12.hi)) t += ` The likely range is ${pct(Math.max(last12.lo,-5))} to ${pct(last12.hi)}.`;
+        if(ok(last12.lo) && ok(last12.hi)) t += ` The 95% likely range is ${pct(Math.max(last12.lo,-5))} to ${pct(last12.hi)}, so the exact number is uncertain.`;
         rows.push({k:'Projected next year', v:t});
       }
       // 5. interest rates
@@ -1868,7 +1868,7 @@
         <div class="hero-inner">
           <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next update ${nextText}</span>`:''}</span>
           <h1 class="hero-title">U.S. Economic<span class="l2">Forecast</span></h1>
-          <p class="hero-sub">Where U.S. prices are heading over the next 12 months, across ${hasCats?Math.floor((cpiNodes.length-1+Math.max(0,pceNodes.length-1))/10)*10:240}+ categories. Updated automatically whenever new government data comes out.</p>
+          <p class="hero-sub">Where U.S. prices are heading over the next 12 months, with ${hasCats?Math.floor((cpiNodes.length-1+Math.max(0,pceNodes.length-1))/10)*10:240}+ price categories to explore. Updated automatically whenever new government data comes out.</p>
           <div class="cta">
             <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
             <a class="btn" href="#drivers">What’s driving inflation <span class="arr">→</span></a>
@@ -1957,7 +1957,7 @@
       {href:'#drivers', icon:'bars', ic:'var(--c-bad)', t:'What’s driving inflation', d:'Which parts of the household budget are adding the most to inflation.', sl:'Top driver', sv:topDriver?esc(topDriver):'—'},
       {href:'#drivers', icon:'grid', ic:'var(--c-3)', t:'Every category', d:'Search and sort every CPI and PCE category, and see how each one changed over time.', sl:'CPI + PCE categories', sv:hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'},
       {href:'#rates', icon:'wave', ic:'var(--c-actual)', t:'Interest rates', d:'Treasury yields, the yield curve and where the Fed’s rate is heading.', sl:'10-year yield', sv:tenR?pct(tenR.last.v,2):'—'},
-      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'Smaller error than a no-change guess', sv:okN(hzEdge)?hzEdge.toFixed(0)+'%':'—'},
+      {href:'#track-record', icon:'target', ic:'var(--c-4)', t:'Track record', d:'How the model performed on years of data it had never seen before.', sl:'More accurate than guessing no change', sv:okN(hzEdge)?hzEdge.toFixed(0)+'%':'—'},
     ];
     const exploreHTML = `<div class="explore">${xcards.map((c,i)=>`<a class="xcard reveal" href="${c.href}" style="--ic:${c.ic};transition-delay:${(i%3)*70}ms">
         <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[c.icon]}</svg></span>
@@ -1968,19 +1968,19 @@
     const whyHTML = `
       <div class="sec-head reveal"><div><span class="kicker">Why this matters</span><h2 class="sec-title">Inflation decides what your money is worth</h2></div></div>
       <div class="why-grid reveal">
-        <div class="why-c"><span class="why-t">$100 in cash loses</span><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Your savings buy less</h3><p>If prices keep rising ${pct(latest.yoy, 2)} a year, what costs $100 today will cost about ${okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'more'} next year. So $100 in cash buys about ${cashLoss!=null?usd(cashLoss):'a few dollars'} less.</p></div>
+        <div class="why-c"><span class="why-t">$100 in cash loses</span><b class="why-n num">${cashLoss!=null?usd(cashLoss):'—'}</b><h3>Your savings buy less</h3><p>If prices keep rising ${pct(latest.yoy)} a year, what costs $100 today will cost about ${okN(latest.yoy)?usd(100*(1+latest.yoy/100)):'more'} next year. So $100 in cash buys about ${cashLoss!=null?usd(cashLoss):'a few dollars'} less.</p></div>
         <div class="why-c"><span class="why-t">Fed interest rate today</span><b class="why-n num">${ffR?pct(ffR.last.v,2):'—'}</b><h3>Borrowing stays expensive</h3><p>The Fed aims for 2% inflation. When prices rise faster than that, it keeps rates up, so mortgages, car loans and credit cards cost more.</p></div>
         <div class="why-c"><span class="why-t">Biggest price push today</span><b class="why-n num">${topDriver?esc(topDriver):'—'}</b><h3>Adds the most to rising prices</h3><p>${topDriver?esc(topDriver):'One category'} is the largest part of today’s price increases. When a big cost like this goes up, businesses pay more and often raise their own prices.</p></div>
       </div>
-      <p class="aud-line reveal"><b>Built for pricing and planning teams.</b><br>Also useful for anyone who wants to know why bills are rising and what their savings will be worth next year.</p>`;
+      <p class="aud-line reveal"><b>Useful for pricing and planning teams.</b><br>And for anyone who wants to know why bills are rising and what their savings will be worth next year.</p>`;
 
     const buildHTML = `<div class="build reveal">
         <span class="kicker">How it’s built</span>
         <h2 class="sec-title">A website that runs itself</h2>
-        <p class="sec-lede">Nobody updates this page by hand. Every day an automated script checks for new government numbers, and when they show up, it redoes everything.</p>
+        <p class="sec-lede">Nobody updates this page by hand. Every day an automated script checks for new government numbers, and when they show up, it reruns the forecast and updates the site.</p>
         <div class="steps">
           <div class="step-c"><b>Collect</b><span>Grab the newest official numbers on prices and interest rates from BLS, BEA and FRED.</span><div class="step-s">Price categories<strong>${hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'}</strong></div></div>
-          <div class="step-c"><b>Forecast</b><span>Predict inflation for the next 12 months, with a likely low and high for each month.</span><div class="step-s">Range hit rate<strong>${(()=>{const r=(hzRaw||[]).map(x=>({n:+x.n,c:+x.coverage_95})).filter(x=>isFinite(x.n)&&isFinite(x.c)&&x.n>0); const N=r.reduce((s,x)=>s+x.n,0); return N?Math.round(r.reduce((s,x)=>s+x.n*x.c,0)/N)+'%':'—';})()}</strong></div></div>
+          <div class="step-c"><b>Forecast</b><span>Predict inflation for the next 12 months, with a likely low and high for each month.</span><div class="step-s">Times the real number fell in range<strong>${(()=>{const r=(hzRaw||[]).map(x=>({n:+x.n,c:+x.coverage_95})).filter(x=>isFinite(x.n)&&isFinite(x.c)&&x.n>0); const N=r.reduce((s,x)=>s+x.n,0); return N?Math.round(r.reduce((s,x)=>s+x.n*x.c,0)/N)+'%':'—';})()}</strong></div></div>
           <div class="step-c"><b>Check</b><span>Test the model on past years it never saw, and post the scorecard.</span><div class="step-s">Past months tested<strong>${(()=>{const n=Math.max(...(hzRaw||[]).map(r=>+r.n).filter(isFinite)); return isFinite(n)?String(n):'—';})()}</strong></div></div>
           <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site.</span><div class="step-s">Data checks<strong>Daily</strong></div></div>
         </div>
@@ -1991,7 +1991,7 @@
       <!-- ================= OVERVIEW / DASHBOARD ================= -->
       <section class="page" id="page-overview" data-title="Dashboard">
         ${heroHTML}
-        <div class="sec-head first"><div><span class="kicker">Executive summary</span><h2 class="sec-title">Where inflation stands today</h2></div></div>
+        <div class="sec-head first"><div><h2 class="sec-title">Where inflation stands today</h2></div></div>
         ${execSummary}
         ${whyHTML}
         ${tickerHTML}
