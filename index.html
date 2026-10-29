@@ -5,7 +5,7 @@
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>U.S. Economic Forecast</title>
-<meta name="description" content="U.S. Economic Forecast: where U.S. prices are heading over the next 12 months, across 160+ categories, with interest rates and a public track record. Updated automatically.">
+<meta name="description" content="U.S. Economic Forecast: where U.S. prices are heading over the next 12 months, across 240+ categories, with interest rates and a public track record. Updated automatically.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="U.S. Economic Forecast">
 <meta property="og:description" content="Where U.S. prices are heading over the next 12 months, with a public track record. Updated automatically.">
@@ -1861,7 +1861,7 @@
         <div class="hero-inner">
           <span class="live-pill"><span class="dot"></span>Live data through ${fmtMonthLong(latest.date)}${nextText?`<span class="pill-next"> · next update ${nextText}</span>`:''}</span>
           <h1 class="hero-title">U.S. Economic<span class="l2">Forecast</span></h1>
-          <p class="hero-sub">Where U.S. prices are heading over the next 12 months, across ${hasCats?Math.floor(cpiNodes.length/10)*10:160}+ categories. Updated automatically whenever new government data comes out.</p>
+          <p class="hero-sub">Where U.S. prices are heading over the next 12 months, across ${hasCats?Math.floor((cpiNodes.length-1+Math.max(0,pceNodes.length-1))/10)*10:240}+ categories. Updated automatically whenever new government data comes out.</p>
           <div class="cta">
             <a class="btn primary" href="#forecast">See the forecast <span class="arr">→</span></a>
             <a class="btn" href="#drivers">What’s driving inflation <span class="arr">→</span></a>
@@ -1961,9 +1961,9 @@
         <p class="sec-lede">Nobody updates this page by hand. Every day an automated script checks for new government numbers, and when they show up, it redoes everything.</p>
         <div class="steps">
           <div class="step-c"><b>Collect</b><span>Grab the newest official numbers on prices and interest rates from BLS, BEA and FRED.</span><div class="step-s">Price categories<strong>${hasCats?String(cpiNodes.length-1+Math.max(0,pceNodes.length-1)):'—'}</strong></div></div>
-          <div class="step-c"><b>Forecast</b><span>Predict the next 12 months, plus a range for how far off it might be.</span><div class="step-s">Months ahead<strong>12</strong></div></div>
+          <div class="step-c"><b>Forecast</b><span>Predict the next 12 months, plus a range for how far off it might be.</span><div class="step-s">Real number in range<strong>${(()=>{const r=(hzRaw||[]).map(x=>({n:+x.n,c:+x.coverage_95})).filter(x=>isFinite(x.n)&&isFinite(x.c)&&x.n>0); const N=r.reduce((s,x)=>s+x.n,0); return N?Math.round(r.reduce((s,x)=>s+x.n*x.c,0)/N)+'%':'—';})()}</strong></div></div>
           <div class="step-c"><b>Check</b><span>Test the model on past years it never saw, and post the scorecard.</span><div class="step-s">Past months tested<strong>${(()=>{const n=Math.max(...(hzRaw||[]).map(r=>+r.n).filter(isFinite)); return isFinite(n)?String(n):'—';})()}</strong></div></div>
-          <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site. Done.</span><div class="step-s">Data checks<strong>Daily</strong></div></div>
+          <div class="step-c"><b>Publish</b><span>Save the new numbers and redraw the site.</span><div class="step-s">Data checks<strong>Daily</strong></div></div>
         </div>
         <div class="cta"><a class="btn primary" href="#findings">Read the story <span class="arr">→</span></a><a class="btn" href="https://github.com/ppc1004/us-inflation-forecast" target="_blank" rel="noopener">View source on GitHub <span class="arr">↗</span></a></div>
       </div>`;
