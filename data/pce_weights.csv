@@ -1,85 +1,85 @@
 code,name,parent,spending_musd,weight,date
-DPCE,Personal consumption expenditures,,22308527.0,100.0,2026-08-01
-DHUT,Housing and utilities,DPCE,3999517.0,17.9282,2026-08-01
-DHSG,Housing,DHUT,3489904.0,15.6438,2026-08-01
-DOWN,Owner-occupied housing (imputed rent),DHSG,2650488.0,11.8811,2026-08-01
-DTEN,Rent of tenant-occupied housing,DHSG,805204.0,3.6094,2026-08-01
-DGRH,Group housing,DHSG,3570.0,0.016,2026-08-01
-DFAR,Farm housing,DHSG,30642.0,0.1374,2026-08-01
-DUTL,Household utilities,DHUT,509613.0,2.2844,2026-08-01
-DELG,Electricity and gas,DUTL,361972.0,1.6226,2026-08-01
-DWRS,Water supply and sanitation,DUTL,147641.0,0.6618,2026-08-01
-DHLC,Health care,DPCE,3861305.0,17.3087,2026-08-01
-DOUT,Outpatient services,DHLC,1811767.0,8.1214,2026-08-01
-DPHY,Physician services,DOUT,884822.0,3.9663,2026-08-01
-DDEN,Dental services,DOUT,209363.0,0.9385,2026-08-01
-DPMS,Paramedical services,DOUT,717582.0,3.2166,2026-08-01
-DHPN,Hospital and nursing home services,DHLC,2049538.0,9.1872,2026-08-01
-DHSP,Hospitals,DHPN,1760649.0,7.8923,2026-08-01
-DNRS,Nursing homes,DHPN,288889.0,1.295,2026-08-01
-DTRS,Transportation services,DPCE,769008.0,3.4471,2026-08-01
-DMVS,Motor vehicle services,DTRS,424572.0,1.9032,2026-08-01
-DVMR,Motor vehicle maintenance and repair,DMVS,300985.0,1.3492,2026-08-01
-DOVS,Other motor vehicle services,DMVS,123588.0,0.554,2026-08-01
-DPUB,Public transportation,DTRS,344436.0,1.544,2026-08-01
-DAIT,Air transportation,DPUB,224379.0,1.0058,2026-08-01
-DGRD,Ground transportation,DPUB,112063.0,0.5023,2026-08-01
-DWAT,Water transportation,DPUB,7994.0,0.0358,2026-08-01
-DRCA,Recreation services,DPCE,858631.0,3.8489,2026-08-01
-DFSA,Food services and accommodations,DPCE,1588004.0,7.1184,2026-08-01
-DFSE,Food services (restaurants),DFSA,1375094.0,6.164,2026-08-01
-DACC,Accommodations,DFSA,212910.0,0.9544,2026-08-01
-DIFS,Financial services and insurance,DPCE,1795945.0,8.0505,2026-08-01
-DFNL,Financial services,DIFS,1230210.0,5.5145,2026-08-01
-DINS,Insurance,DIFS,565735.0,2.536,2026-08-01
-DHIN,Net health insurance,DINS,304047.0,1.3629,2026-08-01
-DTIN,Net motor vehicle insurance,DINS,113517.0,0.5089,2026-08-01
-DLIF,Life insurance,DINS,130199.0,0.5836,2026-08-01
-DFIN,Net household insurance,DINS,17971.0,0.0806,2026-08-01
-DOTS,Other services,DPCE,1837194.0,8.2354,2026-08-01
-DCOM,Communication,DOTS,330228.0,1.4803,2026-08-01
-DTCS,Telecommunication services,DCOM,190271.0,0.8529,2026-08-01
-DINT,Internet access,DCOM,123923.0,0.5555,2026-08-01
-DPSS,Postal and delivery services,DCOM,16034.0,0.0719,2026-08-01
-DTED,Education services,DOTS,373292.0,1.6733,2026-08-01
-DHED,Higher education,DTED,211119.0,0.9464,2026-08-01
-DNEH,"Nursery, elementary and secondary schools",DTED,70940.0,0.318,2026-08-01
-DVED,Commercial and vocational schools,DTED,91233.0,0.409,2026-08-01
-DPRS,Professional and other services,DOTS,320193.0,1.4353,2026-08-01
-DPER,Personal care and clothing services,DOTS,260298.0,1.1668,2026-08-01
-DSOC,Social services and religious activities,DOTS,378375.0,1.6961,2026-08-01
-DHHM,Household maintenance,DOTS,121915.0,0.5465,2026-08-01
-DNPI,Nonprofit institutions serving households,DPCE,649298.0,2.9105,2026-08-01
-DFXA,Food and beverages (groceries),DPCE,1572279.0,7.0479,2026-08-01
-DFOF,Food at home,DFXA,1178195.0,5.2814,2026-08-01
-DNBV,Nonalcoholic beverages,DFXA,150176.0,0.6732,2026-08-01
-DAOP,Alcoholic beverages,DFXA,242926.0,1.0889,2026-08-01
-DONG,Other nondurable goods,DPCE,1821783.0,8.1663,2026-08-01
-DPHM,Pharmaceutical and medical products,DONG,756210.0,3.3898,2026-08-01
-DREI,Recreational items,DONG,365664.0,1.6391,2026-08-01
-DHOU,Household supplies,DONG,209478.0,0.939,2026-08-01
-DOPC,Personal care products,DONG,227120.0,1.0181,2026-08-01
-DTOB,Tobacco,DONG,110517.0,0.4954,2026-08-01
-DNEW,"Magazines, newspapers, stationery",DONG,139297.0,0.6244,2026-08-01
-DMOT,Motor vehicles and parts,DPCE,814907.0,3.6529,2026-08-01
-DNMV,New motor vehicles,DMOT,436264.0,1.9556,2026-08-01
-DNPV,Used motor vehicles (net purchases),DMOT,239408.0,1.0732,2026-08-01
-DMVP,Motor vehicle parts and accessories,DMOT,139235.0,0.6241,2026-08-01
-DGOE,Gasoline and other energy goods,DPCE,503882.0,2.2587,2026-08-01
-DMFL,Motor vehicle fuels,DGOE,472411.0,2.1176,2026-08-01
-DFUL,Fuel oil and other fuels,DGOE,31471.0,0.1411,2026-08-01
-DREQ,Recreational goods and vehicles,DPCE,767248.0,3.4393,2026-08-01
-DVAP,"Video, audio, computers",DREQ,473201.0,2.1212,2026-08-01
-DSPG,Sporting equipment and supplies,DREQ,139957.0,0.6274,2026-08-01
-DWHL,Sports and recreational vehicles,DREQ,107565.0,0.4822,2026-08-01
-DFDH,Furnishings and household equipment,DPCE,536571.0,2.4052,2026-08-01
-DFFF,Furniture and furnishings,DFDH,308944.0,1.3849,2026-08-01
-DAPP,Household appliances,DFDH,95446.0,0.4278,2026-08-01
-DUTE,"Glassware, tableware and utensils",DFDH,66018.0,0.2959,2026-08-01
-DTOO,Tools and equipment for house and garden,DFDH,66163.0,0.2966,2026-08-01
-DCLO,Clothing and footwear,DPCE,608124.0,2.726,2026-08-01
-DGAR,Garments,DCLO,473728.0,2.1235,2026-08-01
-DODG,Other durable goods,DPCE,324829.0,1.4561,2026-08-01
-DJRY,Jewelry and watches,DODG,113838.0,0.5103,2026-08-01
-DTAE,Therapeutic appliances and equipment,DODG,106778.0,0.4786,2026-08-01
-DTCE,Telephone and related communication equipment,DODG,38926.0,0.1745,2026-08-01
+DPCE,Personal consumption expenditures,,22452780.0,100.0,2026-09-01
+DHUT,Housing and utilities,DPCE,4028985.0,17.9443,2026-09-01
+DHSG,Housing,DHUT,3504014.0,15.6061,2026-09-01
+DOWN,Owner-occupied housing (imputed rent),DHSG,2662138.0,11.8566,2026-09-01
+DTEN,Rent of tenant-occupied housing,DHSG,807565.0,3.5967,2026-09-01
+DGRH,Group housing,DHSG,3581.0,0.0159,2026-09-01
+DFAR,Farm housing,DHSG,30730.0,0.1369,2026-09-01
+DUTL,Household utilities,DHUT,524971.0,2.3381,2026-09-01
+DELG,Electricity and gas,DUTL,376951.0,1.6789,2026-09-01
+DWRS,Water supply and sanitation,DUTL,148020.0,0.6593,2026-09-01
+DHLC,Health care,DPCE,3871188.0,17.2415,2026-09-01
+DOUT,Outpatient services,DHLC,1817978.0,8.0969,2026-09-01
+DPHY,Physician services,DOUT,892220.0,3.9738,2026-09-01
+DDEN,Dental services,DOUT,209511.0,0.9331,2026-09-01
+DPMS,Paramedical services,DOUT,716247.0,3.19,2026-09-01
+DHPN,Hospital and nursing home services,DHLC,2053210.0,9.1446,2026-09-01
+DHSP,Hospitals,DHPN,1762269.0,7.8488,2026-09-01
+DNRS,Nursing homes,DHPN,290941.0,1.2958,2026-09-01
+DTRS,Transportation services,DPCE,788789.0,3.5131,2026-09-01
+DMVS,Motor vehicle services,DTRS,427896.0,1.9058,2026-09-01
+DVMR,Motor vehicle maintenance and repair,DMVS,303763.0,1.3529,2026-09-01
+DOVS,Other motor vehicle services,DMVS,124133.0,0.5529,2026-09-01
+DPUB,Public transportation,DTRS,360893.0,1.6073,2026-09-01
+DAIT,Air transportation,DPUB,237712.0,1.0587,2026-09-01
+DGRD,Ground transportation,DPUB,115148.0,0.5128,2026-09-01
+DWAT,Water transportation,DPUB,8033.0,0.0358,2026-09-01
+DRCA,Recreation services,DPCE,857928.0,3.821,2026-09-01
+DFSA,Food services and accommodations,DPCE,1610466.0,7.1727,2026-09-01
+DFSE,Food services (restaurants),DFSA,1396258.0,6.2186,2026-09-01
+DACC,Accommodations,DFSA,214209.0,0.954,2026-09-01
+DIFS,Financial services and insurance,DPCE,1807405.0,8.0498,2026-09-01
+DFNL,Financial services,DIFS,1238913.0,5.5179,2026-09-01
+DINS,Insurance,DIFS,568492.0,2.5319,2026-09-01
+DHIN,Net health insurance,DINS,305497.0,1.3606,2026-09-01
+DTIN,Net motor vehicle insurance,DINS,113572.0,0.5058,2026-09-01
+DLIF,Life insurance,DINS,131410.0,0.5853,2026-09-01
+DFIN,Net household insurance,DINS,18012.0,0.0802,2026-09-01
+DOTS,Other services,DPCE,1844528.0,8.2151,2026-09-01
+DCOM,Communication,DOTS,329334.0,1.4668,2026-09-01
+DTCS,Telecommunication services,DCOM,190365.0,0.8478,2026-09-01
+DINT,Internet access,DCOM,122893.0,0.5473,2026-09-01
+DPSS,Postal and delivery services,DCOM,16076.0,0.0716,2026-09-01
+DTED,Education services,DOTS,375528.0,1.6725,2026-09-01
+DHED,Higher education,DTED,212766.0,0.9476,2026-09-01
+DNEH,"Nursery, elementary and secondary schools",DTED,71016.0,0.3163,2026-09-01
+DVED,Commercial and vocational schools,DTED,91746.0,0.4086,2026-09-01
+DPRS,Professional and other services,DOTS,319468.0,1.4228,2026-09-01
+DPER,Personal care and clothing services,DOTS,263875.0,1.1752,2026-09-01
+DSOC,Social services and religious activities,DOTS,378837.0,1.6873,2026-09-01
+DHHM,Household maintenance,DOTS,122792.0,0.5469,2026-09-01
+DNPI,Nonprofit institutions serving households,DPCE,664793.0,2.9608,2026-09-01
+DFXA,Food and beverages (groceries),DPCE,1572167.0,7.0021,2026-09-01
+DFOF,Food at home,DFXA,1178125.0,5.2471,2026-09-01
+DNBV,Nonalcoholic beverages,DFXA,151130.0,0.6731,2026-09-01
+DAOP,Alcoholic beverages,DFXA,241920.0,1.0775,2026-09-01
+DONG,Other nondurable goods,DPCE,1828649.0,8.1444,2026-09-01
+DPHM,Pharmaceutical and medical products,DONG,763691.0,3.4013,2026-09-01
+DREI,Recreational items,DONG,365364.0,1.6273,2026-09-01
+DHOU,Household supplies,DONG,209192.0,0.9317,2026-09-01
+DOPC,Personal care products,DONG,228087.0,1.0159,2026-09-01
+DTOB,Tobacco,DONG,110174.0,0.4907,2026-09-01
+DNEW,"Magazines, newspapers, stationery",DONG,139026.0,0.6192,2026-09-01
+DMOT,Motor vehicles and parts,DPCE,795923.0,3.5449,2026-09-01
+DNMV,New motor vehicles,DMOT,420940.0,1.8748,2026-09-01
+DNPV,Used motor vehicles (net purchases),DMOT,234956.0,1.0464,2026-09-01
+DMVP,Motor vehicle parts and accessories,DMOT,140026.0,0.6236,2026-09-01
+DGOE,Gasoline and other energy goods,DPCE,547292.0,2.4375,2026-09-01
+DMFL,Motor vehicle fuels,DGOE,513426.0,2.2867,2026-09-01
+DFUL,Fuel oil and other fuels,DGOE,33866.0,0.1508,2026-09-01
+DREQ,Recreational goods and vehicles,DPCE,765409.0,3.409,2026-09-01
+DVAP,"Video, audio, computers",DREQ,473303.0,2.108,2026-09-01
+DSPG,Sporting equipment and supplies,DREQ,138668.0,0.6176,2026-09-01
+DWHL,Sports and recreational vehicles,DREQ,106760.0,0.4755,2026-09-01
+DFDH,Furnishings and household equipment,DPCE,537069.0,2.392,2026-09-01
+DFFF,Furniture and furnishings,DFDH,309264.0,1.3774,2026-09-01
+DAPP,Household appliances,DFDH,96081.0,0.4279,2026-09-01
+DUTE,"Glassware, tableware and utensils",DFDH,65951.0,0.2937,2026-09-01
+DTOO,Tools and equipment for house and garden,DFDH,65773.0,0.2929,2026-09-01
+DCLO,Clothing and footwear,DPCE,608069.0,2.7082,2026-09-01
+DGAR,Garments,DCLO,473915.0,2.1107,2026-09-01
+DODG,Other durable goods,DPCE,324118.0,1.4436,2026-09-01
+DJRY,Jewelry and watches,DODG,112627.0,0.5016,2026-09-01
+DTAE,Therapeutic appliances and equipment,DODG,106660.0,0.475,2026-09-01
+DTCE,Telephone and related communication equipment,DODG,38978.0,0.1736,2026-09-01
