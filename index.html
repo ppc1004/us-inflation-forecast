@@ -47,8 +47,8 @@
       --c-actual:#3987e5; --c-model:#d95926; --c-3:#199e70; --c-4:#9085e9; --c-ref:#77756f;
       --c-good:#0ca30c; --c-bad:#e66767; --band-opacity:.16;
       --c-5:#c98500; --c-6:#d55181; --c-7:#0f9a0f; --c-8:#e66767;
-      --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3a3a37; --h4:#8a4a3c; --h5:#c4553c; --h6:#e66767;
-      --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#0b0b0b;
+      --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3b3b42; --h4:#7a3a2c; --h5:#c2452b; --h6:#ff8f7a;
+      --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#1a0d0a;
     }
   }
   :root[data-theme="dark"]{
@@ -59,8 +59,8 @@
     --c-actual:#3987e5; --c-model:#d95926; --c-3:#199e70; --c-4:#9085e9; --c-ref:#77756f;
     --c-good:#0ca30c; --c-bad:#e66767; --band-opacity:.16;
     --c-5:#c98500; --c-6:#d55181; --c-7:#0f9a0f; --c-8:#e66767;
-    --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3a3a37; --h4:#8a4a3c; --h5:#c4553c; --h6:#e66767;
-    --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#0b0b0b;
+    --h0:#184f95; --h1:#3987e5; --h2:#5f8fc4; --h3:#3b3b42; --h4:#7a3a2c; --h5:#c2452b; --h6:#ff8f7a;
+    --hi0:#fff; --hi1:#fff; --hi2:#0b0b0b; --hi3:#fff; --hi4:#fff; --hi5:#fff; --hi6:#1a0d0a;
   }
 
   *{box-sizing:border-box;}
@@ -299,16 +299,18 @@
   .crumbs .cur{font-weight:600; color:var(--ink); padding:2px 4px;}
   .crumbs .sep{color:var(--muted);}
   .tm{position:relative; width:100%; border-radius:10px; overflow:hidden; background:var(--surface);}
-  .tm-tile{position:absolute; box-sizing:border-box; border:0; margin:0; padding:7px 8px; text-align:left; font:inherit; cursor:pointer; overflow:hidden;
+  .tm-tile{position:absolute; box-sizing:border-box; border:0; margin:0; padding:10px 12px; text-align:left; font:inherit; cursor:pointer; overflow:hidden;
     border-radius:6px; display:flex; flex-direction:column; justify-content:flex-start; gap:1px; transition:filter .1s;}
   .tm-tile:hover{filter:brightness(1.06) saturate(1.05);}
   .tm-tile:focus-visible{outline:2px solid var(--ink); outline-offset:-2px;}
   .tm-tile[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--ink);}
   .tm-tile.other{cursor:default; background:repeating-linear-gradient(45deg, var(--grid), var(--grid) 6px, var(--surface) 6px, var(--surface) 10px) !important; color:var(--ink-2) !important;}
   .tm-name{font-size:12.5px; font-weight:600; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
-  .tm-meta{font-size:11.5px; font-variant-numeric:tabular-nums; opacity:.9; white-space:nowrap;}
-  .tm-big .tm-name{font-size:14.5px;} .tm-big .tm-meta{font-size:12.5px;}
-  .tm-kids{font-size:11px; opacity:.8; margin-top:auto; white-space:nowrap;}
+  .tm-meta{font-size:11.5px; font-variant-numeric:tabular-nums; opacity:.78; white-space:nowrap; font-weight:500;}
+  .tm-big .tm-name{font-size:15px;} .tm-big .tm-meta{font-size:13px;}
+  .tm-val{font-weight:700; line-height:1.05; letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap; margin:3px 0 2px;}
+  .tm-kids{font-size:11.5px; font-weight:500; opacity:.7; margin-top:auto; white-space:nowrap;}
+  .tm-tile:hover .tm-kids{opacity:1;}
   .heat-legend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; font-size:12px; color:var(--ink-2); margin:10px 0 0;}
   .heat-legend .sw{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:5px;}
   .wbar{display:inline-block; height:8px; border-radius:0 4px 4px 0; background:var(--c-actual); vertical-align:middle; margin-right:8px; opacity:.85;}
@@ -1223,12 +1225,12 @@
         const big = r.w>220 && r.h>120, showName = r.w>=66 && r.h>=36, showMeta = r.w>=46 && r.h>=22, roomy = r.w>=200 && r.h>=84;
         const wTxt = n.weight.toFixed(n.weight>=10?1:2)+'%', arrow = ny==null ? '' : ny>=0.05 ? '↑ ' : ny<=-0.05 ? '↓ ' : '';
         const pTxt = ny==null ? 'no price data' : arrow + Math.abs(ny).toFixed(1) + '%';
-        const meta = roomy
-          ? `<span class="tm-meta"><b>${wTxt}</b> of all spending</span><span class="tm-meta">Prices <b>${pTxt}</b> vs. a year ago</span>`
-          : `<span class="tm-meta">${wTxt} of spending</span><span class="tm-meta">Prices ${pTxt}</span>`;
+        // hero number = price change; scales with the tile so big categories read big
+        const vSize = Math.round(Math.max(15, Math.min(r.w*0.13, r.h*0.2, 44)));
+        const meta = `<span class="tm-val" style="font-size:${vSize}px">${pTxt}</span><span class="tm-meta">${wTxt} of spending</span>`;
         return `<button class="tm-tile${big?' tm-big':''}" data-code="${n.code}" data-k="${k}" aria-pressed="${n===sel}" style="${st}${color}" aria-label="${esc(n.name)}: ${n.weight.toFixed(2)}% of all spending, prices ${ny!=null?spct(ny):'not available'} versus a year ago">
-          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?(showName && r.h>=62 ? meta : `<span class="tm-meta">${ny!=null?pTxt:''}</span>`):''}
-          ${n.kids.length && r.h>=100 && r.w>=90 ? `<span class="tm-kids">${r.w>=210 ? `Click to open ${n.kids.length} smaller categor${n.kids.length>1?'ies':'y'}` : `${n.kids.length} inside`} ›</span>` : ''}</button>`;
+          ${showName?`<span class="tm-name">${esc(n.name)}</span>`:''}${showMeta?(showName && r.h>=70 ? meta : `<span class="tm-meta">${ny!=null?pTxt:''}</span>`):''}
+          ${n.kids.length && r.h>=100 && r.w>=90 ? `<span class="tm-kids">${n.kids.length} ${r.w>=160 ? `categor${n.kids.length>1?'ies':'y'} inside` : 'inside'} ›</span>` : ''}</button>`;
       }).join('');
       el.appendChild(tip);
       el.querySelectorAll('.tm-tile').forEach(t=>{
