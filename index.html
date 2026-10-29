@@ -540,6 +540,8 @@
   .cb-track{position:relative; height:16px;}
   .cb-bar{position:absolute; top:0; height:16px; border-radius:5px; transition:left .45s var(--ease), width .45s var(--ease), background .3s;}
   .cb-v{text-align:right; font-weight:600; white-space:nowrap;}
+  .cb-head{cursor:default; padding-top:0; padding-bottom:2px; font-size:11.5px; color:var(--muted);} .cb-head:hover{background:none;}
+  .cb-head .cb-v{font-weight:500;} .cb-head .cshare{font-size:11.5px;}
   .cshare{display:inline-block; min-width:34px; margin-left:6px; font-size:11.5px; font-weight:500; color:var(--muted);}
   .clegend button{display:inline-flex; align-items:center; gap:7px; font:inherit; font-size:12.5px; color:var(--ink-2); background:none; border:1px solid transparent; border-radius:999px; padding:2px 9px 2px 6px; cursor:pointer;}
   .clegend button:hover, .clegend button.hi{color:var(--ink); border-color:var(--border); background:color-mix(in srgb, var(--ink) 5%, transparent);}
@@ -1440,7 +1442,7 @@
     const shown = byW.length>maxG ? byW.slice(0,maxG-1) : byW, rest = byW.length>maxG ? byW.slice(maxG-1) : [];
     const colorOf = new Map(shown.map((g,k)=>[g.code, COLORS[k%COLORS.length]]));
     const METRICS = {
-      contrib:{label:'Adds to inflation', v:g=>g.weight*g.yoyS[li]/100, fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2), unit:'percentage points added to the total'},
+      contrib:{label:'Adds to inflation', v:g=>g.weight*g.yoyS[li]/100, fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2), unit:'points added to the total'},
       yoy:{label:'Price change', v:g=>g.yoyS[li], fmt:v=>spct(v), unit:'how fast each group’s own prices rose'},
       weight:{label:'Share of spending', v:g=>g.weight, fmt:v=>v.toFixed(1)+'%', unit:'share of what people spend'},
     };
@@ -1465,15 +1467,16 @@
       const M = METRICS[metric], rows = majors.map(g=>({g, v:M.v(g)})).sort((a,b)=>b.v-a.v);
       const lo = Math.min(0, ...rows.map(r=>r.v)), hi = Math.max(0, ...rows.map(r=>r.v)), span = (hi-lo)||1, zero = (0-lo)/span*100;
       document.getElementById(id+'-btitle').textContent = metric==='contrib' ? `How much each group adds to the ${pct(head)} ${cfg.rootLower} inflation rate` : metric==='yoy' ? `How fast prices are rising in each group` : `How big each group is in the ${cfg.rootLower} basket`;
-      document.getElementById(id+'-bsub').textContent = `${fmtMonthLong(T.dates[li])} · ${M.unit}.` + (metric==='contrib' ? ' = share of spending × how much its prices rose.' : '');
-      document.getElementById(id+'-bars').innerHTML = rows.map(r=>{
+      document.getElementById(id+'-bsub').textContent = `${fmtMonthLong(T.dates[li])} · ${M.unit}.` + (metric==='contrib' ? ' Points = share of spending × how much its prices rose.' : '');
+      const headRow = metric==='contrib' ? `<div class="cb-row cb-head" aria-hidden="true"><span></span><span></span><span class="cb-v">Points<span class="cshare">of total</span></span></div>` : '';
+      document.getElementById(id+'-bars').innerHTML = headRow + rows.map(r=>{
         const w = Math.abs(r.v)/span*100, left = r.v>=0 ? zero : zero-w, c = metric==='contrib' ? `var(${colorOf.get(r.g.code)||'--c-ref'})` : metric==='yoy' ? `var(--h${heatBin(r.v)})` : 'var(--c-actual)';
         const share = metric==='contrib' && head>0 ? `<span class="cshare">${Math.abs(r.v/head*100)<0.5?'0':(r.v/head*100).toFixed(0)}%</span>` : '';
         return `<button type="button" class="cb-row" data-code="${r.g.code}" aria-label="${esc(r.g.name)}: ${M.label} ${M.fmt(r.v)}"><span class="cb-name">${esc(r.g.name)}</span>
           <span class="cb-track"><span class="hb-zero" style="left:${zero}%"></span><span class="cb-bar" style="left:${left}%;width:${Math.max(w,.4)}%;background:${c}"></span></span>
           <span class="cb-v num">${M.fmt(r.v)}${share}</span></button>`;
       }).join('');
-      el.querySelectorAll('.cb-row').forEach(b=>b.addEventListener('click', ()=>cfg.onPick(b.dataset.code)));
+      el.querySelectorAll('button.cb-row').forEach(b=>b.addEventListener('click', ()=>cfg.onPick(b.dataset.code)));
     }
     function chart(){
       const idx = []; for(let i=Math.max(0, li-range+1); i<=li; i++) idx.push(i);
@@ -1716,7 +1719,9 @@
     const pceFc = s => pceFcRaw.filter(r=>r.series===s).map(r=>({date:parseDate(r.date), mean:num(r.mean), lo:num(r.lower), hi:num(r.upper), model:r.model})).filter(r=>r.mean!=null).sort((a,b)=>a.date-b.date);
     const pceF = {pce:pceFc('pce'), core_pce:pceFc('core_pce')};
     const pceHz = hzParse(pceHzRaw);
-    const pceNodes = pceWRaw.map(r=>({code:r.code, name:r.name, parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null && n.weight>0);
+    // BEA names that read like jargon get a plain-English label on screen
+    const PCE_LABELS = {'Personal consumption expenditures':'All PCE spending', 'Owner-occupied housing (imputed rent)':'Homeowners’ housing (estimated rent)', 'Nonprofit institutions serving households':'Nonprofit groups'};
+    const pceNodes = pceWRaw.map(r=>({code:r.code, name:PCE_LABELS[r.name]||r.name, parent:r.parent||null, weight:num(r.weight)})).filter(n=>n.weight!=null && n.weight>0);
     const pceWDate = pceWRaw.length && pceWRaw[0].date ? parseDate(pceWRaw[0].date) : null;
     const PCOMP = wideTable(pceCompRaw);
 
@@ -2206,7 +2211,7 @@
 
       <!-- ================= DRIVERS ================= -->
       <section class="page" id="page-drivers" data-title="What’s driving inflation">
-        <h1 class="page-title">What’s driving inflation</h1>
+        <h1 class="page-title">What’s driving CPI inflation</h1>
         <p class="lede">CPI (the Consumer Price Index) is the government’s main measure of everyday prices. It tracks what households pay for housing, food, gas and almost everything else. Start with the big groups, then dig into all ${hasCats?cpiNodes.length-1:160} categories.</p>
         ${moversTicker}
         <div id="contribBody">${hasCats?'':pending('Detailed CPI categories')}</div>
@@ -2254,9 +2259,9 @@
       </section>
 
       <!-- ================= PCE CATEGORIES ================= -->
-      <section class="page" id="page-pce-categories" data-title="PCE price breakdown">
-        <h1 class="page-title">PCE price breakdown</h1>
-        <p class="lede">The PCE price index (BEA) covers everything Americans spend on, including what employers and insurers pay on their behalf. It is the measure the Fed targets at 2%.</p>
+      <section class="page" id="page-pce-categories" data-title="What’s driving PCE inflation">
+        <h1 class="page-title">What’s driving PCE inflation</h1>
+        <p class="lede">PCE is the government’s other main price measure, and the one the Fed aims to keep at 2%. It covers more than CPI, including costs that employers and insurers pay for people, like most health care. Start with the big groups, then dig into every category.</p>
         <div id="pceContrib">${pceNodes.length && PCOMP?'':pending('PCE categories')}</div>
         <h2 class="drill-h">Explore every PCE category</h2>
         <p class="drill-sub">Search, click tiles to drill down, or drag the slider (or press play) to see how spending looked in any month.</p>
@@ -3016,7 +3021,7 @@
     if(pceNodes.length && PCOMP){
       const pceEx = explorer({el:document.getElementById('pceExplorer'), id:'px', nodes:pceNodes, table:PCOMP, rootCode:'DPCE', rootLabel:'Total PCE', rootLower:'total PCE',
         weightLabel:`Share of consumer spending${pceWDate?', '+fmtMonth(pceWDate):''}`, target:FED_TARGET, movers:document.getElementById('pceMovers')});
-      if(pceEx) contribSection({el:document.getElementById('pceContrib'), id:'pc', ex:pceEx, table:PCOMP, rootLabel:'Total PCE', rootLower:'PCE', weightNote:pceWDate?fmtMonth(pceWDate)+' spending':'latest spending', maxGroups:8,
+      if(pceEx) contribSection({el:document.getElementById('pceContrib'), id:'pc', ex:pceEx, table:PCOMP, rootLabel:'Total PCE', rootLower:'PCE', weightNote:pceWDate?fmtMonth(pceWDate):'the latest', maxGroups:8,
         onPick:code=>{ pceEx.select(code); pceEx.el.scrollIntoView({behavior:'smooth', block:'start'}); }});
     }
 
