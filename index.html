@@ -103,7 +103,7 @@
   .meta .dot{width:7px; height:7px; border-radius:50%; background:var(--c-good);}
   .meta b{font-weight:500; color:var(--ink-2);}
   .page-title{font-size:clamp(24px, 2.6vw, 30px); letter-spacing:-.011em; font-weight:600; margin:0 0 6px;}
-  .lede{font-size:16px; color:var(--ink-2); max-width:740px; margin:0 0 26px;}
+  .lede{font-size:16px; color:var(--ink-2); max-width:740px; margin:0 0 26px; text-wrap:pretty;}
   .lede b{color:var(--ink); font-weight:600;}
   h2{font-size:19px; letter-spacing:-.006em; margin:30px 0 4px; font-weight:600;}
   .sec-sub{color:var(--ink-2); font-size:14px; margin:0 0 12px; max-width:760px;}
@@ -1991,15 +1991,14 @@
         <div class="story-top">
           <span class="kicker">The story</span>
           <h1 class="story-title">From rising prices to better decisions</h1>
-          <p class="lede">What started as a question about rising prices became a forecasting site that updates itself. Here is why I made it, where it is going, what it is worth to a business, and how it works.</p>
+          <p class="lede">What started as a question about rising prices became a forecasting site that updates itself. Here is why I built it, how a business can use it, what the data shows, and how it works.</p>
           <nav class="ch-nav" aria-label="Chapters">
             <button type="button" data-go="ch-why"><b>01</b>Why I built this</button>
-            <button type="button" data-go="ch-vision"><b>02</b>Vision</button>
-            <button type="button" data-go="ch-value"><b>03</b>Business value</button>
-            <button type="button" data-go="ch-insights"><b>04</b>Business insights</button>
-            <button type="button" data-go="ch-found"><b>05</b>What I found</button>
-            <button type="button" data-go="ch-how"><b>06</b>How it works</button>
-            <button type="button" data-go="ch-next"><b>07</b>What’s next</button>
+            <button type="button" data-go="ch-value"><b>02</b>Use cases</button>
+            <button type="button" data-go="ch-insights"><b>03</b>Insights</button>
+            <button type="button" data-go="ch-found"><b>04</b>Findings</button>
+            <button type="button" data-go="ch-how"><b>05</b>How it works</button>
+            <button type="button" data-go="ch-next"><b>06</b>What’s next</button>
           </nav>
         </div>
 
@@ -2015,23 +2014,17 @@
               <a class="qcard" href="#track-record"><span class="q">Can we trust a forecast?</span><span class="a">See the track record →</span></a>
             </div>
             <p class="story-p">So I built this site to answer them with official government data, a forecasting model that is tested in public, and explanations anyone can follow. It updates itself every day.</p>
-          </div>
-        </section>
-
-        <section class="chap" id="ch-vision">
-          <div class="chap-num">02</div>
-          <div class="chap-body">
-            <h2 class="chap-title">Vision</h2>
             <p class="vision-quote">Make inflation as easy to read as a weather forecast.</p>
             <p class="story-p">One place where anyone, from a shopper to a pricing manager, can see what prices are doing, why, and where they are heading next, with an honest range around every forecast.</p>
           </div>
         </section>
 
+
         ${storyBand}
         <section class="chap" id="ch-value">
-          <div class="chap-num">03</div>
+          <div class="chap-num">02</div>
           <div class="chap-body">
-            <h2 class="chap-title">Business value</h2>
+            <h2 class="chap-title">Use cases</h2>
             <p class="story-p">For a <b>pricing team</b>, inflation is two problems at once: your own costs are rising, and so are your customers’ bills. This site turns official data into four everyday decisions.</p>
             <div class="value-grid">
               <a class="value-c" href="#drivers"><span class="vn">01</span><b>Set prices with evidence</b><span>See how fast prices are rising in your exact category, out of ${hasCats?cpiNodes.length-1:160} CPI and ${Math.max(0,pceNodes.length-1)} PCE categories (CPI and PCE are the government’s two ways of measuring prices), and compare it with overall inflation.</span><em>Price breakdown →</em></a>
@@ -2043,9 +2036,9 @@
         </section>
 
         <section class="chap" id="ch-insights">
-          <div class="chap-num">04</div>
+          <div class="chap-num">03</div>
           <div class="chap-body">
-            <h2 class="chap-title">Business insights</h2>
+            <h2 class="chap-title">Insights</h2>
             <p class="story-p">Five takeaways for pricing teams, recalculated from the latest data every time this site updates.</p>
             <div class="insights" id="bizInsights">${hasCats?'':pending('Detailed CPI categories')}</div>
             <p class="cnote">Estimates from public data to support your own judgement, not business or investment advice.</p>
@@ -2053,16 +2046,16 @@
         </section>
 
         <section class="chap" id="ch-found">
-          <div class="chap-num">05</div>
+          <div class="chap-num">04</div>
           <div class="chap-body">
-            <h2 class="chap-title">What I found</h2>
+            <h2 class="chap-title">Findings</h2>
             <p class="story-p">I tested the model on years of past data it had never seen, as if I were forecasting live back then. Here is what happened, in plain English. Open “Details” for the numbers.</p>
             <div class="findings-list" id="findingsBody"></div>
           </div>
         </section>
 
         <section class="chap" id="ch-how">
-          <div class="chap-num">06</div>
+          <div class="chap-num">05</div>
           <div class="chap-body">
             <h2 class="chap-title">How it works</h2>
             <p class="story-p">Four steps run on their own every day. Nobody types the numbers in by hand.</p>
@@ -2119,7 +2112,7 @@
         </section>
 
         <section class="chap" id="ch-next">
-          <div class="chap-num">07</div>
+          <div class="chap-num">06</div>
           <div class="chap-body">
             <h2 class="chap-title">What’s next</h2>
             <p class="story-p">The model is deliberately simple today. These are the upgrades I want to try.</p>
