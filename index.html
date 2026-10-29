@@ -1042,7 +1042,7 @@
     const btns = document.querySelectorAll(`#${id} button`);
     btns.forEach(b=>b.addEventListener('click', ()=>{ btns.forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); onChange(b.dataset.v); }));
   }
-  const pageFoot = () => `<div class="page-foot"><span>Built by <a href="https://github.com/ppc1004" target="_blank" rel="noopener">Pay-Chern Liu</a></span><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve &amp; U.S. Treasury via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
+  const pageFoot = () => `<div class="page-foot"><span>Built by <a href="https://www.linkedin.com/in/pay-chern-liu-8033b033a" target="_blank" rel="noopener">Pay-Chern Liu</a></span><span>Personal research project · statistical estimates, not investment or policy advice · not affiliated with BLS, BEA, FRED or the Federal Reserve.</span><span>Data: <a href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">BLS</a>, <a href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">BEA</a>, Federal Reserve &amp; U.S. Treasury via <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a></span></div>`;
   const pending = what => `<div class="empty">${esc(what)} will appear after the next automatic data update.</div>`;
 
   // chart height grows with width on large screens so wide charts don't look flat
