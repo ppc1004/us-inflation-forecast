@@ -1,5 +1,5 @@
 [project]
-name = "us-inflation-forecast"
+name = "us_economic_forecast"
 version = "2.0.0"
 description = "U.S. Economic Forecast: CPI and PCE inflation by category, Treasury yields and 12-month ARIMA forecasts with public backtests."
 requires-python = ">=3.11"
