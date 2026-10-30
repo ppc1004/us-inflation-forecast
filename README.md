@@ -1,11 +1,11 @@
 # U.S. Economic Forecast
 
-[![Update Economic Data](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml/badge.svg)](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/update-data.yml)
-[![Tests](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/tests.yml/badge.svg)](https://github.com/ppc1004/us-inflation-forecast/actions/workflows/tests.yml)
+[![Update Economic Data](https://github.com/ppc1004/us_economic_forecast/actions/workflows/update-data.yml/badge.svg)](https://github.com/ppc1004/us_economic_forecast/actions/workflows/update-data.yml)
+[![Tests](https://github.com/ppc1004/us_economic_forecast/actions/workflows/tests.yml/badge.svg)](https://github.com/ppc1004/us_economic_forecast/actions/workflows/tests.yml)
 
 A self-updating dashboard of U.S. prices and interest rates. It tracks **CPI** and **PCE** inflation across more than 200 categories with their weights, the **Fed funds rate** and **2-, 10- and 30-year Treasury yields**, forecasts each 12 months ahead with ARIMA models, and publishes the models' track record: backtests, a four-model benchmark with significance tests, accuracy by horizon, interval calibration and a live archive of every CPI forecast it has made.
 
-**Live site: [ppc1004.github.io/us-inflation-forecast](https://ppc1004.github.io/us-inflation-forecast/)**
+**Live site: [ppc1004.github.io/us_economic_forecast](https://ppc1004.github.io/us_economic_forecast/)**
 
 ![Latest inflation and forecast](data/social_preview.png)
 
@@ -85,8 +85,8 @@ index.html               the website
 ## Run locally
 
 ```bash
-git clone https://github.com/ppc1004/us-inflation-forecast.git
-cd us-inflation-forecast
+git clone https://github.com/ppc1004/us_economic_forecast.git
+cd us_economic_forecast
 pip install -r requirements.txt
 
 python src/download_cpi.py && python src/download_extra.py
@@ -104,7 +104,7 @@ ruff check . && ruff format --check .   # lint and formatting (config in pyproje
 
 ## Key results
 
-Conclusions are recomputed with every data update and published on the [Key findings](https://ppc1004.github.io/us-inflation-forecast/#findings) page. With data through August 2026:
+Conclusions are recomputed with every data update and published on the [Key findings](https://ppc1004.github.io/us_economic_forecast/#findings) page. With data through August 2026:
 
 - Month-to-month inflation is highly persistent, so a "no change" forecast is a tough benchmark one month ahead; ARIMA's edge over it widens at longer horizons (about 4% lower error at 1 month, about 14% at 12 months, over 48 forecast origins).
 - The model's 95% intervals contained the actual value about 96% of the time across horizons, close to their stated coverage.
