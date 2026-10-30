@@ -85,7 +85,7 @@ AVG_PRICES = {
 
 USER_AGENT = (
     os.environ.get("BLS_USER_AGENT")
-    or "us-inflation-forecast research dashboard (https://github.com/ppc1004/us-inflation-forecast)"
+    or "us_economic_forecast research dashboard (https://github.com/ppc1004/us_economic_forecast)"
 )
 
 
