@@ -38,7 +38,7 @@ FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
 START = "1979-01-01"
 CORE = "DPCC"  # PCE excluding food and energy
 HEADERS = {
-    "User-Agent": "us-inflation-forecast research dashboard (github.com/ppc1004/us-inflation-forecast)"
+    "User-Agent": "us_economic_forecast research dashboard (github.com/ppc1004/us_economic_forecast)"
 }
 
 
